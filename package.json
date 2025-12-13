@@ -3,14 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "start": "json-server --watch backend/db.json --port 3000"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "mongodb": "^7.0.0"
-  }
+  "type": "commonjs"
 }
