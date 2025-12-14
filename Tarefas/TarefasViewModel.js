@@ -9,7 +9,7 @@ export class TarefasViewModel {
 
   async obterTarefas() {
     let tarefas = [];
-
+ 
     tarefas = await api.buscarDados(this.endpoint);
     this.tarefas = tarefas.map(tarefa => {
         return {
@@ -44,7 +44,7 @@ export class TarefasViewModel {
     if (tarefa.id) {
       await api.atualizarDados(tarefa, this.endpoint);
     } else {
-      tarefa.id = this.gerarID()
+      //tarefa.id = this.gerarID()
       await api.salvarDados(tarefa, this.endpoint);
     }
     return this.obterTarefas();

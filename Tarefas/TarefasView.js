@@ -40,7 +40,7 @@ export class TarefasView {
                 } 
                 checkTarefa.classList.add('form-check-input', 'flex-shrink-0');
                 checkTarefa.type = 'checkbox';
-                checkTarefa.id = tarefa.id 
+                checkTarefa.id = tarefa._id 
                 checkTarefa.value = '';
                 checkTarefa.style = 'font-size: 1.375em';
 
@@ -77,7 +77,7 @@ export class TarefasView {
                 btnEditar.setAttribute('id', 'botao-editar')
                 btnEditar.setAttribute('title', 'Editar Tarefa')
                 btnEditar.onclick = async ()  => {
-                    this.editarTarefa(tarefa.id)
+                    this.editarTarefa(tarefa._id)
                     
                     imagemBotao.classList.remove('bi', 'bi-plus-lg');
                     imagemBotao.classList.add('bi', 'bi-floppy-fill');
@@ -93,7 +93,7 @@ export class TarefasView {
                 btnExcluir.setAttribute('id', 'excluir-editar')
                 btnExcluir.setAttribute('title', 'Excluir Tarefa')
                 btnExcluir.onclick = async ()  => {                      
-                    await this.vm.excluirTarefa(tarefa.id)
+                    await this.vm.excluirTarefa(tarefa._id)
                 }
         
                 const iconeExcluir = document.createElement('i')
