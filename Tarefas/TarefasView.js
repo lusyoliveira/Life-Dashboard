@@ -7,8 +7,8 @@ export class TarefasView {
 
     async editarTarefa(idTarefa) {
         const tarefa = await this.vm.obterTarefaPorID(idTarefa);
-        
-         if (tarefa.id) {
+     
+        if (tarefa._id) {
             document.getElementById('id-tarefa').value = idTarefa
             document.getElementById('descricao-tarefa').value = tarefa.Tarefa;
         } else {
