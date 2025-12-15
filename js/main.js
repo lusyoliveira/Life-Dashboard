@@ -42,9 +42,9 @@
 
     (async () => {
         // await evm.obterCursos(); 
-         await tvm.obterTarefas();   
+        await tvm.obterTarefas();   
         // await cvm.obterCatalogo(); 
-        // await avm.obterAgenda();
+        await avm.obterAgenda();
         
         // const configuracoes = (await cfvm.obterConfiguracoes())[0] 
         // setInterval(async () => {
@@ -56,10 +56,10 @@
 
 
         // estudoView.renderCursando("Cursando");
-         tarefaView.listarTarefas('lista-tarefa')
+        tarefaView.listarTarefas('lista-tarefa')
         // catalogoView.renderAssistindo(['Assistindo','Reassistindo'],'Assistindo')
-        // agendaView.renderProximosCompromissos('proximos-compromissos')
-        // agendaView.renderCalendario('calendario')
+        agendaView.renderProximosCompromissos('proximos-compromissos')
+        agendaView.renderCalendario('calendario')
         // climaView.exibirClima('clima')
         // contagemView.exibirContagem('contagemRegressiva')
         // contadorView.exibirContador('contador')

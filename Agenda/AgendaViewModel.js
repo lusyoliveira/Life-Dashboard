@@ -9,10 +9,10 @@ export class AgendaViewModel {
 
   async obterAgenda() {
     const agendaData = await api.buscarDados(this.endpoint);
-
+   
     this.agenda = agendaData.map((compromisso) => {
         const compromissos = new Agenda(
-          compromisso.id,
+          compromisso._id,
           compromisso.Titulo,
           compromisso.Status,
           compromisso.Categoria,
@@ -29,7 +29,7 @@ export class AgendaViewModel {
       if (!compromisso) return null;
 
       const agenda = new Agenda(
-          compromisso.id,
+          compromisso._id,
           compromisso.Titulo,
           compromisso.Status,
           compromisso.Categoria,
@@ -45,9 +45,9 @@ export class AgendaViewModel {
     };
 
     if (compromisso.id) {
+      
       await api.atualizarDados(payload, this.endpoint);
     } else {
-      payload.id = this.gerarID()
       await api.salvarDados(payload, this.endpoint);
     }
     return this.obterAgenda();
@@ -56,12 +56,6 @@ export class AgendaViewModel {
   async excluirAgenda(id) {
     await api.excluirDados(id, this.endpoint);
     return this.obterAgenda();
-  }
-
-  gerarID() {
-    if (this.agenda.length === 0) return "1";
-    const maior = Math.max(...this.agenda.map((t) => Number(t.id) || 0));
-    return String(maior + 1);
   }
 
   filtrarAgenda (){

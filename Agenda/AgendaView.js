@@ -8,14 +8,14 @@ export class AgendaView {
     const agendamento = await this.vm.obterAgendaPorID(agendamentoId)
 
     if (agendamento) {
-        document.getElementById('id-adicionar').value = agendamento.id;
+        document.getElementById('id-adicionar').value = agendamentoId;
         document.getElementById('titulo-adicionar').value = agendamento.Titulo;
         document.getElementById('data-adicionar').value = new Date(agendamento.Data).toISOString().slice(0,16);
         document.getElementById('categoria-adicionar').value = agendamento.Categoria;
         document.getElementById('tipo-adicionar').value = agendamento.Tipo;
         document.getElementById('status-adicionar').value = agendamento.Status;
     } else {
-        alert('Agendamento não encontrado!');
+        alert('Compromisso não encontrado!');
     }
   }
 
@@ -28,16 +28,13 @@ export class AgendaView {
 
     if ($.fn.DataTable.isDataTable(".datatable")) {
       $(".datatable").DataTable().clear().destroy();
-    }
-
+    } 
+    
     const listaOrdenada = agenda.sort((a, b) => new Date(a.Data) - new Date(b.Data));
-
+        
     listaOrdenada.forEach((compromisso) => {
       const tr = document.createElement("tr");
-      const th = document.createElement("th");
-      th.textContent = compromisso.id;
-      th.setAttribute("scope", "row");
-
+      
       const tdTitulo = document.createElement("td");
       tdTitulo.textContent = compromisso.Titulo;
 
@@ -93,7 +90,6 @@ export class AgendaView {
       btnExcluir.appendChild(iconeExcluir);
       tdBtnEditar.appendChild(btnEditar);
       tdBtnExcluir.appendChild(btnExcluir);
-      tr.appendChild(th);
       tr.appendChild(tdTitulo);
       tr.appendChild(tdStatus);
       tr.appendChild(tdCategoria);

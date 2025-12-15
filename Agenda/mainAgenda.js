@@ -24,14 +24,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const status = document.getElementById('status-adicionar').value;
 
     const agendamento = new Agenda( 
-        idInput ? Number(idInput) : null,
+        idInput ? idInput : null,
         titulo,
         status,
         categoria,
         tipo,
         formatarParaISO(data)
     );
-  
+    
     await vm.salvarAgenda(agendamento);
     agendaView.listarAgenda("linhas");
     e.target.reset();

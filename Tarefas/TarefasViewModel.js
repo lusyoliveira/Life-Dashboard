@@ -44,7 +44,6 @@ export class TarefasViewModel {
     if (tarefa.id) {
       await api.atualizarDados(tarefa, this.endpoint);
     } else {
-      //tarefa.id = this.gerarID()
       await api.salvarDados(tarefa, this.endpoint);
     }
     return this.obterTarefas();
@@ -62,11 +61,5 @@ export class TarefasViewModel {
   async excluirTarefa(id) {
     await api.excluirDados(id, this.endpoint);
     return this.obterTarefas();
-  }
-
-  gerarID() {
-    if (this.tarefas.length === 0) return 1;
-    const maior = Math.max(...this.tarefas.map((t) => t.id || 0));
-    return maior + 1;
   }
 }
