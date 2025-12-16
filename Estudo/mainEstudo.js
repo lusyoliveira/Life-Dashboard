@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
      const certificado = document.getElementById('certificado-adicionar').value;
 
      const curso = new Curso(
-        idInput ? Number(idInput) : null,
+        idInput ? idInput : null,
         capa,
         escola,
         Number(aulas),

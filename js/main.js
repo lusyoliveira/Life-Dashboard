@@ -41,7 +41,7 @@
 
 
     (async () => {
-        // await evm.obterCursos(); 
+        await evm.obterCursos(); 
         await tvm.obterTarefas();   
         // await cvm.obterCatalogo(); 
         await avm.obterAgenda();
@@ -55,15 +55,15 @@
         // }, configuracoes.AtualizaClima ? configuracoes.AtualizaClima * 60000 : 0); // Converte minutos para milissegundos
 
 
-        // estudoView.renderCursando("Cursando");
+        estudoView.renderCursando("Cursando");
         tarefaView.listarTarefas('lista-tarefa')
         // catalogoView.renderAssistindo(['Assistindo','Reassistindo'],'Assistindo')
         agendaView.renderProximosCompromissos('proximos-compromissos')
         agendaView.renderCalendario('calendario')
         // climaView.exibirClima('clima')
-        // contagemView.exibirContagem('contagemRegressiva')
-        // contadorView.exibirContador('contador')
-        // relogioView.exibirRelogio('relogio')
+        //contagemView.exibirContagem('contagemRegressiva')
+        contadorView.exibirContador('contador')
+        relogioView.exibirRelogio('relogio')
         
         //Adiciona tarefa
         botaoTarefa.addEventListener("click", async (evento) => { 

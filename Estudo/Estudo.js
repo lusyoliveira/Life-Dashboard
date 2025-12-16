@@ -13,8 +13,8 @@ export default class Estudo {
     Status
     Certificado
 
-    constructor(id, capa, escola,aulas, assistido, horas,name,professor,assunto,comprado,valor,status, certificado = false){
-        this.id = id
+    constructor(_id, capa, escola,aulas, assistido, horas,name,professor,assunto,comprado,valor,status, certificado = false){
+        this.id = _id
         this.Capa = capa
         this.Escola = escola
         this.Aulas = aulas

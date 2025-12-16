@@ -38,10 +38,7 @@ export class EstudoView {
         }
             cursos.forEach(curso => {
                 const tr = document.createElement('tr');
-                const thId = document.createElement('th');
-                thId.textContent = curso.id;
-                thId.setAttribute('scope', 'row');
-    
+                   
                 const tdNomeCurso = document.createElement('td');
                 tdNomeCurso.textContent = curso.Name;
     
@@ -60,7 +57,13 @@ export class EstudoView {
                 tdComprado.classList.add('text-center');    
                 const dataUTC = new Date(curso.Comprado);                
                 const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
-                tdComprado.textContent = dataLocal.toLocaleDateString("pt-BR");
+                tdComprado.textContent = dataLocal.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
     
                 const tdValor = document.createElement('td');
                 tdValor.classList.add('text-center');
@@ -103,7 +106,6 @@ export class EstudoView {
                 btnExcluir.appendChild(iconeExcluir);
                 tdBtnEditar.appendChild(btnEditar);
                 tdBtnExcluir.appendChild(btnExcluir);
-                tr.appendChild(thId);
                 tr.appendChild(tdNomeCurso);
                 tr.appendChild(tdProfessor);
                 tr.appendChild(tdEscola);

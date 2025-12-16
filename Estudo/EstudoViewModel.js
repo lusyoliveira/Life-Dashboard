@@ -9,10 +9,11 @@ export class EstudoViewModel {
 
   async obterCursos() {
     const cursosData = await api.buscarDados(this.endpoint);
-
+    console.log(cursosData);
+    
     this.cursos = cursosData.map(curso => {
       const cursos = new Curso(
-        curso.id,
+        curso._id,
         curso.Capa,
         curso.Escola,
         curso.Aulas,
@@ -26,6 +27,7 @@ export class EstudoViewModel {
         curso.Status,
         curso.Certificado
       );
+      //console.log(cursos);
       
         return cursos;
     });   
@@ -37,7 +39,7 @@ export class EstudoViewModel {
     if (!curso) return null;
 
       const cursos = new Curso(
-        curso.id,
+        curso._id,
         curso.Capa,
         curso.Escola,
         curso.Aulas,
@@ -59,7 +61,6 @@ export class EstudoViewModel {
     if (curso.id) {
       await api.atualizarDados(curso, this.endpoint);
     } else {
-      curso.id = this.gerarID()
       await api.salvarDados(curso, this.endpoint);
     }
     return this.obterCursos();
@@ -69,12 +70,6 @@ export class EstudoViewModel {
     await api.excluirDados(id, this.endpoint);
     return this.obterCursos();
   }
-
-  gerarID() {
-    if (this.cursos.length === 0) return "1";
-    const maior = Math.max(...this.cursos.map((t) => t.id || 0));
-    return String(maior + 1);
-  };
 
   cursando(qtd = 3) {
       return this.cursos
