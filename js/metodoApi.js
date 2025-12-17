@@ -6,7 +6,7 @@ const api = {
         try {
             const response = await fetch(`${urlBase}/${endpoint}`)
             return await response.json()
-        } catch {
+        } catch(error)  {
             alert('Erro ao buscar dados da API!')
             throw error
         }
@@ -21,7 +21,7 @@ const api = {
                 body: JSON.stringify(dados)                
             })
             return await response.json()
-        } catch {
+        } catch(error) {
             alert('Erro ao salvar dados na API!')
             throw error
         }
@@ -31,7 +31,7 @@ const api = {
         try {
             const response = await fetch(`${urlBase}/${endpoint}/${id}`)
             return await response.json()
-        } catch {
+        } catch(error)  {
             alert('Erro ao buscar o dado na API!')
             throw error
         }
@@ -47,7 +47,7 @@ const api = {
                 body: JSON.stringify(dados)
             })
             return await response.json()
-        } catch {
+        } catch(error)  {
             alert('Erro ao atualizar os dados na API!')
             throw error
         }
@@ -58,7 +58,7 @@ const api = {
             const response = await fetch(`${urlBase}/${endpoint}/${id}`, {
                 method: "DELETE"
             })
-        } catch {
+        } catch(error)  {
             alert('Erro ao excluir o dado da API!')
             throw error
         }

@@ -7,9 +7,9 @@ export default class Transacao {
     Valor
     ParcelaInicio
     ParcelaFim
-    Parcelamento = false
+    Parcelamento
 
-    constructor(id,descricao,data,categoria,conta,valor,parcelaInicio,parcelaFim) {
+    constructor(id,descricao,data,categoria,conta,valor,parcelaInicio,parcelaFim, parcelamento = false) {
         this.Id = id
         this.Descricao = descricao
         this.Data = data
@@ -18,5 +18,6 @@ export default class Transacao {
         this.Valor = valor
         this.ParcelaInicio = parcelaInicio
         this.ParcelaFim = parcelaFim
+        this.Parcelamento = parcelamento
     }
 }

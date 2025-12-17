@@ -12,7 +12,7 @@ export class ConfiguracaoViewModel {
             
         this.configuracao = configuracaoData.map((configuracoes) => {
             const configuracao = new Configuracao(
-                configuracoes.id,
+                configuracoes._id,
                 configuracoes.AtivaMAL,
                 configuracoes.AtivaOutlook,
                 configuracoes.ChaveOutlook,

@@ -42,4 +42,10 @@ export class FinanceiroView {
       });
     }
   };
+
+  async listarContas(elementoDestinoId) {
+    const elementoDestino = document.getElementById(elementoDestinoId);
+    const contas = await this.vm.obterContas();
+
+  }
 }

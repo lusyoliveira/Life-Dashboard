@@ -43,7 +43,7 @@
     (async () => {
         await evm.obterCursos(); 
         await tvm.obterTarefas();   
-        // await cvm.obterCatalogo(); 
+        //await cvm.obterCatalogo(); 
         await avm.obterAgenda();
         
         // const configuracoes = (await cfvm.obterConfiguracoes())[0] 
@@ -61,7 +61,7 @@
         agendaView.renderProximosCompromissos('proximos-compromissos')
         agendaView.renderCalendario('calendario')
         // climaView.exibirClima('clima')
-        //contagemView.exibirContagem('contagemRegressiva')
+        contagemView.exibirContagem('contagemRegressiva')
         contadorView.exibirContador('contador')
         relogioView.exibirRelogio('relogio')
         

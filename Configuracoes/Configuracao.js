@@ -13,8 +13,8 @@ export default class Configuracao {
     DataContagem
     DescricaoContagem
 
-    constructor(id, ativMAL, ativaOutlook, chaveOutlook, ativaGoogle, chaveGoogle, cidade, latitude = 0, longitude = 0,ativaClima, atualizaClima = 0, dataContagem = new Date(), descricaoContagem) {
-        this.id = id
+    constructor(_id, ativMAL, ativaOutlook, chaveOutlook, ativaGoogle, chaveGoogle, cidade, latitude = 0, longitude = 0,ativaClima, atualizaClima = 0, dataContagem = new Date(), descricaoContagem) {
+        this.id = _id
         this.AtivaMAL = ativMAL
         this.AtivaOutlook = ativaOutlook
         this.ChaveOutlook = chaveOutlook
