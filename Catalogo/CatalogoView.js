@@ -9,7 +9,7 @@ export class CatalogoView {
        const titulo = await this.vm.obterTituloPorID(idTitulo)
         
        if (titulo) {
-            document.getElementById('id-adicionar').value = titulo.id;
+            document.getElementById('id-adicionar').value = idTitulo;
             document.getElementById('titulo-adicionar').value = titulo.Titulo;
             document.getElementById('capa-adicionar').value = titulo.Capa;
             document.getElementById('data-inicio').value = new Date(titulo.Inicio).toISOString().slice(0, 16);
@@ -41,10 +41,7 @@ export class CatalogoView {
 
         catalogo.forEach(titulo => {
             const tr = document.createElement('tr');
-            const thId = document.createElement('th');  
-            thId.scope = 'row';
-            thId.textContent = titulo.id;
-
+    
             const tdTitulo = document.createElement('td');
             tdTitulo.textContent = titulo.Titulo;
 
@@ -123,7 +120,6 @@ export class CatalogoView {
             btnExcluir.appendChild(iconeExcluir)
             tdBtnEditar.appendChild(btnEditar)
             tdBtnExcluir.appendChild(btnExcluir)
-            tr.appendChild(thId);
             tr.appendChild(tdTitulo);
             tr.appendChild(tdTipo);
             tr.appendChild(tdStatus);

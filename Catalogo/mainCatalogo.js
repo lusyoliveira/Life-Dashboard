@@ -34,14 +34,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Se for edição, buscar dados originais para preservar Adicao
         if (idInput) {
-          const tituloExistente = await vm.obterTituloPorID(Number(idInput));
+          const tituloExistente = await vm.obterTituloPorID(idInput);
           if (tituloExistente) {
             adicaoOriginal = tituloExistente.Adicao;
           }
         }
 
         const titulo = new Catalogo(
-          idInput ? Number(idInput) : null,
+          idInput ? idInput : null,
           descricao,
           capa,
           tipo,
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   //Gráficos
   catalogoView.renderGraficos();
 
-  // Adicionados Recentemente
+  //Adicionados Recentemente
   catalogoView.renderRecentes("recentes");
 
   //Card por Status

@@ -7,7 +7,7 @@ export default class Conta {
     Tipo
     Saldo
 
-    constructor(_id,agencia,conta,banco,conta,descricao,tipo,saldo) {
+    constructor(_id,agencia,conta,banco,descricao,tipo,saldo) {
         this.Id = _id
         this.Agencia = agencia
         this.Conta = conta

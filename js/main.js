@@ -16,6 +16,8 @@
     import { RelogioView } from "../Relogio/RelogioView.js";
     import { ConfiguracaoViewModel } from "../Configuracoes/ConfiguracaoViewModel.js";
     import { ConfiguracaoView } from "../Configuracoes/ConfiguracaoView.js";
+    import { FinanceiroViewModel } from "../financeiro/FinanceiroViewModel.js";
+    import { FinanceiroView } from "../financeiro/FinanceiroView.js";
     
     const containerModal = document.getElementById('container-modal');
     const botaoTarefa = document.getElementById('adiciona-tarefa');    
@@ -38,13 +40,16 @@
     const relogioView = new RelogioView(rvm);    
     const cfvm = new ConfiguracaoViewModel('configuracoes');
     const configuracaoView = new ConfiguracaoView(cfvm);
+    const cf = new FinanceiroViewModel('contas');
+    const contasView = new FinanceiroView(cf);
 
 
     (async () => {
         await evm.obterCursos(); 
         await tvm.obterTarefas();   
-        //await cvm.obterCatalogo(); 
+        await cvm.obterCatalogo(); 
         await avm.obterAgenda();
+        await cf.obterContas();
         
         // const configuracoes = (await cfvm.obterConfiguracoes())[0] 
         // setInterval(async () => {
@@ -54,16 +59,16 @@
         //     }
         // }, configuracoes.AtualizaClima ? configuracoes.AtualizaClima * 60000 : 0); // Converte minutos para milissegundos
 
-
         estudoView.renderCursando("Cursando");
         tarefaView.listarTarefas('lista-tarefa')
-        // catalogoView.renderAssistindo(['Assistindo','Reassistindo'],'Assistindo')
+        catalogoView.renderAssistindo(['Assistindo','Reassistindo'],'Assistindo')
         agendaView.renderProximosCompromissos('proximos-compromissos')
         agendaView.renderCalendario('calendario')
         // climaView.exibirClima('clima')
         contagemView.exibirContagem('contagemRegressiva')
         contadorView.exibirContador('contador')
         relogioView.exibirRelogio('relogio')
+        contasView.listarContas('lista-contas')
         
         //Adiciona tarefa
         botaoTarefa.addEventListener("click", async (evento) => { 

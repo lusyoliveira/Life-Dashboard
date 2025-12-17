@@ -14,8 +14,8 @@ export default class Catalogo {
     Vezes
     Adicao
 
-     constructor(id, Titulo, Capa, Tipo, Status, Onde, Inicio, Fim, Episodios, Assistidos, Temporadas, Score = 0, Vezes = 0, Adicao = new Date()) {
-        this.id = id
+     constructor(_id, Titulo, Capa, Tipo, Status, Onde, Inicio, Fim, Episodios, Assistidos, Temporadas, Score = 0, Vezes = 0, Adicao = new Date()) {
+        this.id = _id
         this.Titulo = Titulo
         this.Capa = Capa
         this.Tipo = Tipo

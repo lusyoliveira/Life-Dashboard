@@ -47,5 +47,21 @@ export class FinanceiroView {
     const elementoDestino = document.getElementById(elementoDestinoId);
     const contas = await this.vm.obterContas();
 
+    contas.forEach((conta) => {
+      const option = document.createElement('option');
+      option.value = conta.id;
+      option.textContent = conta.nome;
+
+      const li = document.createElement('li');
+      li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+      li.textContent = conta.Descricao;
+
+      const span = document.createElement('span');
+      span.classList.add('badge', 'bg-primary', 'rounded-pill');
+      span.textContent = `R$ ${conta.Saldo}`;
+
+      li.appendChild(span);
+      elementoDestino.appendChild(li);
+    });
   }
 }

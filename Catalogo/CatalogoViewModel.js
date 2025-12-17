@@ -12,7 +12,7 @@ export class CatalogoViewModel {
 
     this.catalogo = catalogoData.map((titulo) => {
       const titulos = new Catalogo(
-        titulo.id,
+        titulo._id,
         titulo.Titulo,
         titulo.Capa,
         titulo.Tipo,
@@ -69,10 +69,10 @@ export class CatalogoViewModel {
       : new Date(titulo.Adicao); 
 
     if (titulo.id) {
+      debugger
       payload.Adicao = new Date(titulo.Adicao);
       await api.atualizarDados(payload, this.endpoint);
     } else {
-      payload.id = this.gerarID();
       payload.Adicao = new Date();
       payload.Vezes = 0;
       payload.Score = payload.Score || 0;
@@ -87,13 +87,7 @@ export class CatalogoViewModel {
     return this.obterCatalogo();
   };
 
-  gerarID() {
-    if (this.catalogo.length === 0) return "1";
-    const maior = Math.max(...this.catalogo.map((t) => t.id || 0));
-    return String(maior + 1);
-  };
-
-  filtrarPorStatus(status) {
+   filtrarPorStatus(status) {
     return this.catalogo.filter((t) => t.Status === status);
   }
 
