@@ -63,7 +63,7 @@ export class CatalogoView {
             tdInicio.textContent = dataIniLocal.toLocaleDateString("pt-BR");
 
             const tdFim = document.createElement('td');
-            const dataFimUTC = new Date(titulo.Inicio);                
+            const dataFimUTC = new Date(titulo.Fim);                
             const dataFimLocal = new Date(dataFimUTC.getTime() + dataFimUTC.getTimezoneOffset() * 60000);
             tdFim.textContent = dataFimLocal.toLocaleDateString("pt-BR");
 
