@@ -4,43 +4,151 @@ export class FinanceiroView {
     this.vm = vm;
   }
 
-  listarTransacoes(elementoId) {
-    const tabela = document.getElementById(elementoId) //('minhaTabela');
-    const linhas = tabela.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-    const grupos = {};
-  
-    // 1. Agrupar as linhas por data
-    for (let i = 0; i < linhas.length; i++) {
-      const data = linhas[i].getElementsByTagName('td')[0].textContent;
-      if (!grupos[data]) {
-        grupos[data] = [];
-      }
-      grupos[data].push(linhas[i]);
+  async editarTransacao(Id) {
+    const transacao = await this.vm.obterTransacaoPorID(Id)
+
+    if (transacao) {
+        document.getElementById('id-adicionar').value = Id;
+        document.getElementById('descricao-adicionar').value = transacao.Descricao;
+        document.getElementById('data-adicionar').value = new Date(transacao.Data).toISOString().slice(0,16);
+        document.getElementById('categoria-adicionar').value = transacao.Categoria;
+        document.getElementById('conta-adicionar').value = transacao.Conta;
+        document.getElementById('valor-adicionar').value = transacao.Valor;
+        document.getElementById('parcela-inicio').value = transacao.ParcelaInicio;
+        document.getElementById('parcela-fim').value = transacao.ParcelaFim;
+        document.getElementById('parcelamento-adicionar').value = transacao.Parcelamento;
+    } else {
+        alert('Transação não encontrado!');
     }
-  
-    // 2. Limpar a tabela
+  };
+
+  async listarTransacoes(elementoId) {
+    const tabela = document.getElementById(elementoId);
     const corpoTabela = tabela.getElementsByTagName('tbody')[0];
+
+    // Limpa tbody
     while (corpoTabela.firstChild) {
       corpoTabela.removeChild(corpoTabela.firstChild);
     }
-  
-    // 3. Reconstruir a tabela com os grupos
-    for (const data in grupos) {
-      // Adicionar uma linha com a data como cabeçalho (opcional)
-      const linhaData = document.createElement('tr');
-      const celulaData = document.createElement('td');
-      celulaData.setAttribute('colspan', '7'); // Ocupa duas colunas
-      celulaData.style.fontWeight = 'bold';
-      celulaData.classList.add('table-active')
-      celulaData.textContent = data;
-      linhaData.appendChild(celulaData);
-      corpoTabela.appendChild(linhaData);
-  
-      // Adicionar as linhas do grupo
-      grupos[data].forEach(linha => {
-        corpoTabela.appendChild(linha);
+
+    const transacoes = await this.vm.obterTransacoes();
+
+    // Ordena por data
+    const listaOrdenada = transacoes.sort(
+      (a, b) => new Date(a.Data) - new Date(b.Data)
+    );
+
+    // Agrupa por dia (YYYY-MM-DD)
+    const grupos = {};
+
+    listaOrdenada.forEach(transacao => {
+      const dataObj = new Date(transacao.Data);
+
+      const dataChave = [
+        dataObj.getFullYear(),
+        String(dataObj.getMonth() + 1).padStart(2, '0'),
+        String(dataObj.getDate()).padStart(2, '0')
+      ].join('-');
+
+      if (!grupos[dataChave]) {
+        grupos[dataChave] = {
+          data: dataChave,
+          total: 0,
+          itens: []
+        };
+      }
+
+      grupos[dataChave].total += Number(transacao.Valor);
+      grupos[dataChave].itens.push(transacao);
+    });
+
+    // Monta a tabela
+    for (const chave in grupos) {
+      const grupo = grupos[chave];
+
+      /* ========= Cabeçalho do dia ========= */
+      const trCabecalho = document.createElement('tr');
+
+      const tdCabecalho = document.createElement('td');
+      tdCabecalho.colSpan = 7;
+      tdCabecalho.classList.add('table-active');
+      tdCabecalho.style.fontWeight = 'bold';
+
+      const [ano, mes, dia] = grupo.data.split('-');
+      const dataFormatada = `${dia}/${mes}/${ano}`;
+
+
+      tdCabecalho.textContent = `${dataFormatada} — Total do dia: R$ ${grupo.total.toFixed(2)}`;
+
+      trCabecalho.appendChild(tdCabecalho);
+      corpoTabela.appendChild(trCabecalho);
+      
+      /* ========= Transações do dia ========= */
+      grupo.itens.forEach(transacao => {
+        const tr = document.createElement('tr');
+
+        // Coluna DATA (vazia para alinhar)
+        const tdDataVazia = document.createElement('td');
+        tdDataVazia.textContent = '';
+
+        // DESCRIÇÃO
+        const tdDescricao = document.createElement('td');
+        tdDescricao.textContent = transacao.Descricao;
+
+        // CATEGORIA
+        const tdCategoria = document.createElement('td');
+        tdCategoria.textContent = transacao.Categoria;
+
+        // CONTA
+        const tdConta = document.createElement('td');
+        tdConta.textContent = transacao.Conta;
+
+        // VALOR
+        const tdValor = document.createElement('td');
+        tdValor.textContent = Number(transacao.Valor).toFixed(2);
+
+        // EDITAR
+        const tdBtnEditar = document.createElement('td');
+        const btnEditar = document.createElement('button');
+        btnEditar.classList.add('btn', 'btn-primary');
+        btnEditar.onclick = () => this.editarTransacao(transacao.Id);             
+
+        const iconeEditar = document.createElement('i');
+        iconeEditar.classList.add('bi', 'bi-pencil-fill');
+
+        btnEditar.appendChild(iconeEditar);
+        tdBtnEditar.appendChild(btnEditar);
+
+        // EXCLUIR
+        const tdBtnExcluir = document.createElement('td');
+        const btnExcluir = document.createElement('button');
+        btnExcluir.classList.add('btn', 'btn-danger');
+        btnExcluir.onclick = async () => {
+          try {
+            await this.vm.excluirTransacoes(transacao.id);
+          } catch (error) {
+            alert("Erro ao excluir transação!");
+          }
+        };
+        
+        const iconeExcluir = document.createElement('i');
+        iconeExcluir.classList.add('bi', 'bi-trash');
+
+        btnExcluir.appendChild(iconeExcluir);
+        tdBtnExcluir.appendChild(btnExcluir);
+
+        // Montagem final da linha
+        tr.appendChild(tdDataVazia);
+        tr.appendChild(tdDescricao);
+        tr.appendChild(tdCategoria);
+        tr.appendChild(tdConta);
+        tr.appendChild(tdValor);
+        tr.appendChild(tdBtnEditar);
+        tr.appendChild(tdBtnExcluir);
+
+        corpoTabela.appendChild(tr);
       });
-    }
+    }    
   };
 
   async listarContas(elementoDestinoId) {

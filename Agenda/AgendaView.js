@@ -31,8 +31,8 @@ export class AgendaView {
     } 
     
     const listaOrdenada = agenda.sort((a, b) => new Date(a.Data) - new Date(b.Data));
-        
     listaOrdenada.forEach((compromisso) => {
+        
       const tr = document.createElement("tr");
       
       const tdTitulo = document.createElement("td");

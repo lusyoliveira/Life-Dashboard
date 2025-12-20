@@ -15,10 +15,10 @@ export default class Clima {
     admin1
     admin2
 
-    constructor(id, name,latitude,longitude,elevation,feature_code,country_code,admin1_id,admin2_id,timezone,population,country_id,country,admin1,admin2,
+    constructor(_id, name,latitude,longitude,elevation,feature_code,country_code,admin1_id,admin2_id,timezone,population,country_id,country,admin1,admin2,
         current_units = {}, current = {}, daily_units = {}, daily = {}
     ) {
-    this.id = id
+    this.id = _id
     this.name = name;
     this.latitude = latitude;
     this.longitude = longitude;

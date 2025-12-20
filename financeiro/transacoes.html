@@ -95,7 +95,7 @@
     <main class="container-fliud m-4">
         <h1 class="pb-2 mb-4">Transações</h1>
             <div class="container-fliud">
-                <form class="row gy-2 gx-3 align-items-center" id="agenda-form" title="Adicionar Agendamento">                            
+                <form class="row gy-2 gx-3 align-items-center" id="transacao-form" title="Adicionar transacao">                            
                     <div class="col">
                         <input type="hidden" id="id-adicionar" />
                         <label for="data-adicionar" class="col-form-label">Data:</label>
@@ -146,14 +146,14 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col">
-                            <button type="submit" class="btn btn-primary" id="adicionar-agenda" title="Salvar Agendamento">Salvar</button>
-                            <button type="button" class="btn btn-secondary" id="cancelar-agenda" title="Cancelar Agendamento" >Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="adicionar-transacao" title="Salvar transacao">Salvar</button>
+                            <button type="button" class="btn btn-secondary" id="cancelar-transacao" title="Cancelar transacao" >Cancelar</button>
                         </div>
                     </div>                            
                 </form>  
                 <div class="row">
                     <div class="table-responsive">
-                        <table class="table" id="minhaTabela">
+                        <table class="table" id="tbtransacoes">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Data</th>
@@ -165,52 +165,8 @@
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody class="table-group-divider">
-                                <tr>
-                                    <td>2024-07-01</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td><button class="btn" id="editar" title="Editar"><i class="bi bi-pencil-fill"></i></button></td>
-                                    <td><button class="btn" id="deletar" title="Deletar"><i class="bi bi-trash-fill"></i></button></td>
-                                </tr>
-                                <tr>
-                                    <td>2024-07-02</td>
-                                    <td>Dado 2</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td><button class="btn" id="editar" title="Editar"><i class="bi bi-pencil-fill"></i></button></td>
-                                    <td><button class="btn" id="deletar" title="Deletar"><i class="bi bi-trash-fill"></i></button></td>
-                                </tr>
-                                <tr>
-                                    <td>2024-07-01</td>
-                                    <td>Dado 3</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td><button class="btn" id="editar" title="Editar"><i class="bi bi-pencil-fill"></i></button></td>
-                                    <td><button class="btn" id="deletar" title="Deletar"><i class="bi bi-trash-fill"></i></button></td>
-                                </tr>
-                                <tr>
-                                    <td>2024-07-03</td>
-                                    <td>Dado 4</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td><button class="btn" id="editar" title="Editar"><i class="bi bi-pencil-fill"></i></button></td>
-                                    <td><button class="btn" id="deletar" title="Deletar"><i class="bi bi-trash-fill"></i></button></td>
-                                </tr>
-                                <tr>
-                                    <td>2024-07-02</td>
-                                    <td>Dado 5</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td>Dado 1</td>
-                                    <td><button class="btn" id="editar" title="Editar"><i class="bi bi-pencil-fill"></i></button></td>
-                                    <td><button class="btn" id="deletar" title="Deletar"><i class="bi bi-trash-fill"></i></button></td>
-                                </tr>
+                            <tbody class="table-group-divider" id="linha">
+                                
                             </tbody>
                             <tfoot>
                                 <tr>

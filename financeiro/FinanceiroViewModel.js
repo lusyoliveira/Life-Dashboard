@@ -28,21 +28,53 @@ export class FinanceiroViewModel {
         return this.transacoes;
     };
 
-       async obterContas() {
-        const contasData = await api.buscarDados(this.endpoint);
-        this.contas = contasData.map(conta => {
-            const listaContas = new Contas(
-                conta._id,
-                conta.Agencia,
-                conta.Conta,
-                conta.Banco,
-                conta.Descricao,
-                conta.Tipo,
-                conta.Saldo,  
-            );
-            return listaContas;
-        })
-        return this.contas;
+    async obterTransacaoPorID(ID) {
+      const transacao = await api.buscarDadosPorId(ID,this.endpoint);
+        if (!transacao) return null;
+
+        const transacoes = new Transacao(
+                transacao._id,
+                transacao.Descricao,
+                transacao.Data,
+                transacao.Categoria,
+                transacao.Conta,
+                transacao.Valor,
+                transacao.ParcelaInicio,
+                transacao.ParcelaFim,
+                transacao.Parcelamento,  
+        );       
+        return transacoes;
+    }
+
+    async salvarTransacao(transacao) {
+        if (transacao.id) {
+        await api.atualizarDados(transacao, this.endpoint);
+        } else {
+        await api.salvarDados(transacao, this.endpoint);
+        }
+        return this.obterTransacoes();
+    }
+
+    async excluirTransacoes(id) {
+        await api.excluirDados(id, this.endpoint);
+        return this.obterTransacoes();
     };
 
+    async obterContas() {
+    const contasData = await api.buscarDados(this.endpoint);
+    this.contas = contasData.map(conta => {
+        const listaContas = new Contas(
+            conta._id,
+            conta.Agencia,
+            conta.Conta,
+            conta.Banco,
+            conta.Descricao,
+            conta.Tipo,
+            conta.Saldo,  
+        );
+        return listaContas;
+    })
+    return this.contas;
+    };
+    
 }

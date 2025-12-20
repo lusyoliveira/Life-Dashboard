@@ -64,7 +64,7 @@
         catalogoView.renderAssistindo(['Assistindo','Reassistindo'],'Assistindo')
         agendaView.renderProximosCompromissos('proximos-compromissos')
         agendaView.renderCalendario('calendario')
-        // climaView.exibirClima('clima')
+        climaView.exibirClima('clima')
         contagemView.exibirContagem('contagemRegressiva')
         contadorView.exibirContador('contador')
         relogioView.exibirRelogio('relogio')

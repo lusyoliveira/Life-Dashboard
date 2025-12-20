@@ -81,7 +81,7 @@ export class ClimaViewModel {
             console.log(cidade);
             // cria uma instância da classe Clima
             const clima = new Clima(
-                cidade.id,
+                cidade._id,
                 cidade.name,
                 cidade.latitude,
                 cidade.longitude,

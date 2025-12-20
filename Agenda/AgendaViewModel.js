@@ -25,7 +25,7 @@ export class AgendaViewModel {
   }
 
     async obterAgendaPorID(agendaID) {
-       const compromisso = await api.buscarDadosPorId(agendaID,this.endpoint);
+        const compromisso = await api.buscarDadosPorId(agendaID,this.endpoint);
       if (!compromisso) return null;
 
       const agenda = new Agenda(

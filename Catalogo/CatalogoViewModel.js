@@ -38,7 +38,7 @@ export class CatalogoViewModel {
     if (!titulo) return null;
 
     const catalogo = new Catalogo(
-      titulo.id,
+      titulo._id,
       titulo.Titulo,
       titulo.Capa,
       titulo.Tipo,
@@ -69,7 +69,6 @@ export class CatalogoViewModel {
       : new Date(titulo.Adicao); 
 
     if (titulo.id) {
-      debugger
       payload.Adicao = new Date(titulo.Adicao);
       await api.atualizarDados(payload, this.endpoint);
     } else {
