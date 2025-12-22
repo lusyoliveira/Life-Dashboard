@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   //CRUD
   await agendaView.listarAgenda("linhas");
+  await agendaView.listarTipos('tipo-adicionar');
 
   formAgenda.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -40,4 +41,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnCancelar.addEventListener('click', () => {
     formAgenda.reset();
   });
+ 
 })

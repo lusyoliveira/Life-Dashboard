@@ -1,10 +1,12 @@
 import api from "../../servicos/metodoApi.js";
 import Agenda from "../agenda/agendaModel.js";
+import AgendaTipo from "./agendaTipoModel.js";
  
 export class AgendaViewModel {
   constructor(endpoint = "agenda") {
     this.endpoint = endpoint;
     this.agenda = [];
+    this.tipos = [];
   }
 
   async obterAgenda() {
@@ -74,5 +76,19 @@ export class AgendaViewModel {
       })
       .sort((a, b) => new Date(a.Data) - new Date(b.Data))
       .slice(0, qtd);
+  };
+
+  async obterAgendaTipos() {
+  
+    const tipoData = await api.buscarDados(`${this.endpoint}/tipos`);
+    
+    this.tipos = tipoData.map((tipo) => {
+        const tipos = new AgendaTipo(
+          tipo._id,
+          tipo.descricao
+        );               
+      return tipos;
+    })     
+    return this.tipos;
   }
 }

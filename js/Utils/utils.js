@@ -1,18 +1,16 @@
-const resposta = await fetch("modalTarefa.html");
-const html = await resposta.text();
-
-const modal = document.createElement('div')
-modal.classList.add('modal');
-modal.id = 'modal'
-modal.innerHTML = html;
-document.body.appendChild(modal);
-
-
 function FecharModal() {   
     modal.style.display = "block";
-}
+};
 
 function modal(body, titulo) {
+    // const resposta = await fetch("modalTarefa.html");
+    // const html = await resposta.text();
+    // const modal = document.createElement('div')
+    // modal.classList.add('modal');
+    // modal.id = 'modal'
+    // modal.innerHTML = html;
+    // document.body.appendChild(modal);
+
     const modalDialog = document.createElement('div')
     modalDialog.classList.add('modal-dialog')
 
@@ -48,7 +46,7 @@ function modal(body, titulo) {
     modalContent.appendChild(body)
     modalContent.appendChild(modalFooter)
     modalDialog.appendChild(modalContent)
-}
+};
     
 function modalAdicionaTarefas() {
     const modalBody = document.createElement('div')
@@ -101,4 +99,35 @@ function modalAdicionaTarefas() {
             </form>
     `
     return modalBody
-}
+};
+
+export function popularSelect(dados, elemento) {
+    const selectElement = document.getElementById(elemento);
+
+    selectElement.options.length = 0; // Limpa o select
+
+    
+    dados.forEach(dado => {
+        let novaOpcao = new Option(
+            dado.Descricao, 
+            dado.id         ); 
+        selectElement.add(novaOpcao);
+    });
+};
+
+function carregarPagina(pagina) {
+     fetch(pagina)
+         .then(response => response.text())
+         .then(data => {
+             document.getElementById("conteudo").innerHTML = data;
+         })
+         .catch(error => console.error("Erro ao carregar a página:", error));
+};
+
+function abrirMenu() {
+    document.getElementById("menuLateral").style.width = "250px";
+};
+
+function fecharMenu() {
+    document.getElementById("menuLateral").style.width = "0";
+};

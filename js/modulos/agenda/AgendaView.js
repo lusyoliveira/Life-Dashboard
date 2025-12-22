@@ -1,4 +1,6 @@
 import { calculaTempoData } from "../../Utils/metodoData.js";
+import { popularSelect } from "../../Utils/utils.js";
+
 export class AgendaView {
   constructor(vm) {
     this.vm = vm;
@@ -17,7 +19,14 @@ export class AgendaView {
     } else {
         alert('Compromisso não encontrado!');
     }
-  }
+  };
+
+  async listarTipos(elementoId) {    
+    const tipos =  await this.vm.obterAgendaTipos()
+    
+    popularSelect(tipos,elementoId)
+  };
+
 
   async listarAgenda(elementoId) {
     const linhaTabela = document.getElementById(elementoId);
@@ -355,4 +364,6 @@ export class AgendaView {
 
     this.preencherCalendario(mes, ano, elementoId);
   }
+
+ 
 }
