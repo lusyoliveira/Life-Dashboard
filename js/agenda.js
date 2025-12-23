@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   //CRUD
   await agendaView.listarAgenda("linhas");
   await agendaView.listarTipos('tipo-adicionar');
+  await agendaView.listarCategoria('categoria-adicionar');
+  await agendaView.listarStatus('status-adicionar');
 
   formAgenda.addEventListener("submit", async (e) => {
     e.preventDefault();

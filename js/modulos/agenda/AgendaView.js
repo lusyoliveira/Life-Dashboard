@@ -21,13 +21,6 @@ export class AgendaView {
     }
   };
 
-  async listarTipos(elementoId) {    
-    const tipos =  await this.vm.obterAgendaTipos()
-    
-    popularSelect(tipos,elementoId)
-  };
-
-
   async listarAgenda(elementoId) {
     const linhaTabela = document.getElementById(elementoId);
     linhaTabela.innerHTML = "";
@@ -38,7 +31,7 @@ export class AgendaView {
     if ($.fn.DataTable.isDataTable(".datatable")) {
       $(".datatable").DataTable().clear().destroy();
     } 
-    
+        
     const listaOrdenada = agenda.sort((a, b) => new Date(a.Data) - new Date(b.Data));
     listaOrdenada.forEach((compromisso) => {
         
@@ -48,15 +41,15 @@ export class AgendaView {
       tdTitulo.textContent = compromisso.Titulo;
 
       const tdStatus = document.createElement("td");
-      tdStatus.textContent = compromisso.Status;
+      tdStatus.textContent = compromisso.Status.descricao;
       tdStatus.classList.add("text-center");
 
       const tdCategoria = document.createElement("td");
-      tdCategoria.textContent = compromisso.Categoria;
+      tdCategoria.textContent = compromisso.Categoria.descricao;
       tdCategoria.classList.add("text-center");
 
       const tdTipo = document.createElement("td");
-      tdTipo.textContent = compromisso.Tipo;
+      tdTipo.textContent = compromisso.Tipo.descricao;
       tdTipo.classList.add("text-center");
 
       const tdData = document.createElement("td");
@@ -130,7 +123,7 @@ export class AgendaView {
                         <small>${calculaTempoData(dataLocal)}</small>
                         </div>
                         <small class="badge text-bg-info">${
-                          compromisso.Categoria
+                          compromisso.Categoria.descricao
                         }</small>
                     </a>
                 `;
@@ -202,11 +195,11 @@ export class AgendaView {
 
           const spanCategoria = document.createElement("span");
           spanCategoria.classList.add("badge", "text-bg-info");
-          spanCategoria.textContent = compromisso.Categoria;
+          spanCategoria.textContent = compromisso.Categoria.descricao;
 
           const spanStatus = document.createElement("span");
           spanStatus.classList.add("badge", "text-bg-success");
-          spanStatus.textContent = compromisso.Status;
+          spanStatus.textContent = compromisso.Status.descricao;
 
           divCompromisso.appendChild(divTitulo);
           divCompromisso.appendChild(spanCategoria);
@@ -365,5 +358,22 @@ export class AgendaView {
     this.preencherCalendario(mes, ano, elementoId);
   }
 
- 
+   async listarTipos(elementoId) {    
+    const tipos =  await this.vm.obterAgendaTipos()
+    
+    popularSelect(tipos,elementoId)
+  };
+
+    async listarStatus(elementoId) {    
+    const status =  await this.vm.obterAgendaStatus()
+    
+    popularSelect(status,elementoId)
+  };
+
+    async listarCategoria(elementoId) {    
+    const categoria =  await this.vm.obterAgendaCategoria()
+    
+    popularSelect(categoria,elementoId)
+  };
+
 }

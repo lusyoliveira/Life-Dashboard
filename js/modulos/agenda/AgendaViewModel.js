@@ -1,12 +1,16 @@
 import api from "../../servicos/metodoApi.js";
 import Agenda from "../agenda/agendaModel.js";
 import AgendaTipo from "./agendaTipoModel.js";
+import AgendaStatus from "./agendaStatusModel.js";
+import AgendaCategoria from "./agendaCategoriaModel.js";
  
 export class AgendaViewModel {
   constructor(endpoint = "agenda") {
     this.endpoint = endpoint;
     this.agenda = [];
     this.tipos = [];
+    this.status = [];
+    this.categorias = [];
   }
 
   async obterAgenda() {
@@ -90,5 +94,33 @@ export class AgendaViewModel {
       return tipos;
     })     
     return this.tipos;
-  }
+  };
+
+  async obterAgendaStatus() {
+  
+    const statusData = await api.buscarDados(`${this.endpoint}/status`);
+    
+    this.status = statusData.map((statu) => {
+        const status = new AgendaStatus(
+          statu._id,
+          statu.descricao
+        );               
+      return status;
+    })     
+    return this.status;
+  };
+
+  async obterAgendaCategoria() {
+  
+    const categoriaData = await api.buscarDados(`${this.endpoint}/categorias`);
+    
+    this.categorias = categoriaData.map((categoria) => {
+        const categorias = new AgendaCategoria(
+          categoria._id,
+          categoria.descricao
+        );               
+      return categorias;
+    })     
+    return this.categorias;
+  };
 }
