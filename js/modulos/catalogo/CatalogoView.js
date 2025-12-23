@@ -695,4 +695,22 @@ export class CatalogoView {
             } 
         }
     };
+
+    async listarTipos(elementoId) {    
+        const tipos =  await this.vm.obterCatalogoTipos()
+        
+        popularSelect(tipos,elementoId)
+    };
+
+    async listarStatus(elementoId) {    
+        const status =  await this.vm.obterCatalogoStatus()
+        
+        popularSelect(status,elementoId)
+    };
+
+    async listarPlataforma(elementoId) {    
+        const plataforma =  await this.vm.obterCatalogoPlataforma()
+        
+        popularSelect(plataforma,elementoId)
+    };
 }

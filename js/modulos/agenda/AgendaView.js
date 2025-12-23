@@ -358,19 +358,19 @@ export class AgendaView {
     this.preencherCalendario(mes, ano, elementoId);
   }
 
-   async listarTipos(elementoId) {    
+  async listarTipos(elementoId) {    
     const tipos =  await this.vm.obterAgendaTipos()
     
     popularSelect(tipos,elementoId)
   };
 
-    async listarStatus(elementoId) {    
+  async listarStatus(elementoId) {    
     const status =  await this.vm.obterAgendaStatus()
     
     popularSelect(status,elementoId)
   };
 
-    async listarCategoria(elementoId) {    
+  async listarCategoria(elementoId) {    
     const categoria =  await this.vm.obterAgendaCategoria()
     
     popularSelect(categoria,elementoId)

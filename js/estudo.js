@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   //CRUD
   await estudoView.listarCursos("linhas");
+  // await estudoView.listarArea('area-adicionar');
+  // await estudoView.listarStatus('status-adicionar');
 
   formCurso.addEventListener("submit", async (e) => {
      e.preventDefault();

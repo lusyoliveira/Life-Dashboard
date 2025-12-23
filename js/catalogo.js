@@ -12,6 +12,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   //CRUD
   await catalogoView.listarCatalogo("linhas");
+  // await catalogoView.listarTipos('tipo-adicionar');
+  // await catalogoView.listarPlataforma('plataforma-adicionar');
+  // await catalogoView.listarStatus('status-adicionar');
 
   formCatalogo.addEventListener("submit", async (e) => {
     e.preventDefault();

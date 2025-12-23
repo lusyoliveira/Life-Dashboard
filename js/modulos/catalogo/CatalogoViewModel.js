@@ -1,10 +1,16 @@
 import api from "../../servicos/metodoApi.js";
 import Catalogo from "./catalogoModel.js";
+import CatalogoTipo from "./catalogoTipoModel.js";
+import CatalogoStatus from "./catalogoStatusModel.js";
+import CatalogoPlataforma from "./catalogoPlataformasModel.js";
 
 export class CatalogoViewModel {
   constructor(endpoint = "catalogo") {
     this.endpoint = endpoint;
     this.catalogo = [];
+    this.plataformas = [];
+    this.tipos = [];
+    this.status = [];
   }
 
    async obterCatalogo() {
@@ -224,7 +230,48 @@ export class CatalogoViewModel {
       (p) => this.catalogo.filter((t) => t.Onde === p).length
     );
     return { labels: plataformas, data: valores };
-  }
+  };
+
+  async obterCatalogoTipos() {
+  
+    const tipoData = await api.buscarDados(`${this.endpoint}/tipos`);
+    
+    this.tipos = tipoData.map((tipo) => {
+        const tipos = new CatalogoTipo(
+          tipo._id,
+          tipo.descricao
+        );               
+      return tipos;
+    })     
+    return this.tipos;
+  };
+
+  async obterCatalogoStatus() {
+  
+    const statusData = await api.buscarDados(`${this.endpoint}/status`);
+    
+    this.status = statusData.map((statu) => {
+        const status = new CatalogoStatus(
+          statu._id,
+          statu.descricao
+        );               
+      return status;
+    })     
+    return this.status;
+  };
+
+  async obterCatalogoPlataforma() {  
+    const plataformaData = await api.buscarDados(`${this.endpoint}/plataformas`);
+    
+    this.plataformas = plataformaData.map((plataforma) => {
+        const plataformas = new CatalogoPlataforma(
+          plataforma._id,
+          plataforma.descricao
+        );               
+      return plataformas;
+    })     
+    return this.plataformas;
+  };
 }
 
 

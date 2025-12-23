@@ -170,5 +170,17 @@ export class FinanceiroView {
       li.appendChild(span);
       elementoDestino.appendChild(li);
     });
-  }
+  };
+
+  async listarContasSelect(elementoId) {    
+    const contas =  await this.vm.obterContas()
+    
+    popularSelect(contas,elementoId)
+  };
+
+  async listarCategoria(elementoId) {    
+    const categoria =  await this.vm.obterFinanceiroCategoria()
+    
+    popularSelect(categoria,elementoId)
+  };
 }

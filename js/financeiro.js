@@ -6,5 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const contasView = new FinanceiroView(cvm);
 
   await contasView.listarContas('lista-contas');
+  // await contasView.listarContasSelect('lista-contas');
+  // await contasView.listarCategoria('status-adicionar');
 
 });

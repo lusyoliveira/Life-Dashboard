@@ -1,10 +1,14 @@
 import api from "../../servicos/metodoApi.js";
 import Curso from "./estudoModel.js";
+import EstudoStatus from "./estudoStatusModel.js";
+import EstudoAreas from "./estudoAreaModel.js";
 
 export class EstudoViewModel {
   constructor(endpoint = "cursos") {
     this.endpoint = endpoint;
     this.cursos = [];
+    this.areas = [];
+    this.status = [];
   }
 
   async obterCursos() {
@@ -74,6 +78,34 @@ export class EstudoViewModel {
       return this.cursos
           .filter(curso => curso.Status === "Cursando")
           .slice(0, qtd);
-  }
+  };
+
+  async obterEstudoAreas() {
+  
+    const areasData = await api.buscarDados(`${this.endpoint}/tipos`);
+    
+    this.areas = areasData.map((area) => {
+        const areas = new EstudoAreas(
+          area._id,
+          area.descricao
+        );               
+      return areas;
+    })     
+    return this.areas;
+  };
+
+  async obterEstudoStatus() {
+  
+    const statusData = await api.buscarDados(`${this.endpoint}/status`);
+    
+    this.status = statusData.map((statu) => {
+        const status = new EstudoStatus(
+          statu._id,
+          statu.descricao
+        );               
+      return status;
+    })     
+    return this.status;
+  };
 
 }

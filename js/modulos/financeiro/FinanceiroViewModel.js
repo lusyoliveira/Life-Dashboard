@@ -1,12 +1,14 @@
 import api from "../../servicos/metodoApi.js";
 import Transacao from "../financeiro/transacaoModel.js";
 import Contas from "../financeiro/contasModel.js";
+import FinanceiroCategoria from "./financeiroCategoriaModel.js";
 
 export class FinanceiroViewModel {
     constructor(endpoint = "transacoes") {
         this.endpoint = endpoint;
         this.transacoes = [];
         this.contas = [];
+        this.categorias = [];
     }
 
     async obterTransacoes() {
@@ -74,7 +76,20 @@ export class FinanceiroViewModel {
         );
         return listaContas;
     })
-    return this.contas;
+        return this.contas;
     };
     
+    async obterFinanceiroCategoria() {
+    
+        const categoriaData = await api.buscarDados(`${this.endpoint}/categorias`);
+        
+        this.categorias = categoriaData.map((categoria) => {
+            const categorias = new FinanceiroCategoria(
+            categoria._id,
+            categoria.descricao
+            );               
+        return categorias;
+        })     
+        return this.categorias;
+    };
 }

@@ -186,5 +186,17 @@ export class EstudoView {
                 elementoDestino.appendChild(pMensagem);
             }          
         } 
-    }
+    };
+
+    async listarStatus(elementoId) {    
+        const status =  await this.vm.obterEstudoStatus()
+        
+        popularSelect(status,elementoId)
+    };
+
+    async listarArea(elementoId) {    
+        const area =  await this.vm.obterEstudoArea()
+        
+        popularSelect(area,elementoId)
+    };
 }
