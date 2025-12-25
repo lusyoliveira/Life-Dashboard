@@ -20,7 +20,6 @@
                         <a class="navbar-brand fw-bold me-4" href="../index.html">Life Dashboard</a>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">Catálogo</li>
                             </ol>
                         </nav>
@@ -44,52 +43,215 @@
                 </div>
             </div>
         </div>
-        <div class="border-bottom">
-            <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
-                <li> 
-                    <a class="nav-link text-secondary" href="#">
-                        <i class="bi bi-graph-up"></i>
-                        Estatisticas
-                    </a> 
-                </li>                              
-                <li> 
-                    <a class="nav-link text-secondary" href="#">
-                        <i class="bi bi-clock-history"></i>
-                        Histórico
-                    </a> 
-                </li>  
-                <li> 
-                    <a class="nav-link text-secondary" href="#">
-                        <i class="bi bi-star-fill"></i>
-                        Favoritos
-                    </a> 
-                </li>  
-                <li> 
-                    <a class="nav-link text-secondary" href="#"> 
-                        <i class="bi bi-list-columns-reverse"></i>
-                        Tipos
-                    </a> 
-                </li>
-                <li> 
-                    <a class="nav-link text-secondary" href="#">
-                        <i class="bi bi-arrow-repeat"></i>
-                        Status
-                    </a> 
-                </li>  
-                <li> 
-                    <a class="nav-link text-secondary" href="#"> 
-                        <i class="bi bi-tv"></i>
-                        Plataforma
-                    </a> 
-                </li>                
-            </ul>
-        </div>
     </header>
  
     <main class="container-fliud m-4">
         <h1 class="pb-2 border-bottom mb-4">Catálogo</h1>
-            <div class="container-fliud">     
-                <div class="container-fluid" id="custom-cards">   
+            <div class="container-fliud">
+                <div class="row row-cols-auto">
+                    <div class="col-2 mb-4">
+                        <ul class="dropdown-menu d-block position-static mx-0 border-0 shadow w-220px" data-bs-theme="dark"> 
+                            <li> 
+                                <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
+                                    <i class="bi bi-list-columns-reverse"></i>Tipos
+                                </a>
+                            </li> 
+                            <li> 
+                                <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
+                                    <i class="bi bi-arrow-repeat"></i>Status
+                                </a> 
+                            </li> 
+                            <li> 
+                                <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
+                                    <i class="bi bi-tv"></i>
+                                    Plataforma
+                                </a> 
+                            </li> 
+                            <li><hr class="dropdown-divider"></li> 
+                            <li>                                  
+                                <div class="input-group mb-3">
+                                    <input type="hidden" class="form-control" id="id-tipo">
+                                    <input type="text" class="form-control" id="descricao-tipo" placeholder="Nova tipo..." aria-label="Nova tipo...">
+                                    <button class="btn btn-outline-secondary" type="button" title="Adicionar Tipo" id="adiciona-tipo"><i class="bi bi-plus-lg"></i></button>
+                                </div>
+                            </li>  
+                            <li>                                  
+                                <div class="input-group mb-3">
+                                    <input type="hidden" class="form-control" id="id-status">
+                                    <input type="text" class="form-control" id="descricao-status" placeholder="Nova status..." aria-label="Nova status...">
+                                    <button class="btn btn-outline-secondary" type="button" title="Adicionar Status" id="adiciona-status"><i class="bi bi-plus-lg"></i></button>
+                                </div>
+                            </li> 
+                            <li>                                  
+                                <div class="input-group mb-3">
+                                    <input type="hidden" class="form-control" id="id-plataforma">
+                                    <input type="text" class="form-control" id="descricao-plataforma" placeholder="Nova plataforma..." aria-label="Nova plataforma...">
+                                    <button class="btn btn-outline-secondary" type="button" title="Adicionar Plataforma" id="adiciona-plataforma"><i class="bi bi-plus-lg"></i></button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-10 mb-4">
+                        <div class="row d-flex justify-content-center">
+                            <div class="row row-cols-auto">
+                                <div class="col w-100">
+                                    <div class="card" data-filtro="contagem-geral" data-status="Progresso">
+                                        <div class="card-body" id="geral-progresso">
+                                            <h5 class="card-title">Progresso</h5>
+                                        </div>
+                                    </div> 
+                                </div>   
+                            </div>
+
+                            <div class="row row-cols-auto d-flex justify-content-start g-4">
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-geral" data-status="Total">
+                                        <div class="card-body" id="geral-total">
+                                            <h5 class="card-title">Total</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-geral" data-status="Pontuacao">
+                                        <div class="card-body" id="geral-pontuacao">
+                                            <h5 class="card-title">Pontuacao</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                    <div class="col-2">
+                                    <div class="card" data-filtro="contagem-geral" data-status="Assistidos">
+                                        <div class="card-body" id="geral-assistidos">
+                                            <h5 class="card-title">Assistidos</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-geral" data-status="Episodios">
+                                        <div class="card-body" id="geral-episodios">
+                                            <h5 class="card-title">Episodios</h5>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-geral" data-status="Dias">
+                                        <div class="card-body" id="geral-dias">
+                                            <h5 class="card-title">Dias Assistindo</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-geral" data-status="Horas">
+                                        <div class="card-body" id="geral-horas">
+                                            <h5 class="card-title">Horas Assistindo</h5>
+                                        </div>
+                                    </div>
+                                </div>      
+
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-status" data-status="Completado">
+                                        <div class="card-body" id="contagem-completado">
+                                            <h5 class="card-title">Completado</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-status" data-status="Assistindo">
+                                        <div class="card-body" id="contagem-assistindo">
+                                            <h5 class="card-title">Assistindo</h5>
+                                        </div>
+                                    </div>
+                                </div>  
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-status" data-status="Dropped">
+                                        <div class="card-body" id="contagem-dropped">
+                                            <h5 class="card-title">Dropped</h5>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-status" data-status="Em-Espera">
+                                        <div class="card-body" id="contagem-emespera">
+                                            <h5 class="card-title">Em-Espera</h5>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-status" data-status="Planejado">
+                                        <div class="card-body" id="contagem-planejado">
+                                            <h5 class="card-title">Planejado</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                        <div class="card-body" id="contagem-anime">
+                                            <h5 class="card-title">Animes</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                        <div class="card-body" id="contagem-desenho">
+                                            <h5 class="card-title">Desenho</h5>
+                                        </div>
+                                    </div>
+                                </div>  
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                        <div class="card-body" id="contagem-documentario">
+                                            <h5 class="card-title">Documentário</h5>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                        <div class="card-body" id="contagem-filme">
+                                            <h5 class="card-title">Filme</h5>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                        <div class="card-body" id="contagem-serie">
+                                            <h5 class="card-title">Serie</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                        <div class="card-body"  id="contagem-show">
+                                            <h5 class="card-title">Show</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                        <div class="card-body"  id="contagem-reality">
+                                            <h5 class="card-title">Reality</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                        <div class="card-body"  id="contagem-manga">
+                                            <h5 class="card-title">Manga</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+        <div class="container-fluid" id="custom-cards">   
                     <form class="row gy-2 gx-3 align-items-center" id="catalogo-form" title="Adicionar Titulo">
                         <div class="col">
                             <input type="hidden" id="id-adicionar" />
@@ -176,11 +338,9 @@
                         </div>
                     </form>                      
                 </div>
-        </div>
                    
         <br />
                              
-        <h2 class="pb-1 border-bottom">Catálogo</h2>
         <table class="table-responsive table-hover datatable">
             <thead>
                 <tr>
@@ -221,158 +381,7 @@
                 
             <br />                
             
-        <div class="row d-flex justify-content-center">
-            <div class="row row-cols-auto">
-                <div class="col w-100">
-                    <div class="card" data-filtro="contagem-geral" data-status="Progresso">
-                        <div class="card-body" id="geral-progresso">
-                            <h5 class="card-title">Progresso</h5>
-                        </div>
-                    </div> 
-                </div>   
-            </div>
-
-            <div class="row row-cols-auto d-flex justify-content-start g-4">
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-geral" data-status="Total">
-                        <div class="card-body" id="geral-total">
-                            <h5 class="card-title">Total</h5>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-geral" data-status="Pontuacao">
-                        <div class="card-body" id="geral-pontuacao">
-                            <h5 class="card-title">Pontuacao</h5>
-                        </div>
-                    </div>
-                </div>
-
-                    <div class="col-2">
-                    <div class="card" data-filtro="contagem-geral" data-status="Assistidos">
-                        <div class="card-body" id="geral-assistidos">
-                            <h5 class="card-title">Assistidos</h5>
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-geral" data-status="Episodios">
-                        <div class="card-body" id="geral-episodios">
-                            <h5 class="card-title">Episodios</h5>
-                        </div>
-                    </div>
-                </div>    
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-geral" data-status="Dias">
-                        <div class="card-body" id="geral-dias">
-                            <h5 class="card-title">Dias Assistindo</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-geral" data-status="Horas">
-                        <div class="card-body" id="geral-horas">
-                            <h5 class="card-title">Horas Assistindo</h5>
-                        </div>
-                    </div>
-                </div>      
-
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-status" data-status="Completado">
-                        <div class="card-body" id="contagem-completado">
-                            <h5 class="card-title">Completado</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-status" data-status="Assistindo">
-                        <div class="card-body" id="contagem-assistindo">
-                            <h5 class="card-title">Assistindo</h5>
-                        </div>
-                    </div>
-                </div>  
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-status" data-status="Dropped">
-                        <div class="card-body" id="contagem-dropped">
-                            <h5 class="card-title">Dropped</h5>
-                        </div>
-                    </div>
-                </div>    
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-status" data-status="Em-Espera">
-                        <div class="card-body" id="contagem-emespera">
-                            <h5 class="card-title">Em-Espera</h5>
-                        </div>
-                    </div>
-                </div> 
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-status" data-status="Planejado">
-                        <div class="card-body" id="contagem-planejado">
-                            <h5 class="card-title">Planejado</h5>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                        <div class="card-body" id="contagem-anime">
-                            <h5 class="card-title">Animes</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                        <div class="card-body" id="contagem-desenho">
-                            <h5 class="card-title">Desenho</h5>
-                        </div>
-                    </div>
-                </div>  
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                        <div class="card-body" id="contagem-documentario">
-                            <h5 class="card-title">Documentário</h5>
-                        </div>
-                    </div>
-                </div>    
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                        <div class="card-body" id="contagem-filme">
-                            <h5 class="card-title">Filme</h5>
-                        </div>
-                    </div>
-                </div> 
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                        <div class="card-body" id="contagem-serie">
-                            <h5 class="card-title">Serie</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                        <div class="card-body"  id="contagem-show">
-                            <h5 class="card-title">Show</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                        <div class="card-body"  id="contagem-reality">
-                            <h5 class="card-title">Reality</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-2">
-                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                        <div class="card-body"  id="contagem-manga">
-                            <h5 class="card-title">Manga</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>   
+          
             <br />
 
             <div class="row mt-4" id="linha-estatistica" >
