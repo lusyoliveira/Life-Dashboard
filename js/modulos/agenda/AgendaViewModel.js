@@ -98,7 +98,7 @@ export class AgendaViewModel {
 
   async obterAgendaStatus() {
   
-    const statusData = await api.buscarDados(`${this.endpoint}/status`);
+    const statusData = await api.buscarDados('status');
     
     this.status = statusData.map((statu) => {
         const status = new AgendaStatus(
