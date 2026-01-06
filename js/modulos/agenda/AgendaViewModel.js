@@ -46,6 +46,7 @@ export class AgendaViewModel {
     }
 
   async salvarAgenda(compromisso) {
+    debugger
     const payload = {
       ...compromisso
     };

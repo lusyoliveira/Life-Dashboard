@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   formAgenda.addEventListener("submit", async (e) => {
     e.preventDefault();
-
+    
     const idInput = document.getElementById('id-adicionar').value;
     const titulo = document.getElementById('titulo-adicionar').value;
     const data = document.getElementById('data-adicionar').value;
