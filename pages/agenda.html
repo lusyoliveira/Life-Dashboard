@@ -46,98 +46,90 @@
     </header>
  
     <main class="container-fliud m-4">  
-        <h1 class="pb-2 border-bottom mb-4">Agenda</h1>    
-        <div class="row row-cols-auto">
-            <div class="col-2 mb-4">
-                <ul class="dropdown-menu d-block position-static mx-0 border-0 shadow w-220px" data-bs-theme="dark"> 
-                    <li> 
-                        <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
-                            <i class="bi bi-list-columns-reverse"></i>Tipos
-                        </a>
-                    </li> 
-                    <li> 
-                        <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
-                            <i class="bi bi-arrow-repeat"></i>Status
-                        </a> 
-                    </li> 
-                    <li> 
-                        <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
-                            <i class="bi bi-list-task"></i>
-                            Categoria
-                        </a> 
-                    </li> 
-                    <li><hr class="dropdown-divider"></li> 
-                    <li>                                  
+        <h1 class="pb-2 border-bottom mb-4">Agenda</h1>                  
+        <div class="row">                    
+            <div class="col">
+                <div class="card" data-filtro="tipo" data-tipo="tipo">
+                    <div class="card-header">
+                        <i class="bi bi-list-columns-reverse"></i> Tipo
+                    </div>
+                    <div class="card-body">
                         <div class="input-group mb-3">
                             <input type="hidden" class="form-control" id="id-tipo">
-                            <input type="text" class="form-control" id="descricao-tipo" placeholder="Nova tipo..." aria-label="Nova tipo...">
+                            <input type="text" class="form-control" id="descricao-tipo" placeholder="Novo tipo..." aria-label="Nova tipo...">
                             <button class="btn btn-outline-secondary" type="button" title="Adicionar Tipo" id="adiciona-tipo"><i class="bi bi-plus-lg"></i></button>
                         </div>
-                    </li>  
-                    <li>                                  
+                        <div class="list-group"> 
+                            <label class="list-group-item d-flex gap-3"> 
+                                <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked="" style="font-size: 1.375em;"> 
+                                <span class="pt-1 form-checked-content"> 
+                                    Tipo
+                                </span> 
+                                <button class="btn" type="button" id="botao-editar" title="Editar">
+                                    <i class="bi bi-pencil-fill" id="editar"></i>
+                                </button>                                 
+                                <button class="btn" type="button" id="botao-excluir" title="Excluir">
+                                    <i class="bi bi-trash" id="excluir"></i>
+                                </button>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card" data-filtro="status" data-tipo="status">
+                    <div class="card-header">
+                        <i class="bi bi-arrow-repeat"></i> Status
+                    </div>
+                    <div class="card-body">
                         <div class="input-group mb-3">
                             <input type="hidden" class="form-control" id="id-status">
                             <input type="text" class="form-control" id="descricao-status" placeholder="Nova status..." aria-label="Nova status...">
                             <button class="btn btn-outline-secondary" type="button" title="Adicionar Status" id="adiciona-status"><i class="bi bi-plus-lg"></i></button>
                         </div>
-                    </li> 
-                    <li>                                  
-                        <div class="input-group mb-3">
+                        <ul class="list-group list-group-flush gap-1" id="lista-status">
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card" data-filtro="categoria" data-tipo="categoria">
+                    <div class="card-header">
+                        <i class="bi bi-list-task"></i> Categoria
+                    </div>
+                    <div class="card-body">
+                            <div class="input-group mb-3">
                             <input type="hidden" class="form-control" id="id-plataforma">
                             <input type="text" class="form-control" id="descricao-categoria" placeholder="Nova categoria..." aria-label="Nova categoria...">
                             <button class="btn btn-outline-secondary" type="button" title="Adicionar Categoria" id="adiciona-categoria"><i class="bi bi-plus-lg"></i></button>
                         </div>
-                    </li>
-                </ul>
+                        <ul class="list-group list-group-flush gap-1" id="lista-categoria">
+                            
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="col-10 mb-4">
-                <form class="row gy-2 gx-3 align-items-center" id="agenda-form" title="Adicionar Agendamento">
-                    <div class="col-auto">
-                        <input type="hidden" id="id-adicionar" />
-                        <label for="titulo-adicionar" class="col-form-label">Titulo:</label>
-                        <input type="text" class="form-control" id="titulo-adicionar" title="Título" placeholder="Informe o compromisso" required>
-                    </div>
-                    <div class="col-auto">
-                        <label for="data-adicionar" class="col-form-label">Data:</label>
-                        <input type="datetime-local" class="form-control" id="data-adicionar" title="Data" required>
-                    </div>
-                    <div class="col-auto">
-                        <label for="categoria-adicionar" class="col-form-label">Categoria:</label>
-                        <select type="text" class="form-select" id="categoria-adicionar" title="Categoria" required></select>
-                    </div>
-                    <div class="col-auto">
-                        <label for="tipo-adicionar" class="col-form-label">Tipo:</label>
-                        <select type="text" class="form-select" id="tipo-adicionar" title="Tipo" aria-placeholder="selecione um tipo" required></select>
-                    </div>
-                    <div class="col-auto">
-                        <label for="status-adicionar" class="col-form-label">Status:</label>
-                        <select type="text" class="form-select" id="status-adicionar" title="Status" required></select>
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-primary" id="adicionar-agenda" title="Salvar Agendamento">Salvar</button>
-                        <button type="button" class="btn btn-secondary" id="cancelar-agenda" title="Cancelar Agendamento" >Cancelar</button>
-                    </div>
-                </form>      
-                <hr>
-                <table class="table-responsive table-hover datatable">
-                    <thead>
-                        <tr>
-                            <th>Titulo</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">Categoria</th>
-                            <th class="text-center">Tipo</th>
-                            <th>Data</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-group-divider" id="linhas">
-                        
-                    </tbody>
-                </table>
+        </div>   
 
-            </div>
-        </div>            
+        <table class="table-responsive table-hover datatable">
+            <thead>
+                <tr>
+                    <th>Titulo</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Categoria</th>
+                    <th class="text-center">Tipo</th>
+                    <th>Data</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider" id="linhas">
+                
+            </tbody>
+        </table>
     </main>
     
     <!-- Estrutura do modal -->

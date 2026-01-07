@@ -46,53 +46,11 @@
     </header>
  
     <main class="container-fliud m-4">
-        <h1 class="pb-2 border-bottom mb-4">Catálogo</h1>
-            <div class="container-fliud">
-                <div class="row row-cols-auto">
-                    <div class="col-2 mb-4">
-                        <ul class="dropdown-menu d-block position-static mx-0 border-0 shadow w-220px" data-bs-theme="dark"> 
-                            <li> 
-                                <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
-                                    <i class="bi bi-list-columns-reverse"></i>Tipos
-                                </a>
-                            </li> 
-                            <li> 
-                                <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
-                                    <i class="bi bi-arrow-repeat"></i>Status
-                                </a> 
-                            </li> 
-                            <li> 
-                                <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
-                                    <i class="bi bi-tv"></i>
-                                    Plataforma
-                                </a> 
-                            </li> 
-                            <li><hr class="dropdown-divider"></li> 
-                            <li>                                  
-                                <div class="input-group mb-3">
-                                    <input type="hidden" class="form-control" id="id-tipo">
-                                    <input type="text" class="form-control" id="descricao-tipo" placeholder="Nova tipo..." aria-label="Nova tipo...">
-                                    <button class="btn btn-outline-secondary" type="button" title="Adicionar Tipo" id="adiciona-tipo"><i class="bi bi-plus-lg"></i></button>
-                                </div>
-                            </li>  
-                            <li>                                  
-                                <div class="input-group mb-3">
-                                    <input type="hidden" class="form-control" id="id-status">
-                                    <input type="text" class="form-control" id="descricao-status" placeholder="Nova status..." aria-label="Nova status...">
-                                    <button class="btn btn-outline-secondary" type="button" title="Adicionar Status" id="adiciona-status"><i class="bi bi-plus-lg"></i></button>
-                                </div>
-                            </li> 
-                            <li>                                  
-                                <div class="input-group mb-3">
-                                    <input type="hidden" class="form-control" id="id-plataforma">
-                                    <input type="text" class="form-control" id="descricao-plataforma" placeholder="Nova plataforma..." aria-label="Nova plataforma...">
-                                    <button class="btn btn-outline-secondary" type="button" title="Adicionar Plataforma" id="adiciona-plataforma"><i class="bi bi-plus-lg"></i></button>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <div class="col-10 mb-4">
+        <h1 class="pb-2 border-bottom mb-4">Catálogo</h1>         
+
+        <div class="container-fluid" id="custom-cards">   
+            <div class="row">   
+                <div class="col-12 mb-4">
                         <div class="row d-flex justify-content-center">
                             <div class="row row-cols-auto">
                                 <div class="col w-100">
@@ -246,12 +204,72 @@
                             </div>
                         </div> 
                     </div>
+
+                <div class="col">
+                    <div class="card" data-filtro="tipo" data-tipo="tipo">
+                        <div class="card-header">
+                            <i class="bi bi-list-columns-reverse"></i> Tipo
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-3">
+                                <input type="hidden" class="form-control" id="id-tipo">
+                                <input type="text" class="form-control" id="descricao-tipo" placeholder="Novo tipo..." aria-label="Nova tipo...">
+                                <button class="btn btn-outline-secondary" type="button" title="Adicionar Tipo" id="adiciona-tipo"><i class="bi bi-plus-lg"></i></button>
+                            </div>
+                            <div class="list-group"> 
+                                <label class="list-group-item d-flex gap-3"> 
+                                    <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked="" style="font-size: 1.375em;"> 
+                                    <span class="pt-1 form-checked-content"> 
+                                        Tipo
+                                    </span> 
+                                    <button class="btn" type="button" id="botao-editar" title="Editar">
+                                        <i class="bi bi-pencil-fill" id="editar"></i>
+                                    </button>                                 
+                                    <button class="btn" type="button" id="botao-excluir" title="Excluir">
+                                        <i class="bi bi-trash" id="excluir"></i>
+                                    </button>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <hr>
+                <div class="col">
+                    <div class="card" data-filtro="status" data-tipo="status">
+                        <div class="card-header">
+                            <i class="bi bi-arrow-repeat"></i> Status
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-3">
+                                <input type="hidden" class="form-control" id="id-status">
+                                <input type="text" class="form-control" id="descricao-status" placeholder="Nova status..." aria-label="Nova status...">
+                                <button class="btn btn-outline-secondary" type="button" title="Adicionar Status" id="adiciona-status"><i class="bi bi-plus-lg"></i></button>
+                            </div>
+                            <ul class="list-group list-group-flush gap-1" id="lista-status">
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="container-fluid" id="custom-cards">   
+                <div class="col">
+                    <div class="card" data-filtro="plataforma" data-tipo="plataforma">
+                        <div class="card-header">
+                            <i class="bi bi-tv"></i> Plataforma
+                        </div>
+                        <div class="card-body">
+                                <div class="input-group mb-3">
+                                <input type="hidden" class="form-control" id="id-plataforma">
+                                <input type="text" class="form-control" id="descricao-plataforma" placeholder="Nova plataforma..." aria-label="Nova plataforma...">
+                                <button class="btn btn-outline-secondary" type="button" title="Adicionar plataforma" id="adiciona-plataforma"><i class="bi bi-plus-lg"></i></button>
+                            </div>
+                            <ul class="list-group list-group-flush gap-1" id="lista-plataforma">
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div> 
                     <form class="row gy-2 gx-3 align-items-center" id="catalogo-form" title="Adicionar Titulo">
                         <div class="col">
                             <input type="hidden" id="id-adicionar" />
@@ -482,7 +500,7 @@
                 <br />
 
                 <div class="row">                    
-                <h2 class="pb-1 border-bottom">Top</h2>
+                    <h2 class="pb-1 border-bottom">Top</h2>
                     <div class="col">
                         <div class="card" data-filtro="Geral" data-tipo="Geral">
                             <div class="card-header">
