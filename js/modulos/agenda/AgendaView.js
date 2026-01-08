@@ -106,9 +106,9 @@ export class AgendaView {
     document.dispatchEvent(new Event("Renderizado"));
   }
 
-  async renderProximosCompromissos(elementoDestinoId) {
+  async renderProximosCompromissos(elementoDestinoId, qtd) {
     const elementoDestino = document.getElementById(elementoDestinoId);
-    const agendaFiltrada = this.vm.filtrarProximosCompromissos(13);
+    const agendaFiltrada = this.vm.filtrarProximosCompromissos(qtd);
 
     if (elementoDestino) {
       elementoDestino.innerHTML = "";

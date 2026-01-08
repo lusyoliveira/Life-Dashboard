@@ -62,7 +62,7 @@
         estudoView.renderCursando("Cursando");
         tarefaView.listarTarefas('lista-tarefa')
         catalogoView.renderAssistindo(['Assistindo','Reassistindo'],'Assistindo')
-        agendaView.renderProximosCompromissos('proximos-compromissos')
+        agendaView.renderProximosCompromissos('proximos-compromissos', 13)
         agendaView.renderCalendario('calendario')
         climaView.exibirClima('clima')
         contagemView.exibirContagem('contagemRegressiva')

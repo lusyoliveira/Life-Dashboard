@@ -43,5 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnCancelar.addEventListener('click', () => {
     formAgenda.reset();
   });
+
+  agendaView.renderProximosCompromissos('proximos-compromissos', 7)
  
 })

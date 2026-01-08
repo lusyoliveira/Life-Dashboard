@@ -46,7 +46,19 @@
     </header>
  
     <main class="container-fliud m-4">  
-        <h1 class="pb-2 border-bottom mb-4">Agenda</h1>                  
+       <div class="row row-cols-auto"> 
+        <div class="col-4 mb-4">
+            <div class="col">
+                <h3 >Próximos Compromissos</h3>
+                    <div class="list-group text-start" id="proximos-compromissos" data-filtro="compromissos" data-status="recentes">
+                        
+                    </div>
+            </div>
+        </div>
+        <div class="col-6 mb-4">
+            <h4>Grafico</h4>                        
+        </div>
+       </div>               
         <div class="row">                    
             <div class="col">
                 <div class="card" data-filtro="tipo" data-tipo="tipo">
@@ -113,6 +125,34 @@
                 </div>
             </div>
         </div>   
+
+        <form class="row gy-2 gx-3 align-items-center" id="agenda-form" title="Adicionar Agendamento">
+            <div class="col-auto">
+                <input type="hidden" id="id-adicionar" />
+                <label for="titulo-adicionar" class="col-form-label">Titulo:</label>
+                <input type="text" class="form-control" id="titulo-adicionar" title="Título" placeholder="Informe o compromisso" required>
+            </div>
+            <div class="col-auto">
+                <label for="data-adicionar" class="col-form-label">Data:</label>
+                <input type="datetime-local" class="form-control" id="data-adicionar" title="Data" required>
+            </div>
+            <div class="col-auto">
+                <label for="categoria-adicionar" class="col-form-label">Categoria:</label>
+                <select type="text" class="form-select" id="categoria-adicionar" title="Categoria" required></select>
+            </div>
+            <div class="col-auto">
+                <label for="tipo-adicionar" class="col-form-label">Tipo:</label>
+                <select type="text" class="form-select" id="tipo-adicionar" title="Tipo" aria-placeholder="selecione um tipo" required></select>
+            </div>
+            <div class="col-auto">
+                <label for="status-adicionar" class="col-form-label">Status:</label>
+                <select type="text" class="form-select" id="status-adicionar" title="Status" required></select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary" id="adicionar-agenda" title="Salvar Agendamento">Salvar</button>
+                <button type="button" class="btn btn-secondary" id="cancelar-agenda" title="Cancelar Agendamento" >Cancelar</button>
+            </div>
+        </form>    
 
         <table class="table-responsive table-hover datatable">
             <thead>
