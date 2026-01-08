@@ -46,316 +46,332 @@
     </header>
  
     <main class="container-fliud m-4">
-        <h1 class="pb-2 border-bottom mb-4">Catálogo</h1>         
+        <div class="row">   
+            <div class="col-12 mb-4">
+                <div class="row d-flex justify-content-center">
+                    <div class="row row-cols-auto">
+                        <div class="col w-100">
+                            <div class="card" data-filtro="contagem-geral" data-status="Progresso">
+                                <div class="card-body" id="geral-progresso">
+                                    <h5 class="card-title">Progresso</h5>
+                                </div>
+                            </div> 
+                        </div>   
+                    </div>
 
-        <div class="container-fluid" id="custom-cards">   
-            <div class="row">   
-                <div class="col-12 mb-4">
-                        <div class="row d-flex justify-content-center">
-                            <div class="row row-cols-auto">
-                                <div class="col w-100">
-                                    <div class="card" data-filtro="contagem-geral" data-status="Progresso">
-                                        <div class="card-body" id="geral-progresso">
-                                            <h5 class="card-title">Progresso</h5>
-                                        </div>
-                                    </div> 
-                                </div>   
+                    <div class="row row-cols-auto d-flex justify-content-start g-4">
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-geral" data-status="Total">
+                                <div class="card-body" id="geral-total">
+                                    <h5 class="card-title">Total</h5>
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="row row-cols-auto d-flex justify-content-start g-4">
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-geral" data-status="Total">
-                                        <div class="card-body" id="geral-total">
-                                            <h5 class="card-title">Total</h5>
-                                        </div>
-                                    </div>
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-geral" data-status="Pontuacao">
+                                <div class="card-body" id="geral-pontuacao">
+                                    <h5 class="card-title">Pontuacao</h5>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-geral" data-status="Pontuacao">
-                                        <div class="card-body" id="geral-pontuacao">
-                                            <h5 class="card-title">Pontuacao</h5>
-                                        </div>
-                                    </div>
+                            <div class="col-2">
+                            <div class="card" data-filtro="contagem-geral" data-status="Assistidos">
+                                <div class="card-body" id="geral-assistidos">
+                                    <h5 class="card-title">Assistidos</h5>
                                 </div>
+                            </div>
+                        </div>
+                    
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-geral" data-status="Episodios">
+                                <div class="card-body" id="geral-episodios">
+                                    <h5 class="card-title">Episodios</h5>
+                                </div>
+                            </div>
+                        </div>    
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-geral" data-status="Dias">
+                                <div class="card-body" id="geral-dias">
+                                    <h5 class="card-title">Dias Assistindo</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-geral" data-status="Horas">
+                                <div class="card-body" id="geral-horas">
+                                    <h5 class="card-title">Horas Assistindo</h5>
+                                </div>
+                            </div>
+                        </div>      
 
-                                    <div class="col-2">
-                                    <div class="card" data-filtro="contagem-geral" data-status="Assistidos">
-                                        <div class="card-body" id="geral-assistidos">
-                                            <h5 class="card-title">Assistidos</h5>
-                                        </div>
-                                    </div>
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-status" data-status="Completado">
+                                <div class="card-body" id="contagem-completado">
+                                    <h5 class="card-title">Completado</h5>
                                 </div>
-                            
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-geral" data-status="Episodios">
-                                        <div class="card-body" id="geral-episodios">
-                                            <h5 class="card-title">Episodios</h5>
-                                        </div>
-                                    </div>
-                                </div>    
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-geral" data-status="Dias">
-                                        <div class="card-body" id="geral-dias">
-                                            <h5 class="card-title">Dias Assistindo</h5>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-status" data-status="Assistindo">
+                                <div class="card-body" id="contagem-assistindo">
+                                    <h5 class="card-title">Assistindo</h5>
                                 </div>
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-geral" data-status="Horas">
-                                        <div class="card-body" id="geral-horas">
-                                            <h5 class="card-title">Horas Assistindo</h5>
-                                        </div>
-                                    </div>
-                                </div>      
-
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-status" data-status="Completado">
-                                        <div class="card-body" id="contagem-completado">
-                                            <h5 class="card-title">Completado</h5>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>  
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-status" data-status="Dropped">
+                                <div class="card-body" id="contagem-dropped">
+                                    <h5 class="card-title">Dropped</h5>
                                 </div>
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-status" data-status="Assistindo">
-                                        <div class="card-body" id="contagem-assistindo">
-                                            <h5 class="card-title">Assistindo</h5>
-                                        </div>
-                                    </div>
-                                </div>  
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-status" data-status="Dropped">
-                                        <div class="card-body" id="contagem-dropped">
-                                            <h5 class="card-title">Dropped</h5>
-                                        </div>
-                                    </div>
-                                </div>    
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-status" data-status="Em-Espera">
-                                        <div class="card-body" id="contagem-emespera">
-                                            <h5 class="card-title">Em-Espera</h5>
-                                        </div>
-                                    </div>
-                                </div> 
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-status" data-status="Planejado">
-                                        <div class="card-body" id="contagem-planejado">
-                                            <h5 class="card-title">Planejado</h5>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                                        <div class="card-body" id="contagem-anime">
-                                            <h5 class="card-title">Animes</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                                        <div class="card-body" id="contagem-desenho">
-                                            <h5 class="card-title">Desenho</h5>
-                                        </div>
-                                    </div>
-                                </div>  
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                                        <div class="card-body" id="contagem-documentario">
-                                            <h5 class="card-title">Documentário</h5>
-                                        </div>
-                                    </div>
-                                </div>    
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                                        <div class="card-body" id="contagem-filme">
-                                            <h5 class="card-title">Filme</h5>
-                                        </div>
-                                    </div>
-                                </div> 
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                                        <div class="card-body" id="contagem-serie">
-                                            <h5 class="card-title">Serie</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                                        <div class="card-body"  id="contagem-show">
-                                            <h5 class="card-title">Show</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                                        <div class="card-body"  id="contagem-reality">
-                                            <h5 class="card-title">Reality</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2">
-                                    <div class="card" data-filtro="contagem-tipo" data-status="contagem">
-                                        <div class="card-body"  id="contagem-manga">
-                                            <h5 class="card-title">Manga</h5>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>    
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-status" data-status="Em-Espera">
+                                <div class="card-body" id="contagem-emespera">
+                                    <h5 class="card-title">Em-Espera</h5>
                                 </div>
                             </div>
                         </div> 
-                    </div>
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-status" data-status="Planejado">
+                                <div class="card-body" id="contagem-planejado">
+                                    <h5 class="card-title">Planejado</h5>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="col">
-                    <div class="card" data-filtro="tipo" data-tipo="tipo">
-                        <div class="card-header">
-                            <i class="bi bi-list-columns-reverse"></i> Tipo
-                        </div>
-                        <div class="card-body">
-                            <div class="input-group mb-3">
-                                <input type="hidden" class="form-control" id="id-tipo">
-                                <input type="text" class="form-control" id="descricao-tipo" placeholder="Novo tipo..." aria-label="Nova tipo...">
-                                <button class="btn btn-outline-secondary" type="button" title="Adicionar Tipo" id="adiciona-tipo"><i class="bi bi-plus-lg"></i></button>
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                <div class="card-body" id="contagem-anime">
+                                    <h5 class="card-title">Animes</h5>
+                                </div>
                             </div>
-                            <div class="list-group"> 
-                                <label class="list-group-item d-flex gap-3"> 
-                                    <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked="" style="font-size: 1.375em;"> 
-                                    <span class="pt-1 form-checked-content"> 
-                                        Tipo
-                                    </span> 
-                                    <button class="btn" type="button" id="botao-editar" title="Editar">
-                                        <i class="bi bi-pencil-fill" id="editar"></i>
-                                    </button>                                 
-                                    <button class="btn" type="button" id="botao-excluir" title="Excluir">
-                                        <i class="bi bi-trash" id="excluir"></i>
-                                    </button>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card" data-filtro="status" data-tipo="status">
-                        <div class="card-header">
-                            <i class="bi bi-arrow-repeat"></i> Status
-                        </div>
-                        <div class="card-body">
-                            <div class="input-group mb-3">
-                                <input type="hidden" class="form-control" id="id-status">
-                                <input type="text" class="form-control" id="descricao-status" placeholder="Nova status..." aria-label="Nova status...">
-                                <button class="btn btn-outline-secondary" type="button" title="Adicionar Status" id="adiciona-status"><i class="bi bi-plus-lg"></i></button>
-                            </div>
-                            <ul class="list-group list-group-flush gap-1" id="lista-status">
-                                
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card" data-filtro="plataforma" data-tipo="plataforma">
-                        <div class="card-header">
-                            <i class="bi bi-tv"></i> Plataforma
-                        </div>
-                        <div class="card-body">
-                                <div class="input-group mb-3">
-                                <input type="hidden" class="form-control" id="id-plataforma">
-                                <input type="text" class="form-control" id="descricao-plataforma" placeholder="Nova plataforma..." aria-label="Nova plataforma...">
-                                <button class="btn btn-outline-secondary" type="button" title="Adicionar plataforma" id="adiciona-plataforma"><i class="bi bi-plus-lg"></i></button>
-                            </div>
-                            <ul class="list-group list-group-flush gap-1" id="lista-plataforma">
-                                
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div> 
-                    <form class="row gy-2 gx-3 align-items-center" id="catalogo-form" title="Adicionar Titulo">
-                        <div class="col">
-                            <input type="hidden" id="id-adicionar" />
-                            <label for="titulo-adicionar" class="col-form-label">Titulo:</label>
-                            <input type="text" class="form-control" id="titulo-adicionar" title="Título" placeholder="Informe o título" required>
-                        </div>
-                        <div class="col">
-                            <label for="capa-adicionar" class="col-form-label">Capa:</label>
-                            <input type="text" class="form-control" id="capa-adicionar" title="Capa" placeholder="Informa a url da capa" required>
                         </div>
                         <div class="col-2">
-                            <label for="tipo-adicionar" class="col-form-label">Tipo:</label>
-                            <select type="text" class="form-select" id="tipo-adicionar" title="Tipo" required>
-                                <option value="Serie">Serie</option>
-                                <option value="Anime">Anime</option>
-                                <option value="Filme">Filmes</option>
-                                <option value="Desenho">Desenho</option>
-                                <option value="Documentário">Documentário</option>
-                                <option value="Show">Show</option>
-                                <option value="Reality">Reality</option>
-                            </select>
+                            <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                <div class="card-body" id="contagem-desenho">
+                                    <h5 class="card-title">Desenho</h5>
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                <div class="card-body" id="contagem-documentario">
+                                    <h5 class="card-title">Documentário</h5>
+                                </div>
+                            </div>
+                        </div>    
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                <div class="card-body" id="contagem-filme">
+                                    <h5 class="card-title">Filme</h5>
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                <div class="card-body" id="contagem-serie">
+                                    <h5 class="card-title">Serie</h5>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-2">
-                            <label for="status-adicionar" class="col-form-label">Status:</label>
-                            <select type="text" class="form-select" id="status-adicionar" title="Status" required>
-                                <option value="Completado">Completado</option>
-                                <option value="Assistindo">Assistindo</option>
-                                <option value="Em-Espera">Em-Espera</option>
-                                <option value="Dropped">Dropped</option>
-                                <option value="Planejado">Planejado</option>
-                                <option value="Reassistindo">Reassistindo</option>
-                            </select>
+                            <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                <div class="card-body"  id="contagem-show">
+                                    <h5 class="card-title">Show</h5>
+                                </div>
+                            </div>
                         </div>
-                        <div class="row">
-                            <div class="col-2">
-                                <label for="plataforma-adicionar" class="col-form-label">Plataforma:</label>
-                                <select type="text" class="form-select" id="plataforma-adicionar" title="Plataforma" required>
-                                    <option value="Netflix">Netflix</option>
-                                    <option value="Amazom Prime">Amazom Prime</option>
-                                    <option value="Crunchroll">Crunchroll</option>
-                                    <option value="YouTube">YouTube</option>
-                                    <option value="MAX">MAX</option>
-                                    <option value="Download">Download</option>
-                                    <option value="TV">TV</option>
-                                    <option value="Pluto TV">Pluto TV</option>
-                                    <option value="Paramonut">Paramount</option>
-                                </select>
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                <div class="card-body"  id="contagem-reality">
+                                    <h5 class="card-title">Reality</h5>
+                                </div>
                             </div>
-                             <div class="col-2">
-                                <label for="data-inicio" class="col-form-label">Data Inicio:</label>
-                                <input type="datetime-local" class="form-control" id="data-inicio" title="Inicio" required>
+                        </div>
+                        <div class="col-2">
+                            <div class="card" data-filtro="contagem-tipo" data-status="contagem">
+                                <div class="card-body"  id="contagem-manga">
+                                    <h5 class="card-title">Manga</h5>
+                                </div>
                             </div>
-                            <div class="col-2">
-                                <label for="data-fim" class="col-form-label">Data Fim:</label>
-                                <input type="datetime-local" class="form-control" id="data-fim" title="Fim">
-                            </div>
-                            <div class="col-1">
-                                <label for="episodios-adicionar" class="col-form-label">Episódios:</label>
-                                <input type="text" class="form-control" id="episodios-adicionar" title="Episódios" placeholder="0" required>
-                            </div>
-                            <div class="col-1">
-                                <label for="assistidos-adicionar" class="col-form-label">Assistidos:</label>
-                                <input type="text" class="form-control" id="assistidos-adicionar" title="Assistidos" placeholder="0" required>
-                            </div>
-                            <div class="col-1">
-                                <label for="temporada-adicionar" class="col-form-label">Temporadas:</label>
-                                <input type="text" class="form-control" id="temporada-adicionar" title="Temporada" placeholder="0" required>
-                            </div>
-                            <div class="col-1">
-                                <label for="pontuacao-adicionar" class="col-form-label">Pontuação:</label>
-                                <input type="text" class="form-control" id="pontuacao-adicionar" title="pontuação" vale="0" placeholder="0" required>
-                            </div>
-                            <div class="col-1">
-                                <label for="vezes-adicionar" class="col-form-label">Vezes Assistidos:</label>
-                                <input type="text" class="form-control" id="vezes-adicionar" title="vezes" vale="0" placeholder="0" required>
-                            </div>
-                        </div>                   
+                        </div>
+                    </div>
+                </div> 
+            </div>
+
+            <div class="container-fluid mb-4" id="custom-cards">
+                <h2 class="pb-1 border-bottom">Adicionados Recentemente</h2>
+                <div class="row row-cols-4 align-items-center" id="recentes" data-filtro="recentes" data-status="recentes">
+                    <div class="col-2">
                         
-                        <div class="row mt-2">
-                            <div class="col">
-                                <button type="submit" class="btn btn-primary" id="adicionar-catalogo" title="Salvar Agendamento">Salvar</button>
-                                <button type="button" class="btn btn-secondary" id="cancelar-catalogo" title="Cancelar Agendamento" >Cancelar</button>
-                            </div>
-                        </div>
-                    </form>                      
+                    </div>
+
+                    <div class="col-2">
+                        
+                    </div>                    
+
+                    <div class="col-2">
+                        
+                    </div>                   
+
+                    <div class="col-2">
+                        
+                    </div>
                 </div>
+            </div>   
+            <div class="col">
+                <div class="card" data-filtro="tipo" data-tipo="tipo">
+                    <div class="card-header">
+                        <i class="bi bi-list-columns-reverse"></i> Tipo
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <input type="hidden" class="form-control" id="id-tipo">
+                            <input type="text" class="form-control" id="descricao-tipo" placeholder="Novo tipo..." aria-label="Nova tipo...">
+                            <button class="btn btn-outline-secondary" type="button" title="Adicionar Tipo" id="adiciona-tipo"><i class="bi bi-plus-lg"></i></button>
+                        </div>
+                        <div class="list-group"> 
+                            <label class="list-group-item d-flex gap-3"> 
+                                <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked="" style="font-size: 1.375em;"> 
+                                <span class="pt-1 form-checked-content"> 
+                                    Tipo
+                                </span> 
+                                <button class="btn" type="button" id="botao-editar" title="Editar">
+                                    <i class="bi bi-pencil-fill" id="editar"></i>
+                                </button>                                 
+                                <button class="btn" type="button" id="botao-excluir" title="Excluir">
+                                    <i class="bi bi-trash" id="excluir"></i>
+                                </button>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card" data-filtro="status" data-tipo="status">
+                    <div class="card-header">
+                        <i class="bi bi-arrow-repeat"></i> Status
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <input type="hidden" class="form-control" id="id-status">
+                            <input type="text" class="form-control" id="descricao-status" placeholder="Nova status..." aria-label="Nova status...">
+                            <button class="btn btn-outline-secondary" type="button" title="Adicionar Status" id="adiciona-status"><i class="bi bi-plus-lg"></i></button>
+                        </div>
+                        <ul class="list-group list-group-flush gap-1" id="lista-status">
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card" data-filtro="plataforma" data-tipo="plataforma">
+                    <div class="card-header">
+                        <i class="bi bi-tv"></i> Plataforma
+                    </div>
+                    <div class="card-body">
+                            <div class="input-group mb-3">
+                            <input type="hidden" class="form-control" id="id-plataforma">
+                            <input type="text" class="form-control" id="descricao-plataforma" placeholder="Nova plataforma..." aria-label="Nova plataforma...">
+                            <button class="btn btn-outline-secondary" type="button" title="Adicionar plataforma" id="adiciona-plataforma"><i class="bi bi-plus-lg"></i></button>
+                        </div>
+                        <ul class="list-group list-group-flush gap-1" id="lista-plataforma">
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <form class="row gy-2 gx-3 align-items-center" id="catalogo-form" title="Adicionar Titulo">
+            <div class="col">
+                <input type="hidden" id="id-adicionar" />
+                <label for="titulo-adicionar" class="col-form-label">Titulo:</label>
+                <input type="text" class="form-control" id="titulo-adicionar" title="Título" placeholder="Informe o título" required>
+            </div>
+            <div class="col">
+                <label for="capa-adicionar" class="col-form-label">Capa:</label>
+                <input type="text" class="form-control" id="capa-adicionar" title="Capa" placeholder="Informa a url da capa" required>
+            </div>
+            <div class="col-2">
+                <label for="tipo-adicionar" class="col-form-label">Tipo:</label>
+                <select type="text" class="form-select" id="tipo-adicionar" title="Tipo" required>
+                    <option value="Serie">Serie</option>
+                    <option value="Anime">Anime</option>
+                    <option value="Filme">Filmes</option>
+                    <option value="Desenho">Desenho</option>
+                    <option value="Documentário">Documentário</option>
+                    <option value="Show">Show</option>
+                    <option value="Reality">Reality</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <label for="status-adicionar" class="col-form-label">Status:</label>
+                <select type="text" class="form-select" id="status-adicionar" title="Status" required>
+                    <option value="Completado">Completado</option>
+                    <option value="Assistindo">Assistindo</option>
+                    <option value="Em-Espera">Em-Espera</option>
+                    <option value="Dropped">Dropped</option>
+                    <option value="Planejado">Planejado</option>
+                    <option value="Reassistindo">Reassistindo</option>
+                </select>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <label for="plataforma-adicionar" class="col-form-label">Plataforma:</label>
+                    <select type="text" class="form-select" id="plataforma-adicionar" title="Plataforma" required>
+                        <option value="Netflix">Netflix</option>
+                        <option value="Amazom Prime">Amazom Prime</option>
+                        <option value="Crunchroll">Crunchroll</option>
+                        <option value="YouTube">YouTube</option>
+                        <option value="MAX">MAX</option>
+                        <option value="Download">Download</option>
+                        <option value="TV">TV</option>
+                        <option value="Pluto TV">Pluto TV</option>
+                        <option value="Paramonut">Paramount</option>
+                    </select>
+                </div>
+                    <div class="col-2">
+                    <label for="data-inicio" class="col-form-label">Data Inicio:</label>
+                    <input type="datetime-local" class="form-control" id="data-inicio" title="Inicio" required>
+                </div>
+                <div class="col-2">
+                    <label for="data-fim" class="col-form-label">Data Fim:</label>
+                    <input type="datetime-local" class="form-control" id="data-fim" title="Fim">
+                </div>
+                <div class="col-1">
+                    <label for="episodios-adicionar" class="col-form-label">Episódios:</label>
+                    <input type="text" class="form-control" id="episodios-adicionar" title="Episódios" placeholder="0" required>
+                </div>
+                <div class="col-1">
+                    <label for="assistidos-adicionar" class="col-form-label">Assistidos:</label>
+                    <input type="text" class="form-control" id="assistidos-adicionar" title="Assistidos" placeholder="0" required>
+                </div>
+                <div class="col-1">
+                    <label for="temporada-adicionar" class="col-form-label">Temporadas:</label>
+                    <input type="text" class="form-control" id="temporada-adicionar" title="Temporada" placeholder="0" required>
+                </div>
+                <div class="col-1">
+                    <label for="pontuacao-adicionar" class="col-form-label">Pontuação:</label>
+                    <input type="text" class="form-control" id="pontuacao-adicionar" title="pontuação" vale="0" placeholder="0" required>
+                </div>
+                <div class="col-1">
+                    <label for="vezes-adicionar" class="col-form-label">Vezes Assistidos:</label>
+                    <input type="text" class="form-control" id="vezes-adicionar" title="vezes" vale="0" placeholder="0" required>
+                </div>
+            </div>                   
+            
+            <div class="row mt-2">
+                <div class="col">
+                    <button type="submit" class="btn btn-primary" id="adicionar-catalogo" title="Salvar Agendamento">Salvar</button>
+                    <button type="button" class="btn btn-secondary" id="cancelar-catalogo" title="Cancelar Agendamento" >Cancelar</button>
+                </div>
+            </div>
+        </form>                      
                    
         <br />
                              
@@ -378,9 +394,7 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody class="table-group-divider" id="linhas">
-                
-            </tbody>
+            <tbody class="table-group-divider" id="linhas"></tbody>
         </table>
         <div class="container-fluid" >
             <h2 class="pb-1 border-bottom">Estatísticas</h2>
@@ -398,10 +412,7 @@
         </div>  
                 
             <br />                
-            
-          
-            <br />
-
+ 
             <div class="row mt-4" id="linha-estatistica" >
                 <div class="col" id="estatistica-serie" data-filtro="estatisticas" data-tipo="Serie">
                     
@@ -416,29 +427,6 @@
                 </div>
             </div>        
 
-            <br />
-
-            <div class="container-fluid" id="custom-cards">
-                <h2 class="pb-1 border-bottom">Adicionados Recentemente</h2>
-                <div class="row row-cols-4 align-items-center" id="recentes" data-filtro="recentes" data-status="recentes">
-                    <div class="col-2">
-                        
-                    </div>
-
-                    <div class="col-2">
-                        
-                    </div>                    
-
-                    <div class="col-2">
-                        
-                    </div>                   
-
-                    <div class="col-2">
-                        
-                    </div>
-                </div>
-            </div>    
-            
             <br />
 
             <div class="container-fliud">                
