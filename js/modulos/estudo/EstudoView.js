@@ -1,3 +1,7 @@
+import { StatusViewModel } from "../status/StatusViewModel.js";
+import { AreaViewModel } from "../areas/AreasViewModel.js";
+import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
+import { popularSelect } from "../../Utils/utils.js";
 
 export class EstudoView {
     constructor(vm) {
@@ -35,6 +39,7 @@ export class EstudoView {
         if ($.fn.DataTable.isDataTable('.datatable')) {
         $('.datatable').DataTable().clear().destroy(); 
         }
+        
             cursos.forEach(curso => {
                 const tr = document.createElement('tr');
                    
@@ -50,7 +55,7 @@ export class EstudoView {
     
                 const tdAssunto = document.createElement('td');
                 tdAssunto.classList.add('text-center');
-                tdAssunto.textContent = curso.Assunto;
+                tdAssunto.textContent = curso.Assunto.descricao;
     
                 const tdComprado = document.createElement('td');
                 tdComprado.classList.add('text-center');    
@@ -68,7 +73,7 @@ export class EstudoView {
     
                 const tdStatus = document.createElement('td');
                 tdStatus.classList.add('text-center');
-                tdStatus.textContent = curso.Status;
+                tdStatus.textContent = curso.Status.descricao;
     
                 const tdCertificado = document.createElement('td');
                 tdCertificado.classList.add('text-center');
@@ -188,15 +193,25 @@ export class EstudoView {
         } 
     };
 
-    async listarStatus(elementoId) {    
-        const status =  await this.vm.obterEstudoStatus()
+    async listarStatus(elementoId) { 
+        const statusVM = new StatusViewModel();  
+        const status =  await statusVM.obterStatus('Geral')
         
         popularSelect(status,elementoId)
     };
 
     async listarArea(elementoId) {    
-        const area =  await this.vm.obterEstudoArea()
+        const areaVM = new AreaViewModel();
+        const area =  await areaVM.obterArea()
         
         popularSelect(area,elementoId)
     };
+
+    async listarPlataforma(elementoId) {
+        const plataformaVM = new PlataformaViewModel();
+        const plataforma = await plataformaVM.obterPlataforma('Cursos');
+
+        popularSelect(plataforma, elementoId);
+    };
+    
 }
