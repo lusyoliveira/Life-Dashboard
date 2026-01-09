@@ -1,16 +1,10 @@
 import api from "../../servicos/metodoApi.js";
 import Catalogo from "./catalogoModel.js";
-import CatalogoTipo from "./catalogoTipoModel.js";
-import CatalogoStatus from "./catalogoStatusModel.js";
-import CatalogoPlataforma from "./catalogoPlataformaModel.js";
 
 export class CatalogoViewModel {
   constructor(endpoint = "catalogo") {
     this.endpoint = endpoint;
     this.catalogo = [];
-    this.plataformas = [];
-    this.tipos = [];
-    this.status = [];
   }
 
    async obterCatalogo() {

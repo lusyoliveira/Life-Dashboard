@@ -1,5 +1,8 @@
 import { calculaTempoData } from "../../Utils/metodoData.js";
 import { popularSelect } from "../../Utils/utils.js";
+import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
+import { StatusViewModel } from "../status/StatusViewModel.js";
+import { TipoViewModel } from "../tipos/TipoViewModel.js";
 
 export class AgendaView {
   constructor(vm) {
@@ -359,21 +362,24 @@ export class AgendaView {
   }
 
   async listarTipos(elementoId) {    
-    const tipos =  await this.vm.obterAgendaTipos()
+    const tipoVM = new TipoViewModel();
+    const tipos =  await tipoVM.obterTipos('Agenda');
     
     popularSelect(tipos,elementoId)
   };
 
   async listarStatus(elementoId) {    
-    const status =  await this.vm.obterAgendaStatus()
+    const statusVM = new StatusViewModel();
+    const status =  await statusVM.obterStatus('Geral');
     
     popularSelect(status,elementoId)
   };
 
-  async listarCategoria(elementoId) {    
-    const categoria =  await this.vm.obterAgendaCategoria()
-    
-    popularSelect(categoria,elementoId)
+  async listarCategoria(elementoId) {
+    const categoriaVM = new CategoriaViewModel();
+    const categorias = await categoriaVM.obterCategoria('Agenda');
+
+    popularSelect(categorias, elementoId);
   };
 
 }
