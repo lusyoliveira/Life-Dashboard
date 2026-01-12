@@ -51,7 +51,7 @@ export class EstudoView {
 
                 const tdEscola = document.createElement('td');
                 tdEscola.classList.add('text-center');
-                tdEscola.textContent = curso.Escola; 
+                tdEscola.textContent = curso.Escola.descricao; 
     
                 const tdAssunto = document.createElement('td');
                 tdAssunto.classList.add('text-center');
