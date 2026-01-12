@@ -8,7 +8,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const formTransacao = document.getElementById('transacao-form');
     const btnCancelar = document.getElementById('cancelar-transacao');
 
-    financeiroView.listarTransacoes('tbtransacoes')
+    financeiroView.listarTransacoes('tbtransacoes');
+    await financeiroView.listarCategoria('categoria-adicionar');
 
     formTransacao.addEventListener("submit", async (e) => {
         e.preventDefault();

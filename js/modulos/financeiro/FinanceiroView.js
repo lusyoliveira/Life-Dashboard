@@ -1,3 +1,6 @@
+import { popularSelect } from "../../Utils/utils.js";
+import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
+
 export class FinanceiroView {
   constructor(vm) {
     this.vm = vm;
@@ -178,9 +181,10 @@ export class FinanceiroView {
     popularSelect(contas,elementoId)
   };
 
-  async listarCategoria(elementoId) {    
-    const categoria =  await this.vm.obterFinanceiroCategoria()
-    
-    popularSelect(categoria,elementoId)
+  async listarCategoria(elementoId) {
+    const categoriaVM = new CategoriaViewModel();
+    const categorias = await categoriaVM.obterCategoria('Agenda');
+
+    popularSelect(categorias, elementoId);
   };
 }

@@ -1,4 +1,9 @@
 import { calculaTempoData } from "../../Utils/metodoData.js";
+import { StatusViewModel } from "../status/StatusViewModel.js";
+import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
+import { TipoViewModel } from "../tipos/TipoViewModel.js";
+import { popularSelect } from "../../Utils/utils.js";
+
 export class CatalogoView {
     constructor(vm) {
         this.vm = vm;
@@ -696,21 +701,24 @@ export class CatalogoView {
         }
     };
 
-    async listarTipos(elementoId) {    
-        const tipos =  await this.vm.obterCatalogoTipos()
-        
-        popularSelect(tipos,elementoId)
-    };
-
-    async listarStatus(elementoId) {    
-        const status =  await this.vm.obterCatalogoStatus()
+    async listarStatus(elementoId) { 
+        const statusVM = new StatusViewModel();  
+        const status =  await statusVM.obterStatus('Catalogo')
         
         popularSelect(status,elementoId)
     };
 
-    async listarPlataforma(elementoId) {    
-        const plataforma =  await this.vm.obterCatalogoPlataforma()
+    async listarTipos(elementoId) {    
+        const tiposVM = new TipoViewModel();
+        const tipos =  await tiposVM.obterTipos('Catalogo')
         
-        popularSelect(plataforma,elementoId)
+        popularSelect(tipos,elementoId)
+    };
+
+    async listarPlataforma(elementoId) {
+        const plataformaVM = new PlataformaViewModel();
+        const plataforma = await plataformaVM.obterPlataforma('Catalogo');
+
+        popularSelect(plataforma, elementoId);
     };
 }
