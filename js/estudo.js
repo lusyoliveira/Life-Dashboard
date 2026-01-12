@@ -12,8 +12,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   //CRUD
   await estudoView.listarCursos("linhas");
-  // await estudoView.listarArea('area-adicionar');
-  // await estudoView.listarStatus('status-adicionar');
+  await estudoView.listarArea('area-adicionar');
+  await estudoView.listarStatus('status-adicionar');
+  await estudoView.listarPlataforma('escola-adicionar');
 
   formCurso.addEventListener("submit", async (e) => {
      e.preventDefault();
