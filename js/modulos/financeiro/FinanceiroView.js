@@ -99,7 +99,7 @@ export class FinanceiroView {
 
         // CATEGORIA
         const tdCategoria = document.createElement('td');
-        tdCategoria.textContent = transacao.Categoria;
+        tdCategoria.textContent = transacao.Categoria.descricao;
 
         // CONTA
         const tdConta = document.createElement('td');

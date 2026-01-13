@@ -22,6 +22,19 @@ export function formatarParaISO(dataLocalString) {
   return `${ano}-${mes}-${dia}T${horas}:${minutos}:00.000Z`;
 }
 
+export function formatarHorasParaHMS(totalHoras) {
+  const totalSegundos = Math.floor(totalHoras * 3600);
+
+  const horas = Math.floor(totalSegundos / 3600);
+  const minutos = Math.floor((totalSegundos % 3600) / 60);
+  const segundos = totalSegundos % 60;
+
+  return [
+    horas.toString().padStart(2, "0"),
+    minutos.toString().padStart(2, "0"),
+    segundos.toString().padStart(2, "0"),
+  ].join(":");
+}
 
 export function converteDataUTC(dataString) {
     // const [ano, mes, dia] = dataString.split('-')

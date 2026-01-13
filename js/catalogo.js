@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   catalogoView.renderContagemGeral("contagem-completado", "Completado", resumo);
   catalogoView.renderContagemGeral("contagem-assistindo", "Assistindo", resumo);
   catalogoView.renderContagemGeral("contagem-dropped", "Dropped", resumo);
-  catalogoView.renderContagemGeral("contagem-emespera", "Em-Espera", resumo);
+  catalogoView.renderContagemGeral("contagem-emespera", "Em Espera", resumo);
   catalogoView.renderContagemGeral("contagem-planejado", "Planejado", resumo);
   //catalogoView.renderContagemGeral('contagem-anime','Anime', resumo)
   catalogoView.renderContagemGeral("contagem-desenho", "Desenho", resumo);
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   //Card por Status
   catalogoView.renderCardStatus("Assistindo", "lista-assistindo");
   catalogoView.renderCardStatus("Planejado", "lista-planejado");
-  catalogoView.renderCardStatus("Em-Espera", "lista-espera");
+  catalogoView.renderCardStatus("Em Espera", "lista-espera");
   catalogoView.renderCardStatus("Dropped", "lista-dropped");
 
   //Card por Tipo

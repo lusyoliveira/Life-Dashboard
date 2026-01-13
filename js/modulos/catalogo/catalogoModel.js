@@ -32,11 +32,23 @@ export default class Catalogo {
     }
 
     get Dias() {
-        if (!this.Inicio || !this.Fim || isNaN(this.Inicio) || isNaN(this.Fim)) {
-            return 0
+        if (!this.Inicio || isNaN(this.Inicio)) {
+            return 0;
         }
-        const diffMs = this.Fim - this.Inicio
-        return Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+        // Se não tem data fim, usa a data atual
+        const dataFim = this.Fim && !isNaN(this.Fim)
+            ? this.Fim
+            : new Date();
+
+        const diffMs = dataFim - this.Inicio;
+
+        // Garante que nunca retorne negativo
+        if (diffMs < 0) {
+            return 0;
+        }
+
+        return Math.floor(diffMs / (1000 * 60 * 60 * 24));
     }
 
     get Progresso () {

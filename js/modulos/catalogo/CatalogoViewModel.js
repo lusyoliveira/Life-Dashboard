@@ -1,5 +1,6 @@
 import api from "../../servicos/metodoApi.js";
 import Catalogo from "./catalogoModel.js";
+import { formatarHorasParaHMS } from "../../Utils/metodoData.js";
 
 export class CatalogoViewModel {
   constructor(endpoint = "catalogo") {
@@ -87,16 +88,16 @@ export class CatalogoViewModel {
   };
 
    filtrarPorStatus(status) {
-    return this.catalogo.filter((t) => t.Status === status);
+    return this.catalogo.filter((t) => t.Status.descricao === status);
   }
 
   filtrarPorTipo(tipo) {
-    return this.catalogo.filter((t) => t.Tipo === tipo);
+    return this.catalogo.filter((t) => t.Tipo.descricao === tipo);
   }
 
   topPorScore(tipo, qtd = 4) {
     return [...this.catalogo]
-      .filter((t) => t.Tipo === tipo)
+      .filter((t) => t.Tipo.descricao === tipo)
       .sort((a, b) => b.Score - a.Score)
       .slice(0, qtd);
   }
@@ -107,7 +108,7 @@ export class CatalogoViewModel {
 
   recentesPorStatus(status, qtd = 4) {
     return this.catalogo
-      .filter((t) => t.Status === status)
+      .filter((t) => t.Status.descricao === status)
       .sort((a, b) => {
       const ta = a?.Adicao instanceof Date && !isNaN(a.Adicao) ? a.Adicao.getTime() : 0;
       const tb = b?.Adicao instanceof Date && !isNaN(b.Adicao) ? b.Adicao.getTime() : 0;
@@ -118,7 +119,7 @@ export class CatalogoViewModel {
   
   assistindo(status, qtd = 4) {
     return this.catalogo
-      .filter(titulo => status.includes(titulo.Status))
+      .filter(titulo => status.includes(titulo.Status.descricao))
       .slice(0, qtd);
   }
 
@@ -140,11 +141,11 @@ export class CatalogoViewModel {
       dias: lista.reduce((acc, t) => acc + (t.Dias || 0), 0),
       totalEpisodios: lista.reduce((acc, t) => acc + Number(t.Episodios || 0), 0),
       reassistidos: lista.reduce((acc, t) => acc + (t.Vezes || 0), 0),
-      assistindo: lista.filter((t) => t.Status === "Assistindo").length,
-      completado: lista.filter((t) => t.Status === "Completado").length,
-      dropped: lista.filter((t) => t.Status === "Dropped").length,
-      planejado: lista.filter((t) => t.Status === "Planejado").length,
-      emEspera: lista.filter((t) => t.Status === "Em-Espera").length,
+      assistindo: lista.filter((t) => t.Status.descricao === "Assistindo").length,
+      completado: lista.filter((t) => t.Status.descricao === "Completado").length,
+      dropped: lista.filter((t) => t.Status.descricao === "Dropped").length,
+      planejado: lista.filter((t) => t.Status.descricao === "Planejado").length,
+      emEspera: lista.filter((t) => t.Status.descricao === "Em Espera").length,
       mediaPontuacao: lista.length
         ? (
             lista.reduce((acc, t) => acc + (t.Score || 0), 0) / lista.length
@@ -155,7 +156,8 @@ export class CatalogoViewModel {
 
   resumoGeral() {
     const totalDias = this.catalogo.reduce((acc, t) => acc + Number(t.Dias || 0), 0);
-    const totalHoras = totalDias * 24;
+    const Horas = totalDias * 24;
+    const totalHoras = formatarHorasParaHMS(Horas);
     const totalEpisodios = this.catalogo.reduce((acc, t) => acc + Number(t.Episodios || 0), 0);
     const totalAssistidos = this.catalogo.reduce((acc, t) => acc + Number(t.Assistidos || 0), 0);
     const somaPontuacoes = this.catalogo.reduce((acc, t) => acc + Number(t.Score || 0), 0);
@@ -167,17 +169,17 @@ export class CatalogoViewModel {
       totalEpisodios,
       totalAssistidos,
       reassistidos: this.catalogo.reduce((acc, t) => acc + Number(t.Vezes || 0), 0),
-      assistindo: this.catalogo.filter((t) => t.Status === "Assistindo").length,
-      completado: this.catalogo.filter((t) => t.Status === "Completado").length,
-      dropped: this.catalogo.filter((t) => t.Status === "Dropped").length,
-      planejado: this.catalogo.filter((t) => t.Status === "Planejado").length,
-      emEspera: this.catalogo.filter((t) => t.Status === "Em-Espera").length,
-      serie: this.catalogo.filter((t) => t.Tipo === "Serie").length,
-      filme: this.catalogo.filter((t) => t.Tipo === "Filme").length,
-      show: this.catalogo.filter((t) => t.Tipo === "Show").length,
-      desenho: this.catalogo.filter((t) => t.Tipo === "Desenho").length,
-      documentario: this.catalogo.filter((t) => t.Tipo === "Documentário").length,
-      reality: this.catalogo.filter((t) => t.Tipo === "Reality").length,
+      assistindo: this.catalogo.filter((t) => t.Status.descricao === "Assistindo").length,
+      completado: this.catalogo.filter((t) => t.Status.descricao === "Completado").length,
+      dropped: this.catalogo.filter((t) => t.Status.descricao === "Dropped").length,
+      planejado: this.catalogo.filter((t) => t.Status.descricao === "Planejado").length,
+      emEspera: this.catalogo.filter((t) => t.Status.descricao === "Em Espera").length,
+      serie: this.catalogo.filter((t) => t.Tipo.descricao === "Serie").length,
+      filme: this.catalogo.filter((t) => t.Tipo.descricao === "Filme").length,
+      show: this.catalogo.filter((t) => t.Tipo.descricao === "Show").length,
+      desenho: this.catalogo.filter((t) => t.Tipo.descricao === "Desenho").length,
+      documentario: this.catalogo.filter((t) => t.Tipo.descricao === "Documentário").length,
+      reality: this.catalogo.filter((t) => t.Tipo.descricao === "Reality").length,
       mediaPontuacao: this.catalogo.length
         ? Number((somaPontuacoes / this.catalogo.length).toFixed(1))
         : 0,
@@ -192,6 +194,7 @@ export class CatalogoViewModel {
       "Reality",
       "Desenho",
       "Show",
+      "Anime",
     ];
     const valores = tipos.map((tipo) => this.filtrarPorTipo(tipo).length);
     return { labels: tipos, data: valores };
@@ -200,11 +203,10 @@ export class CatalogoViewModel {
   dadosGraficoStatus() {
     const status = [
       "Assistindo",
-      "Reassistindo",
       "Completado",
       "Dropped",
       "Planejado",
-      "Em-Espera",
+      "Em Espera",
     ];
     const valores = status.map((s) => this.filtrarPorStatus(s).length);
     return { labels: status, data: valores };
@@ -213,59 +215,24 @@ export class CatalogoViewModel {
   dadosGraficoPlataforma() {
     const plataformas = [
       "Netflix",
-      "Amazom Prime",
+      "Amazon Prime",
       "Crunchroll",
       "YouTube",
-      "MAX",
+      "HBO Max",
       "Download",
       "TV",
+      "Pluto TV",
+      "Download",
+      "Cinema",
+      "Paramount",
     ];
     const valores = plataformas.map(
-      (p) => this.catalogo.filter((t) => t.Onde === p).length
+      (p) => this.catalogo.filter((t) => t.Onde.descricao === p).length
     );
     return { labels: plataformas, data: valores };
   };
 
-  async obterCatalogoTipos() {
   
-    const tipoData = await api.buscarDados(`${this.endpoint}/tipos`);
-    
-    this.tipos = tipoData.map((tipo) => {
-        const tipos = new CatalogoTipo(
-          tipo._id,
-          tipo.descricao
-        );               
-      return tipos;
-    })     
-    return this.tipos;
-  };
-
-  async obterCatalogoStatus() {
-  
-    const statusData = await api.buscarDados(`${this.endpoint}/status`);
-    
-    this.status = statusData.map((statu) => {
-        const status = new CatalogoStatus(
-          statu._id,
-          statu.descricao
-        );               
-      return status;
-    })     
-    return this.status;
-  };
-
-  async obterCatalogoPlataforma() {  
-    const plataformaData = await api.buscarDados(`${this.endpoint}/plataformas`);
-    
-    this.plataformas = plataformaData.map((plataforma) => {
-        const plataformas = new CatalogoPlataforma(
-          plataforma._id,
-          plataforma.descricao
-        );               
-      return plataformas;
-    })     
-    return this.plataformas;
-  };
 }
 
 

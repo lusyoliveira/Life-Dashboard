@@ -52,15 +52,15 @@ export class CatalogoView {
 
             const tdTipo = document.createElement('td');
             tdTipo.classList.add('text-center');
-            tdTipo.textContent = titulo.Tipo;
+            tdTipo.textContent = titulo.Tipo.descricao;
 
             const tdStatus = document.createElement('td');
             tdStatus.classList.add('text-center');
-            tdStatus.textContent = titulo.Status;
+            tdStatus.textContent = titulo.Status.descricao;
 
             const tdOnde = document.createElement('td');
             tdOnde.classList.add('text-center');
-            tdOnde.textContent = titulo.Onde;
+            tdOnde.textContent = titulo.Onde.descricao;
 
             const tdInicio = document.createElement('td');
             const dataIniUTC = new Date(titulo.Inicio);                
@@ -247,8 +247,12 @@ export class CatalogoView {
                                     "#FF6384", 
                                     "#FFCE56", 
                                     "#9966FF", 
-                                    "#ff9f4033",
-                                    "#c9cbcf33"  
+                                    "#ff9033",
+                                    "#c9cbcf",
+                                    "#c34a33",
+                                    "#ff6333",
+                                    "#eb1b1b",
+                                    "#6f33af"
                                 ],
                                 borderRadius: 8
                             }]
@@ -298,14 +302,14 @@ export class CatalogoView {
                     divProgresso.classList.add('progress');
                     divProgresso.setAttribute('role', 'progressbar');
                     divProgresso.setAttribute('aria-label', 'Example with label');
-                    divProgresso.setAttribute('aria-valuenow', titulo.Status === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
+                    divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
                     divProgresso.setAttribute('aria-valuemin', '0');
                     divProgresso.setAttribute('aria-valuemax', '100');
 
                     const divBarraProgresso = document.createElement('div');
                     divBarraProgresso.classList.add('progress-bar');
-                    divBarraProgresso.style.width = `${titulo.Status === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-                    divBarraProgresso.textContent = `${titulo.Status === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+                    divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+                    divBarraProgresso.textContent = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
                     divProgresso.appendChild(divBarraProgresso);
                     liProgresso.appendChild(divProgresso);
 
@@ -362,14 +366,14 @@ export class CatalogoView {
                     divProgresso.classList.add('progress');
                     divProgresso.setAttribute('role', 'progressbar');
                     divProgresso.setAttribute('aria-label', 'Progresso');
-                    divProgresso.setAttribute('aria-valuenow', titulo.Status === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
+                    divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
                     divProgresso.setAttribute('aria-valuemin', '0');
                     divProgresso.setAttribute('aria-valuemax', '100');
         
                     const divBarraProgresso = document.createElement('div');
                     divBarraProgresso.classList.add('progress-bar');
-                    divBarraProgresso.style.width = `${titulo.Status === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-                    divBarraProgresso.textContent =  `${titulo.Status === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+                    divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+                    divBarraProgresso.textContent =  `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
         
                     const smallDataAdicao = document.createElement('small');
                     smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
@@ -554,7 +558,7 @@ export class CatalogoView {
             h6Card.classList.add('card-subtitle', 'mb-2', 'text-body-secondary');
             h6Card.textContent = contagem;
             elementoDestino.appendChild(h6Card);
-        } else if (tipoContagem === 'Em-Espera') {
+        } else if (tipoContagem === 'Em Espera') {
             contagem = catalogo.emEspera
 
             const h6Card = document.createElement('h6');
@@ -662,24 +666,24 @@ export class CatalogoView {
 
                     const spanBadgeTipo = document.createElement('span');
                     spanBadgeTipo.classList.add('badge', 'text-bg-info');
-                    spanBadgeTipo.textContent = titulo.Tipo;
+                    spanBadgeTipo.textContent = titulo.Tipo.descricao;
 
                     const spanBadgeStatus = document.createElement('span');
                     spanBadgeStatus.classList.add('badge', 'text-bg-primary');
-                    spanBadgeStatus.textContent = titulo.Status;
+                    spanBadgeStatus.textContent = titulo.Status.descricao;
 
                     const divProgresso = document.createElement('div');
                     divProgresso.classList.add('progress', 'mt-2');
                     divProgresso.setAttribute('role', 'progressbar');
                     divProgresso.setAttribute('aria-label', 'Progresso Assistindo');
-                    divProgresso.setAttribute('aria-valuenow', titulo.Status === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
+                    divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
                     divProgresso.setAttribute('aria-valuemin', '0');
                     divProgresso.setAttribute('aria-valuemax', '100');
 
                     const divBarraProgresso = document.createElement('div');
                     divBarraProgresso.classList.add('progress-bar', 'bg-success');
-                    divBarraProgresso.style.width = `${titulo.Status === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-                    divBarraProgresso.textContent = `${titulo.Status === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+                    divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+                    divBarraProgresso.textContent = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
 
                     divProgresso.appendChild(divBarraProgresso);
                     divCardBody.appendChild(h5Titulo);
