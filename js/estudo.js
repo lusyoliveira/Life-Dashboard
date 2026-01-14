@@ -1,17 +1,24 @@
 import { EstudoViewModel } from "./modulos/estudo/EstudoViewModel.js";
 import { EstudoView } from "./modulos/estudo/EstudoView.js"
 import Curso from "./modulos/estudo/estudoModel.js";
-
+import { AreaViewModel } from "./modulos/areas/AreasViewModel.js";
+import { AreasView } from "./modulos/areas/AreasView.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const vm = new EstudoViewModel();
   const estudoView = new EstudoView(vm);
 
+  const areasVM = new AreaViewModel();
+  const areasView = new AreasView(areasVM);
+
   const formCurso = document.getElementById('curso-form');
   const btnCancelar = document.getElementById('cancelar-curso');
+  const botaoArea = document.getElementById('adiciona-area'); 
+
+   areasView.renderCardAreas('lista-areas');
 
   //CRUD
-  await estudoView.listarCursos("linhas");
+  await estudoView.listarCursos('linhas');
   await estudoView.listarArea('area-adicionar');
   await estudoView.listarStatus('status-adicionar');
   await estudoView.listarPlataforma('escola-adicionar');
@@ -57,6 +64,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnCancelar.addEventListener('click', () => {
       formCurso.reset();
   });
+
+   //Adiciona area
+        botaoArea.addEventListener("click", async (evento) => { 
+            evento.preventDefault();   
+
+            const descricaoarea = document.getElementById('descricao-areas').value
+            const inputIdarea= document.getElementById('id-areas').value;
+
+            if (descricaoarea === '') {
+                alert('É necessário inserir uma tarefa!');
+                return
+            }
+            const area = {
+                id: inputIdarea,
+                Descricao: descricaoarea
+            }           
+            await areasVM.salvarArea(area);
+            areasView.renderCardAreas('lista-areas');
+            inputIdarea.value = '';
+        });
 
 });
 

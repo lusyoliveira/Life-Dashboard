@@ -22,25 +22,24 @@ export class AgendaViewModel {
         return compromissos;
     })     
     return this.agenda;
-  }
+  };
 
-    async obterAgendaPorID(agendaID) {
-        const compromisso = await api.buscarDadosPorId(agendaID,this.endpoint);
-      if (!compromisso) return null;
+  async obterAgendaPorID(agendaID) {
+      const compromisso = await api.buscarDadosPorId(agendaID,this.endpoint);
+    if (!compromisso) return null;
 
-      const agenda = new Agenda(
-          compromisso._id,
-          compromisso.Titulo,
-          compromisso.Status,
-          compromisso.Categoria,
-          compromisso.Tipo,
-          compromisso.Data,
-        );       
-        return agenda
-    }
+    const agenda = new Agenda(
+        compromisso._id,
+        compromisso.Titulo,
+        compromisso.Status,
+        compromisso.Categoria,
+        compromisso.Tipo,
+        compromisso.Data,
+      );       
+      return agenda
+  };
 
   async salvarAgenda(compromisso) {
-    debugger
     const payload = {
       ...compromisso
     };

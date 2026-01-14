@@ -14,11 +14,40 @@ export class AreaViewModel {
         .map((area) => {
         const areas = new Area(
           area._id,
-          area.descricao,
-          area.Tipo
+          area.descricao
         );               
       return areas;
     })     
     return this.areas;
   };
+
+  async obterAreaPorID(areaID) {
+        const area = await api.buscarDadosPorId(areaID,this.endpoint);
+      if (!area) return null;
+
+      const areaModel = new Area(
+          area._id,
+          area.descricao
+        );       
+        return areaModel
+    };
+
+  async salvarArea(area) {
+    const payload = {
+      ...area
+    };
+
+    if (area.id) {
+      
+      await api.atualizarDados(payload, this.endpoint);
+    } else {
+      await api.salvarDados(payload, this.endpoint);
+    }
+    return this.obterArea();
+  }
+
+  async excluirArea(id) {
+    await api.excluirDados(id, this.endpoint);
+    return this.obterArea();
+  }
 }

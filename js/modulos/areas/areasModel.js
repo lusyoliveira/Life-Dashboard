@@ -1,11 +1,9 @@
 export default class Area {
     id
     Descricao
-    Tipo
 
-    constructor (_id, descricao, tipo) {
+    constructor (_id, descricao) {
         this.id = _id
         this.Descricao = descricao  
-        this.Tipo = tipo
     }
 }
