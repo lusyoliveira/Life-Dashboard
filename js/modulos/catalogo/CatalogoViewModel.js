@@ -36,7 +36,7 @@ export class CatalogoViewModel {
 
   async obterTituloPorID(idTitulo) {
     const titulo = await api.buscarDadosPorId(idTitulo, this.endpoint);
-    if (!titulo) return null;
+    if (!titulo) return null;  
 
     const catalogo = new Catalogo(
       titulo._id,
@@ -46,7 +46,7 @@ export class CatalogoViewModel {
       titulo.Status,
       titulo.Onde,
       titulo.Inicio,
-      titulo.Fim,
+      titulo.Fim ? new Date(Fim) : new Date(),
       titulo.Episodios,
       titulo.Assistidos,
       titulo.Temporadas,
@@ -59,7 +59,7 @@ export class CatalogoViewModel {
   }
 
   async salvarTitulo(titulo) {
-    const payload = {
+      const payload = {
       ...titulo,
       Dias: titulo.Dias,
       Progresso: titulo.Progresso
@@ -68,7 +68,7 @@ export class CatalogoViewModel {
         payload.Adicao = titulo.Adicao instanceof Date 
       ? titulo.Adicao 
       : new Date(titulo.Adicao); 
-
+   
     if (titulo.id) {
       payload.Adicao = new Date(titulo.Adicao);
       await api.atualizarDados(payload, this.endpoint);

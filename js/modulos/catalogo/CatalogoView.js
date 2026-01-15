@@ -19,9 +19,9 @@ export class CatalogoView {
             document.getElementById('capa-adicionar').value = titulo.Capa;
             document.getElementById('data-inicio').value = new Date(titulo.Inicio).toISOString().slice(0, 16);
             document.getElementById('data-fim').value = titulo.Fim === '' ? '' : new Date(titulo.Fim).toISOString().slice(0, 16);
-            document.getElementById('tipo-adicionar').value = titulo.Tipo;
-            document.getElementById('status-adicionar').value = titulo.Status;
-            document.getElementById('plataforma-adicionar').value = titulo.Onde;
+            document.getElementById('tipo-adicionar').value = titulo.Tipo._id;
+            document.getElementById('status-adicionar').value = titulo.Status._id;
+            document.getElementById('plataforma-adicionar').value = titulo.Onde._id;
             document.getElementById('episodios-adicionar').value = titulo.Episodios;
             document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
             document.getElementById('temporada-adicionar').value = titulo.Temporadas;
@@ -43,7 +43,7 @@ export class CatalogoView {
         if ($.fn.DataTable.isDataTable('.datatable')) {
         $('.datatable').DataTable().clear().destroy(); 
         }
-
+        
         catalogo.forEach(titulo => {
             const tr = document.createElement('tr');
     
@@ -67,7 +67,7 @@ export class CatalogoView {
             const dataIniLocal = new Date(dataIniUTC.getTime() + dataIniUTC.getTimezoneOffset() * 60000);
             tdInicio.textContent = dataIniLocal.toLocaleDateString("pt-BR");
 
-            const tdFim = document.createElement('td');
+            const tdFim = document.createElement('td');           
             const dataFimUTC = new Date(titulo.Fim);                
             const dataFimLocal = new Date(dataFimUTC.getTime() + dataFimUTC.getTimezoneOffset() * 60000);
             tdFim.textContent = dataFimLocal.toLocaleDateString("pt-BR");
@@ -112,6 +112,7 @@ export class CatalogoView {
             btnExcluir.onclick = async () => {
                 try {
                     await this.vm.excluirTitulo(titulo.id)
+                    await this.listarCatalogo(elementoId);
                 } catch(error) {
                     alert('Erro ao excluir agendamento!')
                 }

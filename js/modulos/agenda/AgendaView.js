@@ -11,14 +11,16 @@ export class AgendaView {
   //Formulário
   async editarAgenda(agendamentoId) {
     const agendamento = await this.vm.obterAgendaPorID(agendamentoId)
+    console.log(agendamento);
+    
 
     if (agendamento) {
         document.getElementById('id-adicionar').value = agendamentoId;
         document.getElementById('titulo-adicionar').value = agendamento.Titulo;
         document.getElementById('data-adicionar').value = new Date(agendamento.Data).toISOString().slice(0,16);
-        document.getElementById('categoria-adicionar').value = agendamento.Categoria;
-        document.getElementById('tipo-adicionar').value = agendamento.Tipo;
-        document.getElementById('status-adicionar').value = agendamento.Status;
+        document.getElementById('categoria-adicionar').value = agendamento.Categoria._id;
+        document.getElementById('tipo-adicionar').value = agendamento.Tipo._id;
+        document.getElementById('status-adicionar').value = agendamento.Status._id;
     } else {
         alert('Compromisso não encontrado!');
     }
@@ -82,6 +84,7 @@ export class AgendaView {
       btnExcluir.onclick = async () => {
         try {
           await this.vm.excluirAgenda(compromisso.id);
+          await this.listarAgenda(elementoId);
         } catch (error) {
           alert("Erro ao excluir agendamento!");
         }
