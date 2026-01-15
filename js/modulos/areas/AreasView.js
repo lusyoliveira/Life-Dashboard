@@ -5,9 +5,9 @@ export class AreasView {
     async editarArea(idArea) {
         const area = await this.vm.obterAreaPorID(idArea);
 
-        if (area._id) {
-            document.getElementById('id-area').value = idArea
-            document.getElementById('descricao-area').value = area.Descricao;
+        if (area.id) {
+            document.getElementById('input-id-areas').value = idArea
+            document.getElementById('descricao-areas').value = area.Descricao;
         } else {
             alert('Área não encontrada!');
         }
@@ -16,6 +16,8 @@ export class AreasView {
     async renderCardAreas(elementoId) {
     const areas = await this.vm.obterArea();
     const elementoDestino = document.getElementById(elementoId);
+    const botaoArea = document.getElementById('adiciona-areas'); 
+    const imagemBotao = botaoArea.querySelector('i');    
 
         if (elementoDestino) {
             elementoDestino.innerHTML = "";
@@ -23,6 +25,11 @@ export class AreasView {
             areas.forEach(area => {
                 const divTituloContainer = document.createElement('div');
                 divTituloContainer.classList.add('d-flex', 'justify-content-between');
+
+                const labelId = document.createElement('label');
+                labelId.setAttribute('hidden', 'true');
+                labelId.setAttribute('id', 'id-area')
+                labelId.textContent = area.id;
 
                 const li = document.createElement('li');
                 li.classList.add('d-flex', 'align-items-center');
@@ -37,8 +44,8 @@ export class AreasView {
                 btnEditar.setAttribute('id', 'botao-editar')
                 btnEditar.setAttribute('title', 'Editar área')
                 btnEditar.onclick = async ()  => {
-                    this.editarArea(area._id)
-                    
+                    this.editarArea(area.id)
+
                     imagemBotao.classList.remove('bi', 'bi-plus-lg');
                     imagemBotao.classList.add('bi', 'bi-floppy-fill');
                 }
@@ -53,7 +60,8 @@ export class AreasView {
                 btnExcluir.setAttribute('id', 'excluir-editar')
                 btnExcluir.setAttribute('title', 'Excluir área')
                 btnExcluir.onclick = async ()  => {                      
-                    await this.vm.excluirArea(area._id)
+                    await this.vm.excluirArea(area.id)
+                    await this.renderCardAreas(elementoId);
                 }
         
                 const iconeExcluir = document.createElement('i')
@@ -64,8 +72,9 @@ export class AreasView {
                 btnExcluir.appendChild(iconeExcluir);                
                 divBotoes.appendChild(btnEditar);
                 divBotoes.appendChild(btnExcluir);
+                divTituloContainer.appendChild(labelId);
                 divTituloContainer.appendChild(li);
-                divTituloContainer.appendChild(divBotoes);
+                divTituloContainer.appendChild(divBotoes);                
                 elementoDestino.appendChild(divTituloContainer);                
             });  
         }

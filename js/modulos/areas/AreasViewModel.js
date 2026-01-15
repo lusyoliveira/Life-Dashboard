@@ -36,9 +36,8 @@ export class AreaViewModel {
     const payload = {
       ...area
     };
-
-    if (area.id) {
-      
+    
+    if (area.id) {      
       await api.atualizarDados(payload, this.endpoint);
     } else {
       await api.salvarDados(payload, this.endpoint);

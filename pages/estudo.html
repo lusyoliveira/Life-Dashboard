@@ -27,7 +27,7 @@
                     <!-- Direita: Pesquisa e Avatar -->
                     <div class="d-flex align-items-center ms-auto">
                         <form class="d-flex me-3" id="pesquisar" role="search">
-                            <input class="form-control" type="search" placeholder="Pesquisar..." aria-label="Pesquisar">
+                            <input class="form-control" id="pesquisar" type="search" placeholder="Pesquisar..." aria-label="Pesquisar">
                         </form>
             
                         <div class="d-flex justify-content-between align-items-lg-center gap-3">
@@ -112,20 +112,9 @@
                                     <input type="text" class="form-control" id="descricao-escola" placeholder="Novo escola..." aria-label="Nova escola...">
                                     <button class="btn btn-outline-secondary" type="button" title="Adicionar escola" id="adiciona-escola"><i class="bi bi-plus-lg"></i></button>
                                 </div>
-                                <div class="list-group"> 
-                                    <label class="list-group-item d-flex gap-3"> 
-                                        <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked="" style="font-size: 1.375em;"> 
-                                        <span class="pt-1 form-checked-content"> 
-                                            escola
-                                        </span> 
-                                        <button class="btn" type="button" id="botao-editar" title="Editar">
-                                            <i class="bi bi-pencil-fill" id="editar"></i>
-                                        </button>                                 
-                                        <button class="btn" type="button" id="botao-excluir" title="Excluir">
-                                            <i class="bi bi-trash" id="excluir"></i>
-                                        </button>
-                                    </label>
-                                </div>
+                                <ul class="list-group list-group-flush gap-1" id="lista-escolas">
+                                    
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -155,7 +144,7 @@
                             </div>
                             <div class="card-body">
                                     <div class="input-group mb-3">
-                                    <input type="hidden" class="form-control" id="id-areas">
+                                    <input type="hidden" class="form-control" id="input-id-areas">
                                     <input type="text" class="form-control" id="descricao-areas" placeholder="Nova areas..." aria-label="Nova areas...">
                                     <button class="btn btn-outline-secondary" type="button" title="Adicionar areas" id="adiciona-areas"><i class="bi bi-plus-lg"></i></button>
                                 </div>

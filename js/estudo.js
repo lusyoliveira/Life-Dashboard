@@ -13,9 +13,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const formCurso = document.getElementById('curso-form');
   const btnCancelar = document.getElementById('cancelar-curso');
-  const botaoArea = document.getElementById('adiciona-area'); 
+  const botaoArea = document.getElementById('adiciona-areas'); 
 
-   areasView.renderCardAreas('lista-areas');
+    await areasView.renderCardAreas('lista-areas');
 
   //CRUD
   await estudoView.listarCursos('linhas');
@@ -66,24 +66,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
    //Adiciona area
-        botaoArea.addEventListener("click", async (evento) => { 
-            evento.preventDefault();   
+    botaoArea.addEventListener("click", async (evento) => { 
+        evento.preventDefault();   
 
-            const descricaoarea = document.getElementById('descricao-areas').value
-            const inputIdarea= document.getElementById('id-areas').value;
+        const descricaoarea = document.getElementById('descricao-areas').value
+        const inputIdarea = document.getElementById('input-id-areas').value;
 
-            if (descricaoarea === '') {
-                alert('É necessário inserir uma tarefa!');
-                return
-            }
-            const area = {
-                id: inputIdarea,
-                Descricao: descricaoarea
-            }           
-            await areasVM.salvarArea(area);
-            areasView.renderCardAreas('lista-areas');
-            inputIdarea.value = '';
-        });
+        if (descricaoarea === '') {
+            alert('É necessário inserir uma área!');
+            return
+        }
+        const area = {
+            id: inputIdarea ? inputIdarea : null,
+            descricao: descricaoarea
+        }          
+        await areasVM.salvarArea(area);
+        await areasView.renderCardAreas('lista-areas');
+
+        document.getElementById('descricao-areas').value = ''
+        document.getElementById('input-id-areas').value = ''
+    });
 
 });
 

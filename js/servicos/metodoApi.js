@@ -45,8 +45,9 @@ const api = {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(dados)
-            })
+            });
             return await response.json()
+            
         } catch(error)  {
             alert('Erro ao atualizar os dados na API!')
             throw error
