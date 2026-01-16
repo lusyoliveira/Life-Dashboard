@@ -23,4 +23,34 @@ export class StatusViewModel {
     })     
     return this.status;
   };
+
+  async obterStatusPorID(statusID) {
+        const status = await api.buscarDadosPorId(statusID,this.endpoint);
+      if (!status) return null;
+
+      const statusModel = new Status(
+          status._id,
+          status.descricao,
+          estado.Tipo
+        );       
+        return statusModel
+    };
+
+  async salvarStatus(status) {
+    const payload = {
+      ...status
+    };
+    
+    if (status.id) {      
+      await api.atualizarDados(payload, this.endpoint);
+    } else {
+      await api.salvarDados(payload, this.endpoint);
+    }
+    return this.obterStatus();
+  };
+
+  async excluirStatus(id) {
+    await api.excluirDados(id, this.endpoint);
+    return this.obterStatus();
+  };
 }

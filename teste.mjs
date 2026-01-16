@@ -23,3 +23,4 @@ async function obtercidade() {
 }
 const resultado = await obtercidade();
 console.log(resultado);
+//git rm --cached -r nome_da_pasta

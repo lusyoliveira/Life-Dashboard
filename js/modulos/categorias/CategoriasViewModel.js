@@ -23,4 +23,34 @@ export class CategoriaViewModel {
     })     
     return this.categorias;
   };
+
+  async obterCategoriaPorID(categoriaID) {
+        const categoria = await api.buscarDadosPorId(categoriaID,this.endpoint);
+      if (!categoria) return null;
+
+      const categoriaModel = new Categoria(
+          categoria._id,
+          categoria.descricao,
+          categoria.Tipo
+        );       
+        return categoriaModel
+    };
+
+  async salvarCategoria(categoria) {
+    const payload = {
+      ...categoria
+    };
+    
+    if (categoria.id) {      
+      await api.atualizarDados(payload, this.endpoint);
+    } else {
+      await api.salvarDados(payload, this.endpoint);
+    }
+    return this.obterCategoria();
+  }
+
+  async excluirCategoria(id) {
+    await api.excluirDados(id, this.endpoint);
+    return this.obterCategoria();
+  }
 }

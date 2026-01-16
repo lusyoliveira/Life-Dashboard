@@ -1,39 +1,39 @@
-export class AreasView {
+export class CategoriasView {
   constructor(vm) {
     this.vm = vm;
   }
-    async editarArea(idArea) {
-        const area = await this.vm.obterAreaPorID(idArea);
+    async editarCategoria(idCategoria) {
+        const categoria = await this.vm.obterCategoriaPorID(idCategoria);
 
-        if (area.id) {
-            document.getElementById('input-id-areas').value = idArea
-            document.getElementById('descricao-areas').value = area.Descricao;
+        if (categoria.id) {
+            document.getElementById('input-id-categoria').value = idCategoria
+            document.getElementById('descricao-categoria').value = categoria.Descricao;
         } else {
-            alert('Área não encontrada!');
+            alert('Categoria não encontrada!');
         }
     };
 
-    async renderCardAreas(elementoId) {
-    const areas = await this.vm.obterArea();
+    async renderCardCategorias(elementoId,tipo) {
+    const categorias = await this.vm.obterCategoria(tipo);
     const elementoDestino = document.getElementById(elementoId);
-    const botaoArea = document.getElementById('adiciona-areas'); 
-    const imagemBotao = botaoArea.querySelector('i');    
+    const botaoCategoria = document.getElementById('adiciona-categoria'); 
+    const imagemBotao = botaoCategoria.querySelector('i');    
 
         if (elementoDestino) {
             elementoDestino.innerHTML = "";
             
-            areas.forEach(area => {
+            categorias.forEach(categoria => {
                 const divTituloContainer = document.createElement('div');
                 divTituloContainer.classList.add('d-flex', 'justify-content-between');
 
                 const labelId = document.createElement('label');
                 labelId.setAttribute('hidden', 'true');
-                labelId.setAttribute('id', 'id-area')
-                labelId.textContent = area.id;
+                labelId.setAttribute('id', 'id-categoria')
+                labelId.textContent = categoria.id;
 
                 const li = document.createElement('li');
                 li.classList.add('d-flex', 'align-items-center');
-                li.textContent = area.Descricao;
+                li.textContent = categoria.Descricao;
                 
                 const divBotoes = document.createElement('div');
                 divBotoes.classList.add('d-flex', 'gap-2', 'align-items-center');
@@ -41,10 +41,10 @@ export class AreasView {
                 const btnEditar = document.createElement('button')
                 btnEditar.classList.add('btn')
                 btnEditar.setAttribute('type', 'button')
-                btnEditar.setAttribute('id', 'botao-editar-area')
-                btnEditar.setAttribute('title', 'Editar área')
+                btnEditar.setAttribute('id', 'botao-editar-categoria')
+                btnEditar.setAttribute('title', 'Editar categoria')
                 btnEditar.onclick = async ()  => {
-                    this.editarArea(area.id)
+                    this.editarCategoria(categoria.id)
 
                     imagemBotao.classList.remove('bi', 'bi-plus-lg');
                     imagemBotao.classList.add('bi', 'bi-floppy-fill');
@@ -52,21 +52,21 @@ export class AreasView {
         
                 const iconeEditar = document.createElement('i')
                 iconeEditar.classList.add('bi', 'bi-pencil-fill')
-                iconeEditar.setAttribute ('id', 'editar-area')
+                iconeEditar.setAttribute ('id', 'editar-categoria')
 
                 const btnExcluir = document.createElement('button')
                 btnExcluir.classList.add('btn')
                 btnExcluir.setAttribute('type', 'button')
-                btnExcluir.setAttribute('id', 'botao-excluir-area')
-                btnExcluir.setAttribute('title', 'Excluir área')
+                btnExcluir.setAttribute('id', 'botao-excluir-categoria')
+                btnExcluir.setAttribute('title', 'Excluir categoria')
                 btnExcluir.onclick = async ()  => {                      
-                    await this.vm.excluirArea(area.id)
-                    await this.renderCardAreas(elementoId);
+                    await this.vm.excluirCategoria(categoria.id)
+                    await this.renderCardCategorias(elementoId);
                 }
         
                 const iconeExcluir = document.createElement('i')
                 iconeExcluir.classList.add('bi', 'bi-trash')
-                iconeExcluir.setAttribute ('id', 'excluir-area')
+                iconeExcluir.setAttribute ('id', 'excluir-categoria')
 
                 btnEditar.appendChild(iconeEditar);
                 btnExcluir.appendChild(iconeExcluir);                

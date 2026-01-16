@@ -22,4 +22,34 @@ export class PlataformaViewModel {
     })     
     return this.plataformas;
   };
+
+  async obterPlataformaPorID(plataformaID) {
+    const plataforma = await api.buscarDadosPorId(plataformaID,this.endpoint);
+    if (!plataforma) return null;
+
+    const plataformaModel = new Plataforma(
+        plataforma._id,
+        plataforma.descricao,
+        plataforma.Tipo
+      );       
+      return plataformaModel
+  };
+
+  async salvarPlataforma(plataforma) {
+    const payload = {
+      ...plataforma
+    };
+    
+    if (plataforma.id) {      
+      await api.atualizarDados(payload, this.endpoint);
+    } else {
+      await api.salvarDados(payload, this.endpoint);
+    }
+    return this.obterPlataforma();
+  }
+
+  async excluirPlataforma(id) {
+    await api.excluirDados(id, this.endpoint);
+    return this.obterPlataforma();
+  }
 }

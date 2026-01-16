@@ -1,5 +1,11 @@
 import { CatalogoViewModel } from "./modulos/catalogo/CatalogoViewModel.js";
 import { CatalogoView } from "./modulos/catalogo/CatalogoView.js";
+import { PlataformaViewModel } from "./modulos/plataformas/PlataformasViewModel.js";
+import { PlataformasView } from "./modulos/plataformas/PlataformasView.js";
+import { StatusViewModel } from "./modulos/status/StatusViewModel.js";
+import { StatusView } from "./modulos/status/StatusView.js";
+import { TipoViewModel } from "./modulos/tipos/TipoViewModel.js";
+import { TiposView } from "./modulos/tipos/TiposView.js";
 import { formatarParaISO } from "./Utils/metodoData.js";
 import Catalogo from "./modulos/catalogo/catalogoModel.js";
 
@@ -7,9 +13,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   const vm = new CatalogoViewModel();
   const catalogoView = new CatalogoView(vm);
   
+  const plataformaVM = new PlataformaViewModel();
+  const plataformaView = new PlataformasView(plataformaVM);
+
+    const statusVM = new StatusViewModel();
+    const statusView = new StatusView(statusVM);
+
+    const tipoVM = new TipoViewModel();
+    const tipoView = new TiposView(tipoVM);
+
   const formCatalogo = document.getElementById("catalogo-form");
   const btnCancelar = document.getElementById("cancelar-catalogo");
+  const botaoPlataforma = document.getElementById('adiciona-plataforma'); 
+  const botaoStatus = document.getElementById('adiciona-status'); 
+  const botaoTipo = document.getElementById('adiciona-tipo'); 
 
+  await plataformaView.renderCardPlataformas('lista-plataforma', 'Catalogo');
+  await statusView.renderCardStatus('lista-status', 'Catalogo');
+  await tipoView.renderCardTipos('lista-tipo', 'Catalogo');
+  
   //CRUD
   await catalogoView.listarCatalogo("linhas");
   await catalogoView.listarTipos('tipo-adicionar');
@@ -113,4 +135,73 @@ document.addEventListener("DOMContentLoaded", async () => {
   catalogoView.renderCardGeral("lista-geral");
   catalogoView.renderCardTipo("Filme", "lista-filmes");
   catalogoView.renderCardTipo("Serie", "lista-series");
+
+  //Adiciona plataforma
+  botaoPlataforma.addEventListener("click", async (evento) => { 
+      evento.preventDefault();   
+
+      const descricaoplataforma = document.getElementById('descricao-plataforma').value
+      const inputIdplataforma = document.getElementById('input-id-plataforma').value;
+
+      if (descricaoplataforma === '') {
+          alert('É necessário inserir uma plataforma!');
+          return
+      }
+      const plataforma = {
+          id: inputIdplataforma ? inputIdplataforma : null,
+          descricao: descricaoplataforma,
+          Tipo: 'Catalogo'
+      }          
+      await plataformaView.salvarPlataforma(plataforma);
+      await plataformaView.renderCardPlataformas('lista-plataforma', 'Catalogo');
+
+      document.getElementById('descricao-plataforma').value = ''
+      document.getElementById('input-id-plataforma').value = ''
+  });
+
+  //Adiciona status
+  botaoStatus.addEventListener("click", async (evento) => { 
+      evento.preventDefault();   
+
+      const descricaostatus = document.getElementById('descricao-status').value
+      const inputIdstatus = document.getElementById('input-id-status').value;
+
+      if (descricaostatus === '') {
+          alert('É necessário inserir uma status!');
+          return
+      }
+      const status = {
+          id: inputIdstatus ? inputIdstatus : null,
+          descricao: descricaostatus,
+          Tipo: 'Catalogo'
+      }          
+      await statusView.salvarStatus(status);
+      await statusView.renderCardStatus('lista-status', 'Catalogo');
+
+      document.getElementById('descricao-status').value = ''
+      document.getElementById('input-id-status').value = ''
+  });
+
+  //Adiciona tipo   
+  botaoTipo.addEventListener("click", async (evento) => { 
+      evento.preventDefault();   
+
+      const descricaotipo = document.getElementById('descricao-tipo').value
+      const inputIdtipo = document.getElementById('input-id-tipo').value;
+
+      if (descricaotipo === '') {
+          alert('É necessário inserir uma tipo!');
+          return
+      }
+      const tipo = {
+          id: inputIdtipo ? inputIdtipo : null,
+          descricao: descricaotipo,
+          Tipo: 'Catalogo'
+      }          
+      await tipoView.salvarTipo(tipo);
+      await tipoView.renderCardTipos('lista-tipo', 'Catalogo');
+      
+      document.getElementById('descricao-tipo').value = ''
+      document.getElementById('input-id-tipo').value = ''
+  });
 });

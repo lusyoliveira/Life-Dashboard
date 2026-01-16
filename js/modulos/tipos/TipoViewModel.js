@@ -23,4 +23,34 @@ export class TipoViewModel {
     })     
     return this.tipos;
   };
+
+  async obterTipoPorID(tipoID) {
+    const tipo = await api.buscarDadosPorId(tipoID,this.endpoint);
+    if (!tipo) return null;
+
+    const tipoModel = new Tipo(
+        tipo._id,
+        tipo.descricao,
+        tipo.Tipo
+      );       
+      return tipoModel
+  };
+
+  async salvarTipo(tipo) {
+    const payload = {
+      ...tipo
+    };
+    
+    if (tipo.id) {      
+      await api.atualizarDados(payload, this.endpoint);
+    } else {
+      await api.salvarDados(payload, this.endpoint);
+    }
+    return this.obterTipos();
+  }
+
+  async excluirTipo(id) {
+    await api.excluirDados(id, this.endpoint);
+    return this.obterTipos();
+  }
 }
