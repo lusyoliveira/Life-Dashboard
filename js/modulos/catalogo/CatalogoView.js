@@ -272,69 +272,76 @@ export class CatalogoView {
         this.renderGrafico("graficoStatus", this.vm.dadosGraficoStatus(), "Títulos por Status");
         this.renderGrafico("graficoPlataforma", this.vm.dadosGraficoPlataforma(), "Títulos por Plataforma");
     }
-
-    // RECENTES
-    renderRecentes(elementoId) {
+   
+ // RECENTES
+    renderRecentes(elementoId)  {
         const recentes = this.vm.recentes(3);       
         const elementoDestino = document.getElementById(elementoId);
 
         if (!elementoDestino) return;
-            elementoDestino.innerHTML = "";
-                recentes.forEach(titulo => {
-                const divCardContainer = document.createElement('div');
-                    divCardContainer.classList.add('card', 'card-cover', 'h-100', 'overflow-hidden', 'text-bg-dark', 'rounded-4', 'shadow-lg', 'm-1');
-                    divCardContainer.style.backgroundImage = `url(${titulo.Capa})`;
-                    divCardContainer.style.backgroundSize = 'cover';
-                    divCardContainer.style.backgroundPosition = 'center';
+        elementoDestino.innerHTML = "";
+        recentes.forEach(titulo => {
+            const divCard = document.createElement('div');
+            divCard.classList.add('card', 'p-1', 'm-2');
 
-                    const divCardBody = document.createElement('div');
-                    divCardBody.classList.add('d-flex', 'flex-column', 'h-100', 'p-5', 'pb-3', 'text-white', 'text-shadow-1');
+            const imgCapa = document.createElement('img');
+            imgCapa.src = titulo.Capa;
+            imgCapa.classList.add('card-img-top');
+            imgCapa.width = 320;
+            imgCapa.height = 450;
 
-                    const h4Titulo = document.createElement('h4');
-                    h4Titulo.classList.add('pt-5', 'mt-5', 'mb-2', 'display-7', 'lh-1', 'fw-bold');
-                    h4Titulo.textContent = titulo.Titulo;
+            const divCardBody = document.createElement('div');
+            divCardBody.classList.add('card-body');
 
-                    const ulInfo = document.createElement('ul');
-                    ulInfo.classList.add('d-flex', 'justify-content-between', 'align-items-lg-center', 'gap-3', 'list-unstyled', 'mt-auto');
-                    const liProgresso = document.createElement('li');
-                    liProgresso.classList.add('w-75');
+            const h5Titulo = document.createElement('h5');
+            h5Titulo.classList.add('card-title');
+            h5Titulo.textContent = titulo.Titulo;
 
-                    const divProgresso = document.createElement('div');
-                    divProgresso.classList.add('progress');
-                    divProgresso.setAttribute('role', 'progressbar');
-                    divProgresso.setAttribute('aria-label', 'Example with label');
-                    divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
-                    divProgresso.setAttribute('aria-valuemin', '0');
-                    divProgresso.setAttribute('aria-valuemax', '100');
+            const ulInfo = document.createElement('ul');
+            ulInfo.classList.add('d-flex', 'justify-content-between', 'align-items-lg-center', 'gap-3', 'list-unstyled', 'mt-auto');
+            const liProgresso = document.createElement('li');
+            liProgresso.classList.add('w-75');
 
-                    const divBarraProgresso = document.createElement('div');
-                    divBarraProgresso.classList.add('progress-bar');
-                    divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-                    divBarraProgresso.textContent = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-                    divProgresso.appendChild(divBarraProgresso);
-                    liProgresso.appendChild(divProgresso);
+            const divProgresso = document.createElement('div');
+            divProgresso.classList.add('progress');
+            divProgresso.setAttribute('role', 'progressbar');
+            divProgresso.setAttribute('aria-label', 'Example with label');
+            divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
+            divProgresso.setAttribute('aria-valuemin', '0');
+            divProgresso.setAttribute('aria-valuemax', '100');
 
-                    const liDataAdicao = document.createElement('li');
-                    liDataAdicao.classList.add('d-flex', 'gap-3', 'align-items-center');
+            const divBarraProgresso = document.createElement('div');
+            divBarraProgresso.classList.add('progress-bar');
+            divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+            divBarraProgresso.textContent = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+            divProgresso.appendChild(divBarraProgresso);
+            liProgresso.appendChild(divProgresso);
 
-                    const iIcon = document.createElement('i');
-                    iIcon.classList.add('bi', 'bi-calendar3');
+            const liDataAdicao = document.createElement('li');
+            liDataAdicao.classList.add('d-flex', 'gap-3', 'align-items-center');
 
-                    const smallDataAdicao = document.createElement('small');
-                    const dataUTC = new Date(titulo.Adicao);                
-                    const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
+            const iIcon = document.createElement('i');
+            iIcon.classList.add('bi', 'bi-calendar3');
 
-                    smallDataAdicao.textContent = dataLocal.toLocaleDateString("pt-BR");
-                    liDataAdicao.appendChild(iIcon);
-                    liDataAdicao.appendChild(smallDataAdicao);
-                    ulInfo.appendChild(liProgresso);
-                    ulInfo.appendChild(liDataAdicao);
-                    divCardBody.appendChild(h4Titulo);
-                    divCardBody.appendChild(ulInfo);
-                    divCardContainer.appendChild(divCardBody);
-                    elementoDestino.appendChild(divCardContainer);
-                });
-            }
+            const smallDataAdicao = document.createElement('small');
+            const dataUTC = new Date(titulo.Adicao);                
+            const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
+                        
+            smallDataAdicao.textContent = dataLocal.toLocaleDateString("pt-BR");
+            liDataAdicao.appendChild(iIcon);
+            liDataAdicao.appendChild(smallDataAdicao);
+            ulInfo.appendChild(liProgresso);
+            ulInfo.appendChild(liDataAdicao);
+            divCardBody.appendChild(h5Titulo);
+            divCardBody.appendChild(ulInfo);
+            divCard.appendChild(imgCapa);
+            divCard.appendChild(divCardBody);
+            elementoDestino.appendChild(divCard);
+
+        });
+    }
+  
+    
 
     renderCardStatus(status,elementoId) {
         const catalogoStatus = this.vm.recentesPorStatus(status,4);

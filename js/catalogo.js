@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   catalogoView.renderGraficos();
 
   //Adicionados Recentemente
-  catalogoView.renderRecentes("recentes");
+  catalogoView.renderRecentes2("recentes");
 
   //Card por Status
   catalogoView.renderCardStatus("Assistindo", "lista-assistindo");
