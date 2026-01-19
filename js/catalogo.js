@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           status,
           plataforma,
           formatarParaISO(dataInicio),
-          dataFim === '' ? '' : formatarParaISO(dataFim),
+          dataFim === null ? null : formatarParaISO(dataFim),
           Number(episodios),
           Number(assistidos),
           Number(temporada),
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   catalogoView.renderGraficos();
 
   //Adicionados Recentemente
-  catalogoView.renderRecentes2("recentes");
+  catalogoView.renderRecentes("recentes");
 
   //Card por Status
   catalogoView.renderCardStatus("Assistindo", "lista-assistindo");

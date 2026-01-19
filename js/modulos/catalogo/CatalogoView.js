@@ -18,7 +18,7 @@ export class CatalogoView {
             document.getElementById('titulo-adicionar').value = titulo.Titulo;
             document.getElementById('capa-adicionar').value = titulo.Capa;
             document.getElementById('data-inicio').value = new Date(titulo.Inicio).toISOString().slice(0, 16);
-            document.getElementById('data-fim').value = titulo.Fim === '' ? '' : new Date(titulo.Fim).toISOString().slice(0, 16);
+            document.getElementById('data-fim').value = titulo.Fim === null ? null : new Date(titulo.Fim).toISOString().slice(0, 16);
             document.getElementById('tipo-adicionar').value = titulo.Tipo._id;
             document.getElementById('status-adicionar').value = titulo.Status._id;
             document.getElementById('plataforma-adicionar').value = titulo.Onde._id;
@@ -67,10 +67,14 @@ export class CatalogoView {
             const dataIniLocal = new Date(dataIniUTC.getTime() + dataIniUTC.getTimezoneOffset() * 60000);
             tdInicio.textContent = dataIniLocal.toLocaleDateString("pt-BR");
 
-            const tdFim = document.createElement('td');           
+            const tdFim = document.createElement('td');      
+            if (titulo.Fim === null) {
+                tdFim.textContent = null;
+            } else {     
             const dataFimUTC = new Date(titulo.Fim);                
             const dataFimLocal = new Date(dataFimUTC.getTime() + dataFimUTC.getTimezoneOffset() * 60000);
             tdFim.textContent = dataFimLocal.toLocaleDateString("pt-BR");
+            }
 
             const tdEpisodios = document.createElement('td');
             tdEpisodios.classList.add('text-center');

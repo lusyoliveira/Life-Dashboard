@@ -32,18 +32,33 @@ export default class Catalogo {
     }
 
     get Dias() {
+
         if (!this.Inicio || isNaN(this.Inicio)) {
             return 0;
         }
 
-        // Se não tem data fim, usa a data atual
-        const dataFim = this.Fim && !isNaN(this.Fim)
+        const dataFimBruta = this.Fim && !isNaN(this.Fim)
             ? this.Fim
             : new Date();
 
-        const diffMs = dataFim - this.Inicio;
+        const inicio = new Date(
+            this.Inicio.getFullYear(),
+            this.Inicio.getMonth(),
+            this.Inicio.getDate()
+        );
 
-        // Garante que nunca retorne negativo
+        const fim = new Date(
+            dataFimBruta.getFullYear(),
+            dataFimBruta.getMonth(),
+            dataFimBruta.getDate()
+        );
+
+        if (inicio.getTime() === fim.getTime()) {
+            return 1;
+        }
+
+        const diffMs = fim - inicio;
+
         if (diffMs < 0) {
             return 0;
         }
@@ -56,5 +71,5 @@ export default class Catalogo {
             return 0;
         }
             return (this.Assistidos / this.Episodios) * 100; 
-        }
+    }
 }
