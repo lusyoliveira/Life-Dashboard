@@ -46,7 +46,7 @@ export class CatalogoViewModel {
       titulo.Status,
       titulo.Onde,
       titulo.Inicio,
-      titulo.Fim ? new Date(Fim) : new Date(),
+      titulo.Fim ? new Date(titulo.Fim) : new Date(),
       titulo.Episodios,
       titulo.Assistidos,
       titulo.Temporadas,
