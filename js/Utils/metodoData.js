@@ -52,6 +52,14 @@ export function converteDataUTC(dataString) {
 
     return new Date(Date.UTC(ano, mes - 1, dia, horaStr, minutoStr)).toISOString();
 };
+export function formatarDataBR(valor) {
+  if (!valor) return "";
+
+  const data = new Date(valor);
+  if (isNaN(data)) return "";
+
+  return data.toLocaleDateString("pt-BR");
+}
 
 export function calculaTempoData(dataTexto) {
   let dataAlvo;

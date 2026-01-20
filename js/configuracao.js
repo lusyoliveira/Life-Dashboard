@@ -1,3 +1,4 @@
+import "./Utils/bootstrap.js";
 import { ConfiguracaoViewModel } from './modulos/configuracoes/ConfiguracaoViewModel.js'
 import { ConfiguracaoView } from './modulos/configuracoes/ConfiguracaoView.js'
 import Configuracao from './modulos/configuracoes/configuracaoModel.js';

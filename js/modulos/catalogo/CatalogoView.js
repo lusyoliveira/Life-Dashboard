@@ -1,153 +1,212 @@
-import { calculaTempoData } from "../../Utils/metodoData.js";
+import { calculaTempoData, formatarDataBR } from "../../Utils/metodoData.js";
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
 import { popularSelect } from "../../Utils/utils.js";
+import { graficoBarra } from "../../componentes/graficos/GraficosFactory.js";
+import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
+import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
+import { abrirModalAcao } from "../../Utils/modal.js";
 
 export class CatalogoView {
     constructor(vm) {
         this.vm = vm;
-    }
+        this.registrarEventosTabela();
+    }   
 
-    //Formulário
-    async editarTitulo(idTitulo) {
-       const titulo = await this.vm.obterTituloPorID(idTitulo)
-        
-       if (titulo) {
-            document.getElementById('id-adicionar').value = idTitulo;
-            document.getElementById('titulo-adicionar').value = titulo.Titulo;
-            document.getElementById('capa-adicionar').value = titulo.Capa;
-            document.getElementById('data-inicio').value = new Date(titulo.Inicio).toISOString().slice(0, 16);
-            document.getElementById('data-fim').value = titulo.Fim === null ? null : new Date(titulo.Fim).toISOString().slice(0, 16);
-            document.getElementById('tipo-adicionar').value = titulo.Tipo._id;
-            document.getElementById('status-adicionar').value = titulo.Status._id;
-            document.getElementById('plataforma-adicionar').value = titulo.Onde._id;
-            document.getElementById('episodios-adicionar').value = titulo.Episodios;
-            document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
-            document.getElementById('temporada-adicionar').value = titulo.Temporadas;
-            document.getElementById('pontuacao-adicionar').value = titulo.Score;   
-            document.getElementById('vezes-adicionar').value = titulo.Vezes;   
-        } else {
-            alert('Título não encontrado!');
+    async carregarFormulario() {
+        if (this.formHTML) return; 
+
+        const res = await fetch("/pages/partials/formCatalogo.html");
+        this.formHTML = await res.text();
+    };
+
+    registrarEventosTabela() {
+        const tabela = document.getElementById("tabelaCatalogo");
+        if (!tabela) return;
+
+        tabela.addEventListener("click", async (e) => {
+            const btnEditar = e.target.closest(".btn-editar");
+            const btnExcluir = e.target.closest(".btn-excluir");
+
+            if (btnEditar) {
+            await this.abrirModalEditarCatalogo(btnEditar.dataset.id);
+            }
+
+            if (btnExcluir) {
+            await this.abrirModalExcluirCatalogo(btnExcluir.dataset.id);
+            }
+        });
+    };
+
+    async abrirModalExcluirCatalogo(id) {
+        abrirModalAcao({
+            titulo: "Excluir título",
+            conteudoHTML: `<p>Deseja realmente excluir este título?</p>`,
+            textoConfirmar: "Excluir",
+            classeBotao: "btn-danger",
+
+            onConfirmar: async () => {
+            await this.vm.excluirTitulo(id);
+            await this.listarCatalogo();
+            }
+        });
+    };
+
+    async abrirModalCriarCatalogo() {
+        abrirModalAcao({
+            titulo: "Adicionar título",
+            conteudoHTML: this.formHTML,
+            textoConfirmar: "Salvar",
+
+            onConfirmar: async () => {
+            const form = document.getElementById("formCatalogo");
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return false;
+            }
+
+            await this.salvarFormularioCatalogo(form);
+            await this.listarCatalogo();
+            }
+        });
+
+        // prepara formulário vazio
+        this.limparFormularioCatalogo();
+
+        await this.listarTipos("tipo-adicionar");
+        await this.listarPlataforma("plataforma-adicionar");
+        await this.listarStatus("status-adicionar");
+    };
+
+    limparFormularioCatalogo() {
+        const form = document.getElementById("formCatalogo");
+        if (!form) return;
+
+        form.reset();
+        document.getElementById("id-adicionar").value = "";
+    };
+
+    async abrirModalEditarCatalogo(id) {
+        const titulo = await this.vm.obterTituloPorID(id);
+
+        abrirModalAcao({
+            titulo: "Editar título",
+            conteudoHTML: this.formHTML,
+            textoConfirmar: "Salvar alterações",
+
+            onConfirmar: async () => {
+            const form = document.getElementById("formCatalogo");
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return false;
+            }
+
+            await this.salvarFormularioCatalogo(form);
+            await this.listarCatalogo();
+            }
+        });
+
+        await this.listarTipos("tipo-adicionar");
+        await this.listarPlataforma("plataforma-adicionar");
+        await this.listarStatus("status-adicionar");
+
+        document.getElementById("id-adicionar").value = titulo.id;
+        document.getElementById('titulo-adicionar').value = titulo.Titulo;
+        document.getElementById('capa-adicionar').value = titulo.Capa;
+        document.getElementById('data-inicio').value = new Date(titulo.Inicio).toISOString().slice(0, 16);
+        document.getElementById('data-fim').value = titulo.Fim === null ? null : new Date(titulo.Fim).toISOString().slice(0, 16);
+        document.getElementById('tipo-adicionar').value = titulo.Tipo._id;
+        document.getElementById('status-adicionar').value = titulo.Status._id;
+        document.getElementById('plataforma-adicionar').value = titulo.Onde._id;
+        document.getElementById('episodios-adicionar').value = titulo.Episodios;
+        document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
+        document.getElementById('temporada-adicionar').value = titulo.Temporadas;
+        document.getElementById('pontuacao-adicionar').value = titulo.Score;   
+        document.getElementById('vezes-adicionar').value = titulo.Vezes;  
+        };
+
+    async salvarFormularioCatalogo(form) {
+        const idInput = form.querySelector('#id-adicionar')?.value || null;
+
+        const descricao = form.querySelector('#titulo-adicionar').value;
+        const capa = form.querySelector('#capa-adicionar').value;
+        const dataInicio = form.querySelector('#data-inicio').value;
+        const dataFim = form.querySelector('#data-fim').value;
+        const tipo = form.querySelector('#tipo-adicionar').value;
+        const status = form.querySelector('#status-adicionar').value;
+        const plataforma = form.querySelector('#plataforma-adicionar').value;
+        const episodios = form.querySelector('#episodios-adicionar').value;
+        const assistidos = form.querySelector('#assistidos-adicionar').value;
+        const temporada = form.querySelector('#temporada-adicionar').value;
+        const pontuacao = form.querySelector('#pontuacao-adicionar').value;
+        const vezes = form.querySelector('#vezes-adicionar').value;
+
+        let adicaoOriginal = null;
+
+        // edição → preservar Adicao
+        if (idInput) {
+            const tituloExistente = await this.vm.obterTituloPorID(idInput);
+            if (tituloExistente) {
+            adicaoOriginal = tituloExistente.Adicao;
+            }
         }
-    }
+
+        const titulo = new Catalogo(
+            idInput,
+            descricao,
+            capa,
+            tipo,
+            status,
+            plataforma,
+            formatarParaISO(dataInicio),
+            dataFim ? formatarParaISO(dataFim) : null,
+            Number(episodios),
+            Number(assistidos),
+            Number(temporada),
+            Number(pontuacao),
+            Number(vezes),
+            adicaoOriginal
+        );
+
+        await this.vm.salvarTitulo(titulo);
+        }
 
     // TABELA
-    async listarCatalogo(elementoId) {
-        const tabela = document.getElementById(elementoId);
-        tabela.innerHTML = "";
-        const catalogo = await this.vm.obterCatalogo();
-        
-        if (!tabela) return;
-        
-        if ($.fn.DataTable.isDataTable('.datatable')) {
-        $('.datatable').DataTable().clear().destroy(); 
-        }
-        
-        catalogo.forEach(titulo => {
-            const tr = document.createElement('tr');
-    
-            const tdTitulo = document.createElement('td');
-            tdTitulo.textContent = titulo.Titulo;
+    async listarCatalogo() {
+        const dados = await this.vm.obterCatalogo();
 
-            const tdTipo = document.createElement('td');
-            tdTipo.classList.add('text-center');
-            tdTipo.textContent = titulo.Tipo.descricao;
+        criarDataTable({
+        tabelaId: "tabelaCatalogo",
+        dados,
+        colunas: [
+            { title: "Título", data: "Titulo" },
+            { title: "Tipo", data: "Tipo.descricao" },
+            { title: "Status", data: "Status.descricao" },
+            { title: "Plataforma", data: "Onde.descricao" },
+            {
+                title: "Início",
+                data: "Inicio",
+                render: (data) => formatarDataBR(data)
+            },
+            {
+                title: "Fim",
+                data: "Fim",
+                render: (data) => formatarDataBR(data)
+            },
+            { title: "Episódios", data: "Episodios" },
+            { title: "Assistidos", data: "Assistidos" },
+            { title: "Temporadas", data: "Temporadas" },
+            { title: "Score", data: "Score" },
+            { title: "Vezes", data: "Vezes" },
+            { title: "Dias", data: "Dias" },
+            colunaAcoes({ campoId: "id" })
 
-            const tdStatus = document.createElement('td');
-            tdStatus.classList.add('text-center');
-            tdStatus.textContent = titulo.Status.descricao;
-
-            const tdOnde = document.createElement('td');
-            tdOnde.classList.add('text-center');
-            tdOnde.textContent = titulo.Onde.descricao;
-
-            const tdInicio = document.createElement('td');
-            const dataIniUTC = new Date(titulo.Inicio);                
-            const dataIniLocal = new Date(dataIniUTC.getTime() + dataIniUTC.getTimezoneOffset() * 60000);
-            tdInicio.textContent = dataIniLocal.toLocaleDateString("pt-BR");
-
-            const tdFim = document.createElement('td');      
-            if (titulo.Fim === null) {
-                tdFim.textContent = null;
-            } else {     
-            const dataFimUTC = new Date(titulo.Fim);                
-            const dataFimLocal = new Date(dataFimUTC.getTime() + dataFimUTC.getTimezoneOffset() * 60000);
-            tdFim.textContent = dataFimLocal.toLocaleDateString("pt-BR");
-            }
-
-            const tdEpisodios = document.createElement('td');
-            tdEpisodios.classList.add('text-center');
-            tdEpisodios.textContent = titulo.Episodios;
-
-            const tdAssistidos = document.createElement('td');
-            tdAssistidos.classList.add('text-center');
-            tdAssistidos.textContent = titulo.Assistidos;
-
-            const tdTemporadas = document.createElement('td');
-            tdTemporadas.classList.add('text-center');
-            tdTemporadas.textContent = titulo.Temporadas;
-
-            const tdScore = document.createElement('td');
-            tdScore.classList.add('text-center');
-            tdScore.textContent = titulo.Score;
-
-            const tdVezes = document.createElement('td');
-            tdVezes.classList.add('text-center');
-            tdVezes.textContent = titulo.Vezes;
-
-            const tdDias = document.createElement('td');
-            tdDias.classList.add('text-center');
-            tdDias.textContent = titulo.Dias;
-
-            const tdBtnEditar = document.createElement('td')
-            const tdBtnExcluir = document.createElement('td')
-
-            const btnEditar = document.createElement('button')
-            btnEditar.classList.add('btn', 'btn-primary')
-            btnEditar.onclick = () => this.editarTitulo(titulo.id)
-
-            const iconeEditar = document.createElement('i')
-            iconeEditar.classList.add('bi', 'bi-pencil-fill')
-            iconeEditar.setAttribute ('id', 'editar-agenda')
-
-            const btnExcluir = document.createElement('button')
-            btnExcluir.classList.add('btn', 'btn-danger')        
-            btnExcluir.onclick = async () => {
-                try {
-                    await this.vm.excluirTitulo(titulo.id)
-                    await this.listarCatalogo(elementoId);
-                } catch(error) {
-                    alert('Erro ao excluir agendamento!')
-                }
-            }
-
-            const iconeExcluir = document.createElement('i')
-            iconeExcluir.classList.add('bi', 'bi-trash')
-            iconeExcluir.setAttribute('id','excluir-agenda')
-
-            btnEditar.appendChild(iconeEditar)
-            btnExcluir.appendChild(iconeExcluir)
-            tdBtnEditar.appendChild(btnEditar)
-            tdBtnExcluir.appendChild(btnExcluir)
-            tr.appendChild(tdTitulo);
-            tr.appendChild(tdTipo);
-            tr.appendChild(tdStatus);
-            tr.appendChild(tdOnde);
-            tr.appendChild(tdInicio);
-            tr.appendChild(tdFim);
-            tr.appendChild(tdEpisodios);
-            tr.appendChild(tdAssistidos);
-            tr.appendChild(tdTemporadas);
-            tr.appendChild(tdScore);
-            tr.appendChild(tdVezes);  
-            tr.appendChild(tdDias);        
-            tr.appendChild(tdBtnEditar)
-            tr.appendChild(tdBtnExcluir)
-            tabela.appendChild(tr);        
+            ]
         });
-        document.dispatchEvent(new Event('Renderizado'));
-    }
+    };
 
     // ESTATÍSTICA
     renderEstatistica(tipo, elementoId) {
@@ -236,45 +295,24 @@ export class CatalogoView {
         }        
     }
 
-    // GRÁFICOS
-    renderGrafico(canvasId, dados, titulo) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-        new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels: dados.labels,
-                datasets: [{  label: dados.labels,
-                                data: dados.data,
-                                backgroundColor: [
-                                    "#36A2EB",
-                                    "#4CAF50", 
-                                    "#FF6384", 
-                                    "#FFCE56", 
-                                    "#9966FF", 
-                                    "#ff9033",
-                                    "#c9cbcf",
-                                    "#c34a33",
-                                    "#ff6333",
-                                    "#eb1b1b",
-                                    "#6f33af"
-                                ],
-                                borderRadius: 8
-                            }]
-            },
-            
-            options: {
-                plugins: { title: { display: true, text: titulo }, 
-                            legend: { display: false, position: "Left"} 
-                        }                
-            }            
-        });
-    }
-
     renderGraficos() {
-        this.renderGrafico("graficoTipo", this.vm.dadosGraficoTipo(), "Títulos por Tipo");
-        this.renderGrafico("graficoStatus", this.vm.dadosGraficoStatus(), "Títulos por Status");
-        this.renderGrafico("graficoPlataforma", this.vm.dadosGraficoPlataforma(), "Títulos por Plataforma");
+        graficoBarra(
+            "graficoTipo",
+            this.vm.dadosGraficoTipo(),
+            "Títulos por Tipo"
+        );
+
+        graficoBarra(
+            "graficoStatus",
+            this.vm.dadosGraficoStatus(),
+            "Títulos por Status"
+        );
+
+        graficoBarra(
+            "graficoPlataforma",
+            this.vm.dadosGraficoPlataforma(),
+            "Títulos por Plataforma"
+        );
     }
    
  // RECENTES

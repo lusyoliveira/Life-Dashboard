@@ -1,12 +1,15 @@
-import { calculaTempoData } from "../../Utils/metodoData.js";
+import { calculaTempoData, formatarDataBR } from "../../Utils/metodoData.js";
 import { popularSelect } from "../../Utils/utils.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
+import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
+import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
 
 export class AgendaView {
   constructor(vm) {
     this.vm = vm;
+    this.registrarEventosTabela();
   }
   //Formulário
   async editarAgenda(agendamentoId) {
@@ -26,91 +29,55 @@ export class AgendaView {
     }
   };
 
-  async listarAgenda(elementoId) {
-    const linhaTabela = document.getElementById(elementoId);
-    linhaTabela.innerHTML = "";
-    const agenda = await this.vm.obterAgenda();
+  registrarEventosTabela() {
+      const tabela = document.getElementById("tabelaCatalogo");
+      if (!tabela) return;
 
-    if (!linhaTabela) return;
+      tabela.addEventListener("click", async (e) => {
+      const btnEditar = e.target.closest(".btn-editar");
+      const btnExcluir = e.target.closest(".btn-excluir");
 
-    if ($.fn.DataTable.isDataTable(".datatable")) {
-      $(".datatable").DataTable().clear().destroy();
-    } 
-        
-    const listaOrdenada = agenda.sort((a, b) => new Date(a.Data) - new Date(b.Data));
-    listaOrdenada.forEach((compromisso) => {
-        
-      const tr = document.createElement("tr");
-      
-      const tdTitulo = document.createElement("td");
-      tdTitulo.textContent = compromisso.Titulo;
+      if (btnEditar) {
+          const id = btnEditar.dataset.id;
+          this.editarAgenda(id);
+      }
 
-      const tdStatus = document.createElement("td");
-      tdStatus.textContent = compromisso.Status.descricao;
-      tdStatus.classList.add("text-center");
+      if (btnExcluir) {
+          const id = btnExcluir.dataset.id;
 
-      const tdCategoria = document.createElement("td");
-      tdCategoria.textContent = compromisso.Categoria.descricao;
-      tdCategoria.classList.add("text-center");
+          if (!confirm("Deseja realmente excluir este título?")) return;
 
-      const tdTipo = document.createElement("td");
-      tdTipo.textContent = compromisso.Tipo.descricao;
-      tdTipo.classList.add("text-center");
-
-      const tdData = document.createElement("td");
-      const dataUTC = new Date(compromisso.Data);
-      const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
-      tdData.textContent = dataLocal.toLocaleString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+          try {
+          await this.vm.excluirAgenda(id);
+          await this.listarCatalogo();
+          } catch (error) {
+          alert("Erro ao excluir título!");
+          }
+      }
       });
+  };
 
-      const tdBtnEditar = document.createElement("td");
-      const tdBtnExcluir = document.createElement("td");
+  async listarAgenda() {
+      const dados = await this.vm.obterAgenda();
 
-      const btnEditar = document.createElement("button");
-      btnEditar.classList.add("btn", "btn-primary");
-      btnEditar.onclick = () => this.editarAgenda(compromisso.id);
+      criarDataTable({
+      tabelaId: "tabelaAgenda",
+      dados,
+      colunas: [
+          { title: "Título", data: "Titulo" },
+          { title: "Status", data: "Status.descricao" },
+          { title: "Categoria", data: "Categoria.descricao" },
+          { title: "Tipo", data: "Tipo.descricao" },
+          {
+              title: "Data",
+              data: "Data",
+              render: (data) => formatarDataBR(data)
+          },
+          colunaAcoes({ campoId: "id" })
 
-      const iconeEditar = document.createElement("i");
-      iconeEditar.classList.add("bi", "bi-pencil-fill");
-      iconeEditar.setAttribute("id", "editar-agenda");
-
-      const btnExcluir = document.createElement("button");
-      btnExcluir.classList.add("btn", "btn-danger");
-      btnExcluir.onclick = async () => {
-        try {
-          await this.vm.excluirAgenda(compromisso.id);
-          await this.listarAgenda(elementoId);
-        } catch (error) {
-          alert("Erro ao excluir agendamento!");
-        }
-      };
-
-      const iconeExcluir = document.createElement("i");
-      iconeExcluir.classList.add("bi", "bi-trash");
-      iconeExcluir.setAttribute("id", "excluir-agenda");
-
-      btnEditar.appendChild(iconeEditar);
-      btnExcluir.appendChild(iconeExcluir);
-      tdBtnEditar.appendChild(btnEditar);
-      tdBtnExcluir.appendChild(btnExcluir);
-      tr.appendChild(tdTitulo);
-      tr.appendChild(tdStatus);
-      tr.appendChild(tdCategoria);
-      tr.appendChild(tdTipo);
-      tr.appendChild(tdData);
-      tr.appendChild(tdBtnEditar);
-      tr.appendChild(tdBtnExcluir);
-
-      linhaTabela.appendChild(tr);
-    });
-
-    document.dispatchEvent(new Event("Renderizado"));
-  }
+          ]
+      });
+  };
 
   async renderProximosCompromissos(elementoDestinoId, qtd) {
     const elementoDestino = document.getElementById(elementoDestinoId);
@@ -135,7 +102,7 @@ export class AgendaView {
                 `;
       });
     }
-  }
+  };
 
   async preencherCalendario(mes, ano, elementoId) {
     const calendarioContainer = document.getElementById(elementoId);

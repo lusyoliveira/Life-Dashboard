@@ -1,3 +1,4 @@
+import "./Utils/bootstrap.js";
 import { FinanceiroViewModel } from "./modulos/financeiro/FinanceiroViewModel.js";
 import { FinanceiroView } from "./modulos/financeiro/FinanceiroView.js";
 import Transacao from "./modulos/financeiro/transacaoModel.js";

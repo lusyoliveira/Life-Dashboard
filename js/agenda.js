@@ -1,3 +1,4 @@
+import "./Utils/bootstrap.js";
 import { AgendaViewModel } from "./modulos/agenda/AgendaViewModel.js";
 import { AgendaView } from "../js/modulos/agenda/AgendaView.js";
 import { CategoriaViewModel } from "./modulos/categorias/CategoriasViewModel.js";
@@ -33,7 +34,7 @@ const botaoTipo = document.getElementById('adiciona-tipo');
     await tipoView.renderCardTipos('lista-tipo', 'Agenda');
 
     //CRUD
-    await agendaView.listarAgenda("linhas");
+    await agendaView.listarAgenda();
     await agendaView.listarTipos('tipo-adicionar');
     await agendaView.listarCategoria('categoria-adicionar');
     await agendaView.listarStatus('status-adicionar');
@@ -58,7 +59,7 @@ const botaoTipo = document.getElementById('adiciona-tipo');
         );
         
         await vm.salvarAgenda(agendamento);
-        agendaView.listarAgenda("linhas");
+        agendaView.listarAgenda();
         e.target.reset();
     });
 

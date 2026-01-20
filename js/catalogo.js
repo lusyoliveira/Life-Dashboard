@@ -1,3 +1,4 @@
+import "./Utils/bootstrap.js";
 import { CatalogoViewModel } from "./modulos/catalogo/CatalogoViewModel.js";
 import { CatalogoView } from "./modulos/catalogo/CatalogoView.js";
 import { PlataformaViewModel } from "./modulos/plataformas/PlataformasViewModel.js";
@@ -6,24 +7,17 @@ import { StatusViewModel } from "./modulos/status/StatusViewModel.js";
 import { StatusView } from "./modulos/status/StatusView.js";
 import { TipoViewModel } from "./modulos/tipos/TipoViewModel.js";
 import { TiposView } from "./modulos/tipos/TiposView.js";
-import { formatarParaISO } from "./Utils/metodoData.js";
-import Catalogo from "./modulos/catalogo/catalogoModel.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const vm = new CatalogoViewModel();
-  const catalogoView = new CatalogoView(vm);
-  
+  const catalogoView = new CatalogoView(vm);  
   const plataformaVM = new PlataformaViewModel();
   const plataformaView = new PlataformasView(plataformaVM);
-
-    const statusVM = new StatusViewModel();
-    const statusView = new StatusView(statusVM);
-
-    const tipoVM = new TipoViewModel();
-    const tipoView = new TiposView(tipoVM);
-
-  const formCatalogo = document.getElementById("catalogo-form");
-  const btnCancelar = document.getElementById("cancelar-catalogo");
+  const statusVM = new StatusViewModel();
+  const statusView = new StatusView(statusVM);
+  const tipoVM = new TipoViewModel();
+  const tipoView = new TiposView(tipoVM);
+  const botaoAdicionar = document.getElementById("adicionarCatalogo");
   const botaoPlataforma = document.getElementById('adiciona-plataforma'); 
   const botaoStatus = document.getElementById('adiciona-status'); 
   const botaoTipo = document.getElementById('adiciona-tipo'); 
@@ -33,64 +27,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   await tipoView.renderCardTipos('lista-tipo', 'Catalogo');
   
   //CRUD
-  await catalogoView.listarCatalogo("linhas");
-  await catalogoView.listarTipos('tipo-adicionar');
-  await catalogoView.listarPlataforma('plataforma-adicionar');
-  await catalogoView.listarStatus('status-adicionar');
-
-  formCatalogo.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    
-        const idInput = document.getElementById('id-adicionar').value;
-        const descricao = document.getElementById('titulo-adicionar').value;
-        const capa = document.getElementById('capa-adicionar').value;
-        const dataInicio = document.getElementById('data-inicio').value;
-        const dataFim = document.getElementById('data-fim').value;
-        const tipo = document.getElementById('tipo-adicionar').value;
-        const status = document.getElementById('status-adicionar').value;
-        const plataforma = document.getElementById('plataforma-adicionar').value;
-        const episodios = document.getElementById('episodios-adicionar').value;
-        const assistidos = document.getElementById('assistidos-adicionar').value;
-        const temporada = document.getElementById('temporada-adicionar').value;
-        const pontuacao = document.getElementById('pontuacao-adicionar').value;
-        const vezes = document.getElementById('vezes-adicionar').value;
-        
-        let adicaoOriginal = null;
-
-        // Se for edição, buscar dados originais para preservar Adicao
-        if (idInput) {
-          const tituloExistente = await vm.obterTituloPorID(idInput);
-          if (tituloExistente) {
-            adicaoOriginal = tituloExistente.Adicao;
-          }
-        }
-
-        const titulo = new Catalogo(
-          idInput ? idInput : null,
-          descricao,
-          capa,
-          tipo,
-          status,
-          plataforma,
-          formatarParaISO(dataInicio),
-          dataFim === null ? null : formatarParaISO(dataFim),
-          Number(episodios),
-          Number(assistidos),
-          Number(temporada),
-          Number(pontuacao),
-          Number(vezes),        
-          adicaoOriginal 
-        );
-          
-    await vm.salvarTitulo(titulo);
-    catalogoView.listarCatalogo("linhas");
-    e.target.reset();
-  });
-
-  btnCancelar.addEventListener('click', () => {
-    formCatalogo.reset();
-  });
-
+  await catalogoView.listarCatalogo();
+  await catalogoView.carregarFormulario(); 
+         
   //Contagem
   const resumo = vm.resumoGeral();
   catalogoView.renderContagemGeral("geral-progresso", "Progresso", resumo);
@@ -135,6 +74,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   catalogoView.renderCardGeral("lista-geral");
   catalogoView.renderCardTipo("Filme", "lista-filmes");
   catalogoView.renderCardTipo("Serie", "lista-series");
+
+  botaoAdicionar.addEventListener("click", async () => {
+      await catalogoView.abrirModalCriarCatalogo();
+  });
 
   //Adiciona plataforma
   botaoPlataforma.addEventListener("click", async (evento) => { 

@@ -2,10 +2,14 @@ import { StatusViewModel } from "../status/StatusViewModel.js";
 import { AreaViewModel } from "../areas/AreasViewModel.js";
 import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
 import { popularSelect } from "../../Utils/utils.js";
+import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
+import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
+import { formatarDataBR } from "../../Utils/metodoData.js";
 
 export class EstudoView {
     constructor(vm) {
         this.vm = vm;
+        this.registrarEventosTabela();
     }
 
     async editarCurso(cursoId) {
@@ -28,101 +32,60 @@ export class EstudoView {
         } else {
             alert('Curso não encontrado!');
         }
-    }
-    async listarCursos(elementoId) {
-        const tabela = document.getElementById(elementoId);
-        tabela.innerHTML = '';
-        const cursos = await this.vm.obterCursos();
-        
-        if (!tabela) return;     
-    
-        if ($.fn.DataTable.isDataTable('.datatable')) {
-        $('.datatable').DataTable().clear().destroy(); 
-        }
-        
-            cursos.forEach(curso => {
-                const tr = document.createElement('tr');
-                   
-                const tdNomeCurso = document.createElement('td');
-                tdNomeCurso.textContent = curso.Name;
-    
-                const tdProfessor = document.createElement('td');
-                tdProfessor.textContent = curso.Professor;
-
-                const tdEscola = document.createElement('td');
-                tdEscola.classList.add('text-center');
-                tdEscola.textContent = curso.Escola.descricao; 
-    
-                const tdAssunto = document.createElement('td');
-                tdAssunto.classList.add('text-center');
-                tdAssunto.textContent = curso.Assunto.descricao;
-    
-                const tdComprado = document.createElement('td');
-                tdComprado.classList.add('text-center');    
-                const dataUTC = new Date(curso.Comprado);                
-                const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
-                tdComprado.textContent = dataLocal.toLocaleString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
-    
-                const tdValor = document.createElement('td');
-                tdValor.classList.add('text-center');
-                tdValor.textContent = curso.Valor.toFixed(2);
-    
-                const tdStatus = document.createElement('td');
-                tdStatus.classList.add('text-center');
-                tdStatus.textContent = curso.Status.descricao;
-    
-                const tdCertificado = document.createElement('td');
-                tdCertificado.classList.add('text-center');
-                tdCertificado.textContent = curso.Certificado; 
-
-                const tdBtnEditar = document.createElement("td");
-                const tdBtnExcluir = document.createElement("td");
-
-                const btnEditar = document.createElement("button");
-                btnEditar.classList.add("btn", "btn-primary");
-                btnEditar.onclick = () => this.editarCurso(curso.id);
-
-                const iconeEditar = document.createElement("i");
-                iconeEditar.classList.add("bi", "bi-pencil-fill");
-                iconeEditar.setAttribute("id", "editar-curso");
-
-                const btnExcluir = document.createElement("button");
-                btnExcluir.classList.add("btn", "btn-danger");
-                btnExcluir.onclick = async () => {
-                    try {
-                    await this.vm.excluirCurso(curso.id);
-                    } catch (error) {
-                    alert("Erro ao excluir agendamento!");
-                    }
-                };
-
-                const iconeExcluir = document.createElement("i");
-                iconeExcluir.classList.add("bi", "bi-trash");
-                iconeExcluir.setAttribute("id", "excluir-curso");
-                  
-                btnEditar.appendChild(iconeEditar);
-                btnExcluir.appendChild(iconeExcluir);
-                tdBtnEditar.appendChild(btnEditar);
-                tdBtnExcluir.appendChild(btnExcluir);
-                tr.appendChild(tdNomeCurso);
-                tr.appendChild(tdProfessor);
-                tr.appendChild(tdEscola);
-                tr.appendChild(tdAssunto);
-                tr.appendChild(tdComprado);
-                tr.appendChild(tdValor);
-                tr.appendChild(tdStatus);
-                tr.appendChild(tdCertificado);
-                tr.appendChild(tdBtnEditar);
-                tr.appendChild(tdBtnExcluir);
-                tabela.appendChild(tr);
-        });
-        // Dispara DataTable
-        document.dispatchEvent(new Event('Renderizado'));
     };
+    registrarEventosTabela() {
+        const tabela = document.getElementById("tabelaCatalogo");
+        if (!tabela) return;
+
+        tabela.addEventListener("click", async (e) => {
+        const btnEditar = e.target.closest(".btn-editar");
+        const btnExcluir = e.target.closest(".btn-excluir");
+
+        if (btnEditar) {
+            const id = btnEditar.dataset.id;
+            this.editarCurso(id);
+        }
+
+        if (btnExcluir) {
+            const id = btnExcluir.dataset.id;
+
+            if (!confirm("Deseja realmente excluir este cursos?")) return;
+
+            try {
+            await this.vm.excluirCurso(id);
+            await this.listarCursos();
+            } catch (error) {
+            alert("Erro ao excluir curso!");
+            }
+        }
+        });
+    };
+    // TABELA
+    async listarCursos() {
+        const dados = await this.vm.obterCursos();
+
+        criarDataTable({
+        tabelaId: "tabelaCursos",
+        dados,
+        colunas: [
+            { title: "Curso", data: "Name" },
+            { title: "Instrutor", data: "Professor" },
+            { title: "Escola", data: "Escola.descricao" },
+            { title: "Área", data: "Assunto.descricao" },
+            {
+                title: "Comprado",
+                data: "Comprado",
+                render: (data) => formatarDataBR(data)
+            },
+            { title: "Valor", data: "Valor" },
+            { title: "Status", data: "Status.descricao" },
+            { title: "Certificado", data: "Certificado" },
+            colunaAcoes({ campoId: "id" })
+
+            ]
+        });
+    };
+
 
     renderCursando(elementoId) { 
         const cursando = this.vm.cursando(3);

@@ -1,3 +1,4 @@
+    import "./Utils/bootstrap.js";
     import { EstudoViewModel } from "./modulos/estudo/EstudoViewModel.js";
     import { EstudoView } from "./modulos/estudo/EstudoView.js";
     import { CatalogoViewModel } from "./modulos/catalogo/CatalogoViewModel.js";
@@ -18,7 +19,7 @@
     import { ConfiguracaoView } from "./modulos/configuracoes/ConfiguracaoView.js";
     import { FinanceiroViewModel } from "./modulos/financeiro/FinanceiroViewModel.js";
     import { FinanceiroView } from "./modulos/financeiro/FinanceiroView.js";
-    
+
     const containerModal = document.getElementById('container-modal');
     const botaoTarefa = document.getElementById('adiciona-tarefa');    
 

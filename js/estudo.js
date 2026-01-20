@@ -1,3 +1,4 @@
+import "./Utils/bootstrap.js";
 import { EstudoViewModel } from "./modulos/estudo/EstudoViewModel.js";
 import { EstudoView } from "./modulos/estudo/EstudoView.js"
 import { PlataformaViewModel } from "./modulos/plataformas/PlataformasViewModel.js";
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await statusView.renderCardStatus('lista-status', 'Geral');
 
   //CRUD
-  await estudoView.listarCursos('linhas');
+  await estudoView.listarCursos();
   await estudoView.listarArea('area-adicionar');
   await estudoView.listarStatus('status-adicionar');
   await estudoView.listarPlataforma('escola-adicionar');
@@ -71,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
      );
    
      await vm.salvarCurso(curso);
-     estudoView.listarCursos("linhas");
+     estudoView.listarCursos();
      e.target.reset();
    });
 

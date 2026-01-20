@@ -1,0 +1,18 @@
+{
+  "decimal": "",
+  "emptyTable": "Nenhum registro encontrado",
+  "info": "Mostrando _START_ até _END_ de _TOTAL_ registros",
+  "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+  "infoFiltered": "(Filtrado de _MAX_ registros no total)",
+  "lengthMenu": "Mostrar _MENU_ registros",
+  "loadingRecords": "Carregando...",
+  "processing": "Processando...",
+  "search": "Pesquisar:",
+  "zeroRecords": "Nenhum registro encontrado",
+  "paginate": {
+    "first": "Primeiro",
+    "last": "Último",
+    "next": "Próximo",
+    "previous": "Anterior"
+  }
+}
