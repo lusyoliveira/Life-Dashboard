@@ -170,7 +170,7 @@ export class CatalogoView {
             Number(vezes),
             adicaoOriginal
         );
-
+        debugger
         await this.vm.salvarTitulo(titulo);
         }
 

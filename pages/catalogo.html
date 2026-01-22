@@ -44,7 +44,7 @@
     </header>
  
     <main class="container-fliud m-4">
-        <div class="row">   
+        <div class="row mb-2">   
             <div class="col-12 mb-4">
                 <div class="row d-flex justify-content-center">
                     <div class="row row-cols-auto">
@@ -254,8 +254,9 @@
             </div>
         </div> 
         
-        <div class="table-responsive">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="table-responsive mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-3 border-bottom">
+                <h2 class="pb-1">Catálogo Completo</h2>
                 <button class="btn btn-primary mb-3" id="adicionarCatalogo">
                     <i class="bi bi-plus-lg"></i> Adicionar ao Catálogo
                 </button>
@@ -276,139 +277,111 @@
                     <canvas id="graficoPlataforma"></canvas>
                 </div>
             </div>
-        </div>  
-                
-            <br />                
+        </div>                  
  
-            <div class="row mt-4" id="linha-estatistica" >
-                <div class="col" id="estatistica-serie" data-filtro="estatisticas" data-tipo="Serie">
-                    
+        <div class="row mt-4 mb-4" id="linha-estatistica" >
+            <div class="col" id="estatistica-serie" data-filtro="estatisticas" data-tipo="Serie"></div>
+            <div class="col" id="estatistica-filme" data-filtro="estatisticas" data-tipo="Filme"></div>
+            <div class="col" id="estatistica-desenho" data-filtro="estatisticas" data-tipo="Desenho"></div>
+        </div>        
+
+        <div class="container-fliud">                
+            <h2 class="pb-1 border-bottom">Por status</h2>
+            <div class="row mt-4">
+                <div class="col">
+                    <div class="card" data-filtro="status" data-status="Assistindo">
+                        <div class="card-header">
+                            Assistindo
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush gap-1" id="lista-assistindo"></ul>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col" id="estatistica-filme" data-filtro="estatisticas" data-tipo="Filme">
-                    
+                <div class="col">
+                    <div class="card" data-filtro="status" data-status="Planejado">
+                        <div class="card-header">
+                            Planejado
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush gap-1"  id="lista-planejado"></ul>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col" id="estatistica-desenho" data-filtro="estatisticas" data-tipo="Desenho">
-                    
+                <div class="col">
+                    <div class="card" data-filtro="status" data-status="Em-Espera">
+                        <div class="card-header">
+                            Em-Espera
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush gap-1"  id="lista-espera"></ul>
+                        </div>
+                    </div>
                 </div>
-            </div>        
 
-            <br />
-
-            <div class="container-fliud">                
-                <h2 class="pb-1 border-bottom">Por status</h2>
-                <div class="row mt-4">
-                    <div class="col">
-                        <div class="card" data-filtro="status" data-status="Assistindo">
-                            <div class="card-header">
-                                Assistindo
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-group list-group-flush gap-1" id="lista-assistindo">
-                                    
-                                </ul>
-                            </div>
+                <div class="col">
+                    <div class="card" data-filtro="status" data-status="Dropped">
+                        <div class="card-header">
+                            Dropped
                         </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card" data-filtro="status" data-status="Planejado">
-                            <div class="card-header">
-                                Planejado
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-group list-group-flush gap-1"  id="lista-planejado">
-                                    
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card" data-filtro="status" data-status="Em-Espera">
-                            <div class="card-header">
-                                Em-Espera
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-group list-group-flush gap-1"  id="lista-espera">
-
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card" data-filtro="status" data-status="Dropped">
-                            <div class="card-header">
-                                Dropped
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-group list-group-flush gap-1"  id="lista-dropped">
-                                    
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>    
-            
-                <br />
-
-                <div class="row">                    
-                    <h2 class="pb-1 border-bottom">Top</h2>
-                    <div class="col">
-                        <div class="card" data-filtro="Geral" data-tipo="Geral">
-                            <div class="card-header">
-                                Geral
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-group list-group-flush gap-1" id="lista-geral">
-                                    
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card" data-filtro="tipo" data-tipo="Animes">
-                            <div class="card-header">
-                                Animes
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-group list-group-flush gap-1" id="lista-animes">
-                                    
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card" data-filtro="tipo" data-tipo="Filme">
-                            <div class="card-header">
-                                Filme
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-group list-group-flush gap-1" id="lista-filmes">
-                                    
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card" data-filtro="tipo" data-tipo="Serie">
-                            <div class="card-header">
-                                Serie
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-group list-group-flush gap-1" id="lista-series">
-                                    
-                                </ul>
-                            </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush gap-1"  id="lista-dropped"></ul>
                         </div>
                     </div>
                 </div>
             </div>    
+        
+            <br />
+
+            <div class="row">                    
+                <h2 class="pb-1 border-bottom">Top 4</h2>
+                <div class="col">
+                    <div class="card" data-filtro="Geral" data-tipo="Geral">
+                        <div class="card-header">
+                            Geral
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush gap-1" id="lista-geral"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card" data-filtro="tipo" data-tipo="Animes">
+                        <div class="card-header">
+                            Animes
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush gap-1" id="lista-animes"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card" data-filtro="tipo" data-tipo="Filme">
+                        <div class="card-header">
+                            Filme
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush gap-1" id="lista-filmes"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card" data-filtro="tipo" data-tipo="Serie">
+                        <div class="card-header">
+                            Serie
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush gap-1" id="lista-series"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>    
     </main>
     
     <!-- Estrutura do modal -->
@@ -443,7 +416,7 @@
         </div>
     </div>
     
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 mt-4 border-top bg-body-tertiary">
         <div class="col-md-4 d-flex align-items-center"> 
             <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1" aria-label="Bootstrap">
             </a> 

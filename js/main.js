@@ -20,8 +20,8 @@
     import { FinanceiroViewModel } from "./modulos/financeiro/FinanceiroViewModel.js";
     import { FinanceiroView } from "./modulos/financeiro/FinanceiroView.js";
 
-    const containerModal = document.getElementById('container-modal');
-    const botaoTarefa = document.getElementById('adiciona-tarefa');    
+    const botaoTarefa = document.getElementById('adiciona-tarefa'); 
+    const botaoAdicionar = document.getElementById("adicionarCatalogo");   
 
     const tvm = new TarefasViewModel("tarefas");
     const tarefaView = new TarefasView(tvm);
@@ -70,7 +70,13 @@
         contadorView.exibirContador('contador')
         relogioView.exibirRelogio('relogio')
         contasView.listarContas('lista-contas')
+        await catalogoView.carregarFormulario(); 
         
+        //Adicionar catalogo
+        botaoAdicionar.addEventListener("click", async () => {
+            await catalogoView.abrirModalCriarCatalogo();
+        });
+
         //Adiciona tarefa
         botaoTarefa.addEventListener("click", async (evento) => { 
             evento.preventDefault();   
