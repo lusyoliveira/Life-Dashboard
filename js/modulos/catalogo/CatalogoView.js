@@ -7,6 +7,8 @@ import { graficoBarra } from "../../componentes/graficos/GraficosFactory.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
 import { abrirModalAcao } from "../../Utils/modal.js";
+import Catalogo from "./catalogoModel.js";
+import { formatarParaISO } from "../../Utils/metodoData.js";
 
 export class CatalogoView {
     constructor(vm) {
@@ -481,7 +483,7 @@ export class CatalogoView {
                 
             });
         }
-    }
+    };
 
     renderCardGeral(elementoId) {
         const catalogoTipo = this.vm.topGeral(4);
@@ -755,6 +757,43 @@ export class CatalogoView {
         }
     };
 
+    renderCardFrequentes(tipo,elementoId) {
+        const catalogoTipo = this.vm.fequentes(tipo,4);
+        const elementoDestino = document.getElementById(elementoId);      
+
+         if (elementoDestino) {
+            elementoDestino.innerHTML = "";
+            catalogoTipo.forEach(titulo => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'd-flex', 'align-items-center', 'gap-2', 'p-0');
+
+                const imgCapa = document.createElement('img');
+                imgCapa.src = titulo.Capa;
+                imgCapa.alt = titulo.Titulo;
+                imgCapa.width = 60;
+                imgCapa.height = 80;
+                imgCapa.classList.add('flex-shrink-0');
+
+                const divTituloContainer = document.createElement('div');
+                divTituloContainer.classList.add('ms-2', 'me-auto');
+
+                const divTitulo = document.createElement('div');
+                divTitulo.classList.add('fw-bold');
+                divTitulo.textContent = titulo.Titulo;
+
+                const spanScore = document.createElement('span');
+                spanScore.classList.add('badge', 'text-bg-primary', 'rounded-pill');
+                spanScore.textContent = titulo.Vezes;
+
+                divTituloContainer.appendChild(divTitulo);
+                li.appendChild(imgCapa);
+                li.appendChild(divTituloContainer);
+                li.appendChild(spanScore);
+                elementoDestino.appendChild(li);
+                
+            });
+        }
+    };
     async listarStatus(elementoId) { 
         const statusVM = new StatusViewModel();  
         const status =  await statusVM.obterStatus('Catalogo')

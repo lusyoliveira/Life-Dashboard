@@ -46,7 +46,7 @@ export class CatalogoViewModel {
       titulo.Status,
       titulo.Onde,
       titulo.Inicio,
-      titulo.Fim ? new Date(titulo.Fim) : new Date(),
+      titulo.Fim,
       titulo.Episodios,
       titulo.Assistidos,
       titulo.Temporadas,
@@ -88,22 +88,22 @@ export class CatalogoViewModel {
 
    filtrarPorStatus(status) {
     return this.catalogo.filter((t) => t.Status.descricao === status);
-  }
+  };
 
   filtrarPorTipo(tipo) {
     return this.catalogo.filter((t) => t.Tipo.descricao === tipo);
-  }
+  };
 
   topPorScore(tipo, qtd = 4) {
     return [...this.catalogo]
       .filter((t) => t.Tipo.descricao === tipo)
       .sort((a, b) => b.Score - a.Score)
       .slice(0, qtd);
-  }
+  };
 
   topGeral(qtd = 4) {
     return [...this.catalogo].sort((a, b) => b.Score - a.Score).slice(0, qtd);
-  }
+  };
 
   recentesPorStatus(status, qtd = 4) {
     return this.catalogo
@@ -114,13 +114,13 @@ export class CatalogoViewModel {
       return tb - ta;
     })
       .slice(0, qtd);
-  }
+  };
   
   assistindo(status, qtd = 4) {
     return this.catalogo
       .filter(titulo => status.includes(titulo.Status.descricao))
       .slice(0, qtd);
-  }
+  };
 
   recentes(qtd = 3) {
     return [...this.catalogo]
@@ -130,7 +130,7 @@ export class CatalogoViewModel {
       return tb - ta;
     })
     .slice(0, qtd);    
-  }
+  };
 
   estatisticasPorTipo(tipo) {
     const lista = this.filtrarPorTipo(tipo);
@@ -151,7 +151,7 @@ export class CatalogoViewModel {
           ).toFixed(1)
         : 0,
     };
-  }
+  };
 
   resumoGeral() {
     const totalDias = this.catalogo.reduce((acc, t) => acc + Number(t.Dias || 0), 0);
@@ -183,7 +183,14 @@ export class CatalogoViewModel {
         ? Number((somaPontuacoes / this.catalogo.length).toFixed(1))
         : 0,
     };
-  }
+  };
+
+  fequentes(tipo, qtd = 4) {
+    return [...this.catalogo]
+      .filter((t) => t.Tipo.descricao === tipo && t.Vezes > 1)
+      .sort((a, b) => b.Vezes - a.Vezes)
+      .slice(0, qtd);
+  };
 
   dadosGraficoTipo() {
     const tipos = [

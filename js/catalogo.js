@@ -70,10 +70,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   catalogoView.renderCardStatus("Em Espera", "lista-espera");
   catalogoView.renderCardStatus("Dropped", "lista-dropped");
 
-  //Card por Tipo
+  //Card Top por Tipo
   catalogoView.renderCardGeral("lista-geral");
   catalogoView.renderCardTipo("Filme", "lista-filmes");
   catalogoView.renderCardTipo("Serie", "lista-series");
+
+  //Card Frequentes
+    catalogoView.renderCardFrequentes("Serie", "frequentes-series");
+    catalogoView.renderCardFrequentes("Filme", "frequentes-filmes");
+    catalogoView.renderCardFrequentes("Desenho", "frequentes-desenho");
 
   botaoAdicionar.addEventListener("click", async () => {
       await catalogoView.abrirModalCriarCatalogo();
