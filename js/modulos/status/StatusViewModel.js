@@ -31,7 +31,7 @@ export class StatusViewModel {
       const statusModel = new Status(
           status._id,
           status.descricao,
-          estado.Tipo
+          status.Tipo
         );       
         return statusModel
     };

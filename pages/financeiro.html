@@ -47,9 +47,7 @@
         <div class="row row-cols-auto">                    
             <div class="col-4 mb-4">
                 <h4>Saldo</h4>
-                <ul class="list-group" id="lista-contas">
-
-                </ul>
+                <ul class="list-group" id="lista-contas"></ul>
                 
                 <hr>
 
@@ -88,29 +86,34 @@
                         <small class="text-body-secondary">And some muted small print.</small>
                     </a>
                 </div>
+                <a class="icon-link icon-link-hover" href="./transacoes.html">
+                Todas as transações
+                <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                </svg>
+                </a>
+                <div class="row mt-3">  
+                    <div class="col">
+                        <div class="card" data-filtro="categoria" data-tipo="categoria">
+                            <div class="card-header">
+                                <i class="bi bi-list-task"></i> Categoria
+                            </div>
+                            <div class="card-body">
+                                <div class="input-group mb-3">
+                                <input type="hidden" class="form-control" id="input-id-categoria">
+                                <input type="text" class="form-control" id="descricao-categoria" placeholder="Nova categoria..." aria-label="Nova categoria...">
+                                <button class="btn btn-outline-secondary" type="button" title="Adicionar Categoria" id="adiciona-categoria"><i class="bi bi-plus-lg"></i></button>
+                            </div>
+                            <ul class="list-group list-group-flush gap-1" id="lista-categoria"> </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-6 mb-4">
                 <h4>Grafico</h4>                        
             </div>
         </div>
-        <div class="row">  
-            <div class="col">
-                <div class="card" data-filtro="categoria" data-tipo="categoria">
-                    <div class="card-header">
-                        <i class="bi bi-list-task"></i> Categoria
-                    </div>
-                    <div class="card-body">
-                        <div class="input-group mb-3">
-                        <input type="hidden" class="form-control" id="input-id-categoria">
-                        <input type="text" class="form-control" id="descricao-categoria" placeholder="Nova categoria..." aria-label="Nova categoria...">
-                        <button class="btn btn-outline-secondary" type="button" title="Adicionar Categoria" id="adiciona-categoria"><i class="bi bi-plus-lg"></i></button>
-                    </div>
-                    <ul class="list-group list-group-flush gap-1" id="lista-categoria"> </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="col-8 mb-4">
             <h4>Investimentos</h4>
             
@@ -118,7 +121,36 @@
     </main>
     
     <!-- Estrutura do modal -->
-    <div id="container-modal"></div>
+    <div class="modal fade" id="modalAcao" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAcaoTitulo"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="modalAcaoBody"></div>
+
+            <div class="modal-footer">
+                <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">
+                Cancelar
+                </button>
+
+                <button
+                type="button"
+                class="btn btn-primary"
+                id="modalAcaoConfirmar">
+                Confirmar
+                </button>
+            </div>
+
+            </div>
+        </div>
+    </div>
     
     <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
         <div class="col-md-4 d-flex align-items-center"> 

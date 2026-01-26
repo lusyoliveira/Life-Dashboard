@@ -1,4 +1,5 @@
     import "./Utils/bootstrap.js";
+    import { carregarFormulario } from "./Utils/utils.js";
     import { EstudoViewModel } from "./modulos/estudo/EstudoViewModel.js";
     import { EstudoView } from "./modulos/estudo/EstudoView.js";
     import { CatalogoViewModel } from "./modulos/catalogo/CatalogoViewModel.js";
@@ -21,8 +22,8 @@
     import { FinanceiroView } from "./modulos/financeiro/FinanceiroView.js";
 
     const botaoTarefa = document.getElementById('adiciona-tarefa'); 
-    const botaoAdicionar = document.getElementById("adicionarCatalogo");   
-
+    const botaoCatalogo = document.getElementById("adicionarCatalogo");   
+    const botaoCurso = document.getElementById("adicionarCurso");
     const tvm = new TarefasViewModel("tarefas");
     const tarefaView = new TarefasView(tvm);
     const evm = new EstudoViewModel("cursos");
@@ -70,13 +71,22 @@
         contadorView.exibirContador('contador')
         relogioView.exibirRelogio('relogio')
         contasView.listarContas('lista-contas')
-        await catalogoView.carregarFormulario(); 
-        
+
+        const formCatalogoHTML = await carregarFormulario("/pages/partials/formCatalogo.html");
+        catalogoView.formHTML = formCatalogoHTML;
+        const formAgendaHTML = await carregarFormulario("/pages/partials/formAgenda.html");
+        agendaView.formHTML = formAgendaHTML;
+        const formCursoHTML = await carregarFormulario("/pages/partials/formCurso.html");
+        estudoView.formHTML = formCursoHTML;
+
         //Adicionar catalogo
-        botaoAdicionar.addEventListener("click", async () => {
+        botaoCatalogo.addEventListener("click", async () => {
             await catalogoView.abrirModalCriarCatalogo();
         });
-
+        //Adicionar curso
+        botaoCurso.addEventListener("click", async () => {
+            await estudoView.abrirModalCriarCursos();
+        });
         //Adiciona tarefa
         botaoTarefa.addEventListener("click", async (evento) => { 
             evento.preventDefault();   

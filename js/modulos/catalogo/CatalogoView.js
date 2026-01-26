@@ -1,27 +1,19 @@
-import { calculaTempoData, formatarDataBR } from "../../Utils/metodoData.js";
+import { calculaTempoData, formatarDataBR, formatarParaISO } from "../../Utils/metodoData.js";
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
-import { popularSelect } from "../../Utils/utils.js";
+import { popularSelect, limparFormulario } from "../../Utils/utils.js";
 import { graficoBarra } from "../../componentes/graficos/GraficosFactory.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
 import { abrirModalAcao } from "../../Utils/modal.js";
 import Catalogo from "./catalogoModel.js";
-import { formatarParaISO } from "../../Utils/metodoData.js";
 
 export class CatalogoView {
     constructor(vm) {
         this.vm = vm;
         this.registrarEventosTabela();
     }   
-
-    async carregarFormulario() {
-        if (this.formHTML) return; 
-
-        const res = await fetch("/pages/partials/formCatalogo.html");
-        this.formHTML = await res.text();
-    };
 
     registrarEventosTabela() {
         const tabela = document.getElementById("tabelaCatalogo");
@@ -74,20 +66,11 @@ export class CatalogoView {
             }
         });
 
-        // prepara formulário vazio
-        this.limparFormularioCatalogo();
+        limparFormulario();
 
         await this.listarTipos("tipo-adicionar");
         await this.listarPlataforma("plataforma-adicionar");
         await this.listarStatus("status-adicionar");
-    };
-
-    limparFormularioCatalogo() {
-        const form = document.getElementById("formCatalogo");
-        if (!form) return;
-
-        form.reset();
-        document.getElementById("id-adicionar").value = "";
     };
 
     async abrirModalEditarCatalogo(id) {
@@ -128,11 +111,10 @@ export class CatalogoView {
         document.getElementById('temporada-adicionar').value = titulo.Temporadas;
         document.getElementById('pontuacao-adicionar').value = titulo.Score;   
         document.getElementById('vezes-adicionar').value = titulo.Vezes;  
-        };
+    };
 
     async salvarFormularioCatalogo(form) {
         const idInput = form.querySelector('#id-adicionar')?.value || null;
-
         const descricao = form.querySelector('#titulo-adicionar').value;
         const capa = form.querySelector('#capa-adicionar').value;
         const dataInicio = form.querySelector('#data-inicio').value;
@@ -172,11 +154,10 @@ export class CatalogoView {
             Number(vezes),
             adicaoOriginal
         );
-        debugger
+        
         await this.vm.salvarTitulo(titulo);
-        }
+    };
 
-    // TABELA
     async listarCatalogo() {
         const dados = await this.vm.obterCatalogo();
 

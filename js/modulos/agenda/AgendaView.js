@@ -1,62 +1,130 @@
-import { calculaTempoData, formatarDataBR } from "../../Utils/metodoData.js";
-import { popularSelect } from "../../Utils/utils.js";
+import { calculaTempoData, formatarDataBR, formatarParaISO } from "../../Utils/metodoData.js";
+import { popularSelect, limparFormulario } from "../../Utils/utils.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
+import { abrirModalAcao } from "../../Utils/modal.js";
+import Agenda from "./agendaModel.js";
 
 export class AgendaView {
   constructor(vm) {
     this.vm = vm;
     this.registrarEventosTabela();
   }
-  //Formulário
-  async editarAgenda(agendamentoId) {
-    const agendamento = await this.vm.obterAgendaPorID(agendamentoId)
-    console.log(agendamento);
-    
 
-    if (agendamento) {
-        document.getElementById('id-adicionar').value = agendamentoId;
-        document.getElementById('titulo-adicionar').value = agendamento.Titulo;
-        document.getElementById('data-adicionar').value = new Date(agendamento.Data).toISOString().slice(0,16);
-        document.getElementById('categoria-adicionar').value = agendamento.Categoria._id;
-        document.getElementById('tipo-adicionar').value = agendamento.Tipo._id;
-        document.getElementById('status-adicionar').value = agendamento.Status._id;
-    } else {
-        alert('Compromisso não encontrado!');
-    }
+  async 
+  registrarEventosTabela() {
+    const tabela = document.getElementById("tabelaAgenda");
+    if (!tabela) return;
+
+    tabela.addEventListener("click", async (e) => {
+        const btnEditar = e.target.closest(".btn-editar");
+        const btnExcluir = e.target.closest(".btn-excluir");
+
+        if (btnEditar) {
+        await this.abrirModalEditarAgenda(btnEditar.dataset.id);
+        }
+
+        if (btnExcluir) {
+        await this.abrirModalExcluirAgenda(btnExcluir.dataset.id);
+        }
+    });
   };
 
-  registrarEventosTabela() {
-      const tabela = document.getElementById("tabelaCatalogo");
-      if (!tabela) return;
+  async abrirModalExcluirAgenda(id) {
+      abrirModalAcao({
+          titulo: "Excluir agendamento",
+          conteudoHTML: `<p>Deseja realmente excluir este agedamento?</p>`,
+          textoConfirmar: "Excluir",
+          classeBotao: "btn-danger",
 
-      tabela.addEventListener("click", async (e) => {
-      const btnEditar = e.target.closest(".btn-editar");
-      const btnExcluir = e.target.closest(".btn-excluir");
-
-      if (btnEditar) {
-          const id = btnEditar.dataset.id;
-          this.editarAgenda(id);
-      }
-
-      if (btnExcluir) {
-          const id = btnExcluir.dataset.id;
-
-          if (!confirm("Deseja realmente excluir este título?")) return;
-
-          try {
+          onConfirmar: async () => {
           await this.vm.excluirAgenda(id);
-          await this.listarCatalogo();
-          } catch (error) {
-          alert("Erro ao excluir título!");
+          await this.listarAgenda();
           }
-      }
       });
   };
 
+  async abrirModalCriarAgenda() {
+      abrirModalAcao({
+          titulo: "Adicionar agendamento",
+          conteudoHTML: this.formHTML,
+          textoConfirmar: "Salvar",
+
+          onConfirmar: async () => {
+          const form = document.getElementById("formAgenda");
+
+          if (!form.checkValidity()) {
+              form.reportValidity();
+              return false;
+          }
+
+          await this.salvarFormularioAgenda(form);
+          await this.listarAgenda();
+          }
+      });
+
+      limparFormulario();
+
+      await this.listarTipos('tipo-adicionar');
+      await this.listarCategoria('categoria-adicionar');
+      await this.listarStatus('status-adicionar');
+
+  };
+
+  async abrirModalEditarAgenda(id) {
+    const agenda = await this.vm.obterAgendaPorID(id);
+
+    abrirModalAcao({
+        titulo: "Editar agendamento",
+        conteudoHTML: this.formHTML,
+        textoConfirmar: "Salvar alterações",
+
+        onConfirmar: async () => {
+        const form = document.getElementById("formAgenda");
+
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return false;
+        }
+
+        await this.salvarFormularioAgenda(form);
+        await this.listarAgenda();
+        }
+    });    
+
+    await this.listarTipos('tipo-adicionar');
+    await this.listarCategoria('categoria-adicionar');
+    await this.listarStatus('status-adicionar');
+
+    document.getElementById('id-adicionar').value = agenda.id;
+    document.getElementById('titulo-adicionar').value = agenda.Titulo;
+    document.getElementById('data-adicionar').value = new Date(agenda.Data).toISOString().slice(0,16);
+    document.getElementById('categoria-adicionar').value = agenda.Categoria._id;
+    document.getElementById('tipo-adicionar').value = agenda.Tipo._id;
+    document.getElementById('status-adicionar').value = agenda.Status._id; 
+  };
+
+  async salvarFormularioAgenda(form) {
+    const idInput = form.querySelector('#id-adicionar')?.value || null;
+    const titulo = form.querySelector('#titulo-adicionar').value;
+    const data = form.querySelector('#data-adicionar').value;
+    const categoria = form.querySelector('#categoria-adicionar').value;
+    const tipo = form.querySelector('#tipo-adicionar').value;
+    const status = form.querySelector('#status-adicionar').value;
+
+    const agendamento = new Agenda( 
+      idInput ? idInput : null,
+      titulo,
+      status,
+      categoria,
+      tipo,
+      formatarParaISO(data)
+    );
+    await this.vm.salvarAgenda(agendamento);
+};
   async listarAgenda() {
       const dados = await this.vm.obterAgenda();
 
@@ -280,6 +348,9 @@ export class AgendaView {
     btnAdicionar.classList.add("btn");
     btnAdicionar.title = "Adicionar Evento";
     btnAdicionar.id = "adicionar-evento";
+    btnAdicionar.onclick = async () => {  
+      await this.abrirModalCriarAgenda();
+    };
 
     const iconAdicionar = document.createElement("i");
     iconAdicionar.classList.add("bi", "bi-plus-square");

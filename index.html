@@ -15,9 +15,7 @@
             <div class="d-flex align-items-center">
                 <a class="navbar-brand fw-bold me-4" title="home" href="/index.html">Life Dashboard</a>
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0">
-                        
-                    </ol>
+                    <ol class="breadcrumb mb-0"></ol>
                 </nav>
             </div>
     
@@ -42,17 +40,13 @@
     <main class="container-fliud m-4">
         <h1 class="pb-2 border-bottom">Bem Vindo!</h1>
             <div class="container-fliud text-center">
-                <div class="row" id="clima">                    
-                    
-                </div>
+                <div class="row" id="clima"> </div>
             </div>
 
             <hr>
 
             <div class="container-fluid">
-                <div class="" id="calendario">                    
-                                   
-                </div> 
+                <div class="" id="calendario"></div> 
             </div>
             
             <hr>
@@ -180,22 +174,24 @@
 
             <div class="container-fliud"> 
                 <div class="d-flex justify-content-between align-items-center mb-3 pb-1 border-bottom">
-                    <h2 >Assistindo</h2>
+                    <h2>Assistindo</h2>
                     <button class="btn btn-primary mb-3" id="adicionarCatalogo">
                         <i class="bi bi-plus-lg"></i> Adicionar ao Catálogo
                     </button>
                 </div>                   
-                <div class="row d-inline-flex justify-content-start" id="Assistindo" data-filtro="principal" data-status="Assistindo"></div>
-            
+                <div class="row d-inline-flex justify-content-start" id="Assistindo" data-filtro="principal" data-status="Assistindo"></div>          
             </div>
 
             <br />
 
             <div class="container-fliud">
-                <h2 class="pb-2 border-bottom mb-3">Cursando</h2>
-                <div class="row d-inline-flex justify-content-start" id="Cursando" data-filtro="cursos" data-status="Cursando"></div>
-                    
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-1 border-bottom">
+                    <h2>Cursando</h2>
+                    <button class="btn btn-primary mb-3" id="adicionarCurso">
+                        <i class="bi bi-plus-lg"></i> Adicionar curso
+                    </button>
                 </div>
+                <div class="row d-inline-flex justify-content-start" id="Cursando" data-filtro="cursos" data-status="Cursando"></div>
             </div>
     </main>
     

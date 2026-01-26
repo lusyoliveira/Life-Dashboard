@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life Dashboard - Configurações</title>
     <link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 
 <body>
@@ -32,9 +32,9 @@
                         <i class="bi bi-person-circle"></i> 
                     </a>Luciene
                     <a href="#" title="Modo Escuro" class="icones-navbar"><i class="bi bi-moon-stars-fill"></i></a>
-                    <a href="configuracoes.html" title="Configurações" class="icones-navbar"><i class="bi bi-gear-fill"></i></a>                  
-                    <a href="#" title="Sair" class="icones-navbar"><i class="bi bi-box-arrow-right"></i></a>
-                </div>                    
+                    <a href="./pages/configuracoes.html" alt="Configurações" class="icones-navbar" title="Configurações"><i class="bi bi-gear-fill"></i></a>                  
+                    <a href="#" alt="Sair" class="icones-navbar" title="sair"><i class="bi bi-box-arrow-right"></i></a>
+                </div>                  
             </div>
         </div>
     </nav>
@@ -44,28 +44,53 @@
         <div class="container-fliud">
             <div class="row">
                 <div class="col">
-                    <h3 class="border-bottom pb-2">Contagem Regressiva</h3>                        
-                    <div class="row" id="linha-contagem">
-
+                    <h3 class="border-bottom pb-2">Dados</h3>  
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text" id="visible-addon">@</span>
+                            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="visible-addon">
+                            <input type="text" class="form-control d-none" placeholder="Hidden input" aria-label="Hidden input" aria-describedby="visible-addon">
+                        </div> 
                     </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+                    </div>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <label for="inputPassword6" class="col-form-label">Password</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="password" id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline">
+                        </div>
+                        <div class="col-auto">
+                            <span id="passwordHelpInline" class="form-text">
+                            Must be 8-20 characters long.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlTextarea1" class="form-label">Bio</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                            <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04">Confirmar</button>
+                        </div>
+                    </div>
+                    <h3 class="border-bottom pb-2">Contagem Regressiva</h3>                        
+                    <div class="row" id="linha-contagem"></div>
                 </div>
                 <div class="col">
                     <h3 class="border-bottom pb-2">Integrações</h3>
-                    <div id="linha-mal">
-
-                    </div>
+                    <div id="linha-mal"></div>
                     <br />
-                    <div id="linha-google">
-
-                    </div>
+                    <div id="linha-google"></div>
                     <br />
-                    <div id="linha-outlook">
-
-                    </div>
+                    <div id="linha-outlook"></div>
                     <br />
-                    <div id="linha-clima">
-
-                    </div>                    
+                    <div id="linha-clima"></div>                    
                 </div>
             </div>
             <br />
@@ -78,7 +103,36 @@
     </main>
     
     <!-- Estrutura do modal -->
-    <div id="container-modal"></div>
+    <div class="modal fade" id="modalAcao" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAcaoTitulo"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="modalAcaoBody"></div>
+
+            <div class="modal-footer">
+                <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">
+                Cancelar
+                </button>
+
+                <button
+                type="button"
+                class="btn btn-primary"
+                id="modalAcaoConfirmar">
+                Confirmar
+                </button>
+            </div>
+
+            </div>
+        </div>
+    </div>
     
     <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
         <div class="col-md-4 d-flex align-items-center"> 

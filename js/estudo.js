@@ -1,9 +1,9 @@
 import "./Utils/bootstrap.js";
+import { carregarFormulario } from "./Utils/utils.js";
 import { EstudoViewModel } from "./modulos/estudo/EstudoViewModel.js";
 import { EstudoView } from "./modulos/estudo/EstudoView.js"
 import { PlataformaViewModel } from "./modulos/plataformas/PlataformasViewModel.js";
 import { PlataformasView } from "./modulos/plataformas/PlataformasView.js";
-import Curso from "./modulos/estudo/estudoModel.js";
 import { AreaViewModel } from "./modulos/areas/AreasViewModel.js";
 import { AreasView } from "./modulos/areas/AreasView.js";
 import { StatusViewModel } from "./modulos/status/StatusViewModel.js";
@@ -12,73 +12,28 @@ import { StatusView } from "./modulos/status/StatusView.js";
 document.addEventListener("DOMContentLoaded", async () => {
   const vm = new EstudoViewModel();
   const estudoView = new EstudoView(vm);
-
   const areasVM = new AreaViewModel();
   const areasView = new AreasView(areasVM);
-  
   const plataformaVM = new PlataformaViewModel();
   const plataformaView = new PlataformasView(plataformaVM);
-
   const statusVM = new StatusViewModel();
   const statusView = new StatusView(statusVM);
-
-  const formCurso = document.getElementById('curso-form');
-  const btnCancelar = document.getElementById('cancelar-curso');
+  const botaoAdicionar = document.getElementById("adicionarCurso");
   const botaoArea = document.getElementById('adiciona-areas');  
   const botaoPlataforma = document.getElementById('adiciona-plataforma'); 
-  const botaoStatus = document.getElementById('adiciona-status'); 
+  const botaoStatus = document.getElementById('adiciona-status');   
+  const formCursoHTML = await carregarFormulario("/pages/partials/formCurso.html");
+  estudoView.formHTML = formCursoHTML
 
   await areasView.renderCardAreas('lista-areas'); 
   await plataformaView.renderCardPlataformas('lista-plataforma', 'Cursos');
   await statusView.renderCardStatus('lista-status', 'Geral');
-
-  //CRUD
   await estudoView.listarCursos();
-  await estudoView.listarArea('area-adicionar');
-  await estudoView.listarStatus('status-adicionar');
-  await estudoView.listarPlataforma('escola-adicionar');
-
-  formCurso.addEventListener("submit", async (e) => {
-     e.preventDefault();
- 
-     const idInput = document.getElementById('id-adicionar').value;     
-     const capa = document.getElementById('capa-adicionar').value;
-     const tituloCurso = document.getElementById('curso-adicionar').value;        
-     const escola = document.getElementById('capa-adicionar').value;
-     const instrutor = document.getElementById('instrutor-adicionar').value;
-     const area = document.getElementById('area-adicionar').value;
-     const dataCompra = document.getElementById('compra-adicionar').value;
-     const aulas = document.getElementById('assistidos-adicionar').value;
-     const assistido = document.getElementById('aulas-adicionar').value;
-     const horas = document.getElementById('horas-adicionar').value;
-     const valor = document.getElementById('valor-adicionar').value;
-     const status = document.getElementById('status-adicionar').value;
-     const certificado = document.getElementById('certificado-adicionar').value;
-
-     const curso = new Curso(
-        idInput ? idInput : null,
-        capa,
-        escola,
-        Number(aulas),
-        Number(assistido),
-        Number(horas),
-        tituloCurso,
-        instrutor,
-        area,
-        formatarParaISO(dataCompra),
-        Number(valor),
-        status,
-        certificado
-     );
    
-     await vm.salvarCurso(curso);
-     estudoView.listarCursos();
-     e.target.reset();
-   });
-
-  btnCancelar.addEventListener('click', () => {
-      formCurso.reset();
-  });
+    //Adicionar curso
+    botaoAdicionar.addEventListener("click", async () => {
+        await estudoView.abrirModalCriarCursos();
+    });
 
    //Adiciona area
     botaoArea.addEventListener("click", async (evento) => { 

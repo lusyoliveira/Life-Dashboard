@@ -1,4 +1,5 @@
 import "./Utils/bootstrap.js";
+import { carregarFormulario } from "./Utils/utils.js";
 import { CatalogoViewModel } from "./modulos/catalogo/CatalogoViewModel.js";
 import { CatalogoView } from "./modulos/catalogo/CatalogoView.js";
 import { PlataformaViewModel } from "./modulos/plataformas/PlataformasViewModel.js";
@@ -21,15 +22,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const botaoPlataforma = document.getElementById('adiciona-plataforma'); 
   const botaoStatus = document.getElementById('adiciona-status'); 
   const botaoTipo = document.getElementById('adiciona-tipo'); 
+  const formCatalogoHTML = await carregarFormulario("/pages/partials/formCatalogo.html");
+  catalogoView.formHTML = formCatalogoHTML
 
   await plataformaView.renderCardPlataformas('lista-plataforma', 'Catalogo');
   await statusView.renderCardStatus('lista-status', 'Catalogo');
   await tipoView.renderCardTipos('lista-tipo', 'Catalogo');
-  
-  //CRUD
   await catalogoView.listarCatalogo();
-  await catalogoView.carregarFormulario(); 
-         
+        
   //Contagem
   const resumo = vm.resumoGeral();
   catalogoView.renderContagemGeral("geral-progresso", "Progresso", resumo);
@@ -76,10 +76,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   catalogoView.renderCardTipo("Serie", "lista-series");
 
   //Card Frequentes
-    catalogoView.renderCardFrequentes("Serie", "frequentes-series");
-    catalogoView.renderCardFrequentes("Filme", "frequentes-filmes");
-    catalogoView.renderCardFrequentes("Desenho", "frequentes-desenho");
+  catalogoView.renderCardFrequentes("Serie", "frequentes-series");
+  catalogoView.renderCardFrequentes("Filme", "frequentes-filmes");
+  catalogoView.renderCardFrequentes("Desenho", "frequentes-desenho");
 
+  //Adicionar Catalogo
   botaoAdicionar.addEventListener("click", async () => {
       await catalogoView.abrirModalCriarCatalogo();
   });

@@ -1,0 +1,27 @@
+<form class="row gy-2 gx-3 align-items-center" id="formAgenda" title="Adicionar Agendamento">
+    <div class="row">
+        <div class="col-9">
+            <input type="hidden" id="id-adicionar" />
+            <label for="titulo-adicionar" class="col-form-label">Titulo:</label>
+            <input type="text" class="form-control" id="titulo-adicionar" title="Título" placeholder="Informe o compromisso" required>
+        </div>
+        <div class="col-3">
+            <label for="data-adicionar" class="col-form-label">Data:</label>
+            <input type="datetime-local" class="form-control" id="data-adicionar" title="Data" required>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-auto">
+            <label for="categoria-adicionar" class="col-form-label">Categoria:</label>
+            <select type="text" class="form-select" id="categoria-adicionar" title="Categoria" required></select>
+        </div>
+        <div class="col-auto">
+            <label for="tipo-adicionar" class="col-form-label">Tipo:</label>
+            <select type="text" class="form-select" id="tipo-adicionar" title="Tipo" aria-placeholder="selecione um tipo" required></select>
+        </div>
+        <div class="col-auto">
+            <label for="status-adicionar" class="col-form-label">Status:</label>
+            <select type="text" class="form-select" id="status-adicionar" title="Status" required></select>
+        </div>
+    </div>
+</form>  

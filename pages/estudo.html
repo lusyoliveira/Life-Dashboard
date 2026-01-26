@@ -106,8 +106,8 @@
                             </div>
                             <div class="card-body">
                                     <div class="input-group mb-3">
-                                    <input type="hidden" class="form-control" id="input-id-plataforma">
-                                    <input type="text" class="form-control" id="descricao-plataforma" placeholder="Nova plataforma..." aria-label="Nova plataforma...">
+                                    <input type="hidden" class="form-control" id="input-id-plataformas">
+                                    <input type="text" class="form-control" id="descricao-plataformas" placeholder="Nova plataforma..." aria-label="Nova plataforma...">
                                     <button class="btn btn-outline-secondary" type="button" title="Adicionar plataforma" id="adiciona-plataforma"><i class="bi bi-plus-lg"></i></button>
                                 </div>
                                 <ul class="list-group list-group-flush gap-1" id="lista-plataforma">
@@ -123,7 +123,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="input-group mb-3">
-                                    <input type="hidden" class="form-control" id="id-status">
+                                    <input type="hidden" class="form-control" id="input-id-status">
                                     <input type="text" class="form-control" id="descricao-status" placeholder="Nova status..." aria-label="Nova status...">
                                     <button class="btn btn-outline-secondary" type="button" title="Adicionar Status" id="adiciona-status"><i class="bi bi-plus-lg"></i></button>
                                 </div>
@@ -152,75 +152,14 @@
                         </div>
                     </div>
                 </div>
-
-            <form class="row gy-2 gx-3 align-items-center" id="curso-form" title="Adicionar curso">
-                <div class="col-3">
-                    <input type="hidden" id="id-adicionar" />
-                    <label for="curso-adicionar" class="col-form-label">Curso:</label>
-                    <input type="text" class="form-control" id="curso-adicionar" title="Curso" placeholder="Informe o curso" required>
+            <div class="table-responsive mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom">
+                    <h2 class="pb-1">Lista de Cursos</h2>
+                    <button class="btn btn-primary mb-3" id="adicionarCurso">
+                        <i class="bi bi-plus-lg"></i> Adicionar curso
+                    </button>
                 </div>
-                <div class="col">
-                    <label for="capa-adicionar" class="col-form-label">Capa:</label>
-                    <input type="text" class="form-control" id="capa-adicionar" title="Capa" placeholder="Informa a url da capa" required>
-                </div>
-                <div class="col-2">
-                    <label for="escola-adicionar" class="col-form-label">Escola:</label>
-                    <select type="text" class="form-select" id="escola-adicionar" title="Escola" required></select>
-                </div>
-                <div class="col-2">
-                    <label for="instrutor-adicionar" class="col-form-label">Instrutor:</label>
-                    <input type="text" class="form-control" id="instrutor-adicionar" title="Instrutor" placeholder="Informe o instrutor" required>
-                </div>
-                <div class="row">
-                <div class="col-1">
-                    <label for="aulas-adicionar" class="col-form-label">Aulas:</label>
-                    <input type="text" class="form-control" id="aulas-adicionar" title="Aulas" placeholder="0" required>
-                </div>
-                <div class="col-1">
-                    <label for="assistidos-adicionar" class="col-form-label">Assistidos:</label>
-                    <input type="text" class="form-control" id="assistidos-adicionar" title="Assistidos" placeholder="0" required>
-                </div>
-                <div class="col-1">
-                    <label for="horas-adicionar" class="col-form-label">Horas:</label>
-                    <input type="text" class="form-control" id="horas-adicionar" title="Horas" placeholder="0" required>
-                </div>
-                    <div class="col-2">
-                        <label for="area-adicionar" class="col-form-label">Área:</label>
-                        <select type="text" class="form-select" id="area-adicionar" title="Área" required></select>
-                    </div>
-                    <div class="col-2">
-                        <label for="compra-adicionar" class="col-form-label">Compra:</label>
-                        <input type="datetime-local" class="form-control" id="compra-adicionar" title="Compra" required>
-                    </div>
-                    <div class="col-2">
-                        <label for="valor-adicionar" class="col-form-label">Valor:</label>
-                        <input type="text" class="form-control" id="valor-adicionar" title="Valor" placeholder="Informe o valor" required>
-                    </div>
-                    <div class="col-2">
-                        <label for="status-adicionar" class="col-form-label">Status:</label>
-                        <select type="text" class="form-select" id="status-adicionar" title="Status" required>
-                        </select>
-                    </div>
-                    <div class="col-1">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="certificado-adicionar">
-                            <label class="form-check-label" for="certificado-adicionar">
-                                Certificado
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-2">  
-                    <div class="col">
-                        <button type="submit" class="btn btn-primary" id="adicionar-curso" title="Salvar Agendamento">Salvar</button>
-                        <button type="button" class="btn btn-secondary" id="cancelar-curso" title="Cancelar Agendamento" >Cancelar</button>
-                    </div>
-                </div>
-            </form>   
-            <div class="table-responsive">
                 <table id="tabelaCursos" class="table-responsive table-hover datatable"></table>
-
-               
             </div>
         </div>
 
@@ -298,100 +237,106 @@
 
         <div class="container-fliud mt-4">                
             <h2 class="pb-1 border-bottom">Plano de Estudo por Área</h2>
-            <div class="row mt-4">
-                <div class="col">
+            <div class="row row-cols-5 align-items-center">
+                <div class="col-2">
                     <div class="card" data-filtro="areas" data-status="Lettering">
                         <div class="card-header">
                             Lettering
                         </div>
                         <div class="card-body">
-                            <ul class="list-group list-group-flush gap-1" id="lista-lettering">
-                                
-                            </ul>
+                            <ul class="list-group list-group-flush gap-1" id="lista-lettering"></ul>
                         </div>
                     </div>
                 </div>
 
-                <div class="col">
+                <div class="col-2">
                     <div class="card" data-filtro="area" data-status="Desenho">
                         <div class="card-header">
                             Desenho
                         </div>
                         <div class="card-body">
-                            <ul class="list-group list-group-flush gap-1"  id="lista-desenho">
-                                
-                            </ul>
+                            <ul class="list-group list-group-flush gap-1"  id="lista-desenho"></ul>
                         </div>
                     </div>
                 </div>
 
-                <div class="col">
+                <div class="col-2">
                     <div class="card" data-filtro="area" data-status="Design">
                         <div class="card-header">
                             Design
                         </div>
                         <div class="card-body">
-                            <ul class="list-group list-group-flush gap-1"  id="lista-design">
-
-                            </ul>
+                            <ul class="list-group list-group-flush gap-1"  id="lista-design"></ul>
                         </div>
                     </div>
                 </div>
 
-                <div class="col">
+                <div class="col-2">
                     <div class="card" data-filtro="area" data-status="Aquarela">
                         <div class="card-header">
                             Aquarela
                         </div>
                         <div class="card-body">
-                            <ul class="list-group list-group-flush gap-1"  id="lista-aquarela">
-                                
-                            </ul>
+                            <ul class="list-group list-group-flush gap-1"  id="lista-aquarela"></ul>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="row mt-4">                    
-                <div class="col">
+                <div class="col-2">
                     <div class="card" data-filtro="area" data-tipo="Encadernacao">
                         <div class="card-header">
                             Encadernação
                         </div>
                         <div class="card-body">
-                            <ul class="list-group list-group-flush gap-1" id="lista-encadernacao">
-                                
-                            </ul>
+                            <ul class="list-group list-group-flush gap-1" id="lista-encadernacao"></ul>
                         </div>
                     </div>
                 </div>
-
-                <div class="col">
+    
+                <div class="col-2">
                     <div class="card" data-filtro="area" data-tipo="Tecnologia">
                         <div class="card-header">
                             Tecnologia
                         </div>
                         <div class="card-body">
-                            <ul class="list-group list-group-flush gap-1" id="lista-tecnologia">
-                                
-                            </ul>
+                            <ul class="list-group list-group-flush gap-1" id="lista-tecnologia"></ul>
                         </div>
                     </div>
                 </div>
-
-                <div class="col">
-                    
-                </div>
-
-                <div class="col">
-                    
-                </div>
-            </div>
+            </div>                 
         </div>  
     </main>
     
     <!-- Estrutura do modal -->
-    <div id="container-modal"></div>
+    <div class="modal fade" id="modalAcao" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAcaoTitulo"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="modalAcaoBody"></div>
+
+            <div class="modal-footer">
+                <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">
+                Cancelar
+                </button>
+
+                <button
+                type="button"
+                class="btn btn-primary"
+                id="modalAcaoConfirmar">
+                Confirmar
+                </button>
+            </div>
+
+            </div>
+        </div>
+    </div>
     
     <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
         <div class="col-md-4 d-flex align-items-center"> 
@@ -412,9 +357,6 @@
             </li>
         </ul>
     </footer>    
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="../js/componentes/datatables.min.js"></script>
-    <script src="../js/componentes/iniciaDataTable.js"></script>
     <script src="../js/estudo.js" type="module"></script>
 </body>
 </html>
