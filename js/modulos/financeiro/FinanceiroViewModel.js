@@ -6,8 +6,6 @@ export class FinanceiroViewModel {
     constructor(endpoint = "transacoes") {
         this.endpoint = endpoint;
         this.transacoes = [];
-        this.contas = [];
-        this.categorias = [];
     }
 
     async obterTransacoes() {
@@ -76,5 +74,15 @@ export class FinanceiroViewModel {
         return listaContas;
     })
         return this.contas;
+    };
+
+    filtrarTransacoesAVencer(qtd = 13) {
+        return [...this.transacoes]
+        .filter(transacao => {
+            const dataTransacao = new Date(transacao.Data);
+            return dataTransacao > new Date(); 
+        })
+        .sort((a, b) => new Date(a.Data) - new Date(b.Data))
+        .slice(0, qtd);
     };
 }

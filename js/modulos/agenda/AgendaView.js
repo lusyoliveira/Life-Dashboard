@@ -14,8 +14,7 @@ export class AgendaView {
     this.registrarEventosTabela();
   }
 
-  async 
-  registrarEventosTabela() {
+  async registrarEventosTabela() {
     const tabela = document.getElementById("tabelaAgenda");
     if (!tabela) return;
 
@@ -108,23 +107,23 @@ export class AgendaView {
   };
 
   async salvarFormularioAgenda(form) {
-    const idInput = form.querySelector('#id-adicionar')?.value || null;
-    const titulo = form.querySelector('#titulo-adicionar').value;
-    const data = form.querySelector('#data-adicionar').value;
-    const categoria = form.querySelector('#categoria-adicionar').value;
-    const tipo = form.querySelector('#tipo-adicionar').value;
-    const status = form.querySelector('#status-adicionar').value;
+      const idInput = form.querySelector('#id-adicionar')?.value || null;
+      const titulo = form.querySelector('#titulo-adicionar').value;
+      const data = form.querySelector('#data-adicionar').value;
+      const categoria = form.querySelector('#categoria-adicionar').value;
+      const tipo = form.querySelector('#tipo-adicionar').value;
+      const status = form.querySelector('#status-adicionar').value;
 
-    const agendamento = new Agenda( 
-      idInput ? idInput : null,
-      titulo,
-      status,
-      categoria,
-      tipo,
-      formatarParaISO(data)
-    );
-    await this.vm.salvarAgenda(agendamento);
-};
+      const agendamento = new Agenda( 
+        idInput ? idInput : null,
+        titulo,
+        status,
+        categoria,
+        tipo,
+        formatarParaISO(data)
+      );
+      await this.vm.salvarAgenda(agendamento);
+  };
   async listarAgenda() {
       const dados = await this.vm.obterAgenda();
 

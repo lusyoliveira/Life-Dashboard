@@ -1,50 +1,45 @@
-<form class="row gy-2 gx-3 align-items-center" id="formTransacao" title="Adicionar transacao">                            
-    <div class="col">
-        <input type="hidden" id="id-adicionar" />
-        <label for="data-adicionar" class="col-form-label">Data:</label>
-        <input type="date" class="form-control" id="data-adicionar" title="Data" required>
-    </div>
-    <div class="col">
-        <label for="descricao-adicionar" class="col-form-label">Descrição:</label>
-        <input type="text" class="form-control" id="descricao-adicionar" title="Descrição" placeholder="Informe a transação" required>
-    </div>
-    <div class="col">
-        <label for="categoria-adicionar" class="col-form-label">Categoria:</label>
-        <select type="text" class="form-select" id="categoria-adicionar" title="Categoria" required>
-            <option value="Loja">Loja</option>
-            <option value="Casa">Casa</option>
-            <option value="Pessoal">Pessoal</option>
-            <option value="Educação">Educação</option>
-            <option value="Financeiro">Financeiro</option>
-            <option value="Data Importante">Data Importante</option>
-        </select>
-    </div>
-    <div class="col">
-        <label for="conta-adicionar" class="col-form-label">Conta:</label>
-        <select type="text" class="form-select" id="conta-adicionar" title="Conta" required>
-            <option value="Evento">Evento</option>
-            <option value="Compromisso">Compromisso</option>
-            <option value="Tarefas">Tarefas</option>
-        </select>
-    </div>
-    <div class="col">
-        <label for="valor-adicionar" class="col-form-label">Valor:</label>
-        <input type="text" class="form-control" id="valor-adicionar" title="valor" placeholder="0" required>
-    </div>
-    <div class="col">
-        <label for="parcela-inicio" class="col-form-label">Parcela Inicio:</label>
-        <input type="text" class="form-control" id="parcela-inicio" title="Parcela Inicio">
-    </div>
-    <div class="col">
-        <label for="parcela-fim" class="col-form-label">Parcela Fim:</label>
-        <input type="text" class="form-control" id="parcela-fim" title="Parcela Fim">
-    </div>
-    <div class="col">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="parcelamento-adicionar">
-            <label class="form-check-label" for="parcelamento-adicionar">
-                Parcelamento
-            </label>
+<form class="row gy-2 gx-3 align-items-center" id="formTransacao" title="Adicionar transacao">    
+    <div class="row">
+        <div class="col-3">
+            <input type="hidden" id="id-adicionar" />
+            <label for="data-adicionar" class="col-form-label">Data:</label>
+            <input type="date" class="form-control" id="data-adicionar" title="Data" required>
         </div>
-    </div>                          
+        <div class="col-6">
+            <label for="descricao-adicionar" class="col-form-label">Descrição:</label>
+            <input type="text" class="form-control" id="descricao-adicionar" title="Descrição" placeholder="Informe a transação" required>
+        </div>
+        <div class="col-3">
+            <label for="categoria-adicionar" class="col-form-label">Categoria:</label>
+            <select type="text" class="form-select" id="categoria-adicionar" title="Categoria" required></select>
+        </div>
+    </div>                        
+    <div class="row">
+        <div class="col-3">
+            <label for="conta-adicionar" class="col-form-label">Conta:</label>
+            <select type="text" class="form-select" id="conta-adicionar" title="Conta" required></select>
+        </div>
+        <div class="col-3">
+            <label for="valor-adicionar" class="col-form-label">Valor:</label>
+            <input type="text" class="form-control" id="valor-adicionar" title="valor" placeholder="0" required>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <label for="parcela-inicio" class="col-form-label">Parcela Inicio:</label>
+            <input type="text" class="form-control" id="parcela-inicio" title="Parcela Inicio">
+        </div>
+        <div class="col-3">
+            <label for="parcela-fim" class="col-form-label">Parcela Fim:</label>
+            <input type="text" class="form-control" id="parcela-fim" title="Parcela Fim">
+        </div>
+        <div class="col-3 align-content-center">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="parcelamento-adicionar">
+                <label class="form-check-label" for="parcelamento-adicionar">
+                    Parcelamento
+                </label>
+            </div>
+        </div>                          
+    </div>
 </form>  

@@ -20,10 +20,13 @@
     import { ConfiguracaoView } from "./modulos/configuracoes/ConfiguracaoView.js";
     import { FinanceiroViewModel } from "./modulos/financeiro/FinanceiroViewModel.js";
     import { FinanceiroView } from "./modulos/financeiro/FinanceiroView.js";
+    import { ContasViewModel } from "./modulos/contas/ContasViewModel.js";
+    import { ContasView } from "./modulos/contas/ContasView.js";
 
     const botaoTarefa = document.getElementById('adiciona-tarefa'); 
     const botaoCatalogo = document.getElementById("adicionarCatalogo");   
     const botaoCurso = document.getElementById("adicionarCurso");
+    const botaoTransacao = document.getElementById('adicionarTransacao');
     const tvm = new TarefasViewModel("tarefas");
     const tarefaView = new TarefasView(tvm);
     const evm = new EstudoViewModel("cursos");
@@ -42,8 +45,10 @@
     const relogioView = new RelogioView(rvm);    
     const cfvm = new ConfiguracaoViewModel('configuracoes');
     const configuracaoView = new ConfiguracaoView(cfvm);
-    const cf = new FinanceiroViewModel('contas');
-    const contasView = new FinanceiroView(cf);
+    const cf = new FinanceiroViewModel();
+    const financeiroView = new FinanceiroView(cf);
+    const contasVM = new ContasViewModel();
+    const contasView = new ContasView(contasVM);  
 
 
     (async () => {
@@ -51,7 +56,7 @@
         await tvm.obterTarefas();   
         await cvm.obterCatalogo(); 
         await avm.obterAgenda();
-        await cf.obterContas();
+        await contasVM.obterContas();
         
         // const configuracoes = (await cfvm.obterConfiguracoes())[0] 
         // setInterval(async () => {
@@ -64,13 +69,14 @@
         estudoView.renderCursando("Cursando");
         tarefaView.listarTarefas('lista-tarefa')
         catalogoView.renderAssistindo(['Assistindo','Reassistindo'],'Assistindo')
-        agendaView.renderProximosCompromissos('proximos-compromissos', 13)
+        agendaView.renderProximosCompromissos('proximos-compromissos', 5)
+        financeiroView.renderTransacoesAVencer('proximos-transacoes', 5)
         agendaView.renderCalendario('calendario')
         climaView.exibirClima('clima')
         contagemView.exibirContagem('contagemRegressiva')
         contadorView.exibirContador('contador')
         relogioView.exibirRelogio('relogio')
-        contasView.listarContas('lista-contas')
+        contasView.renderContas('lista-contas')
 
         const formCatalogoHTML = await carregarFormulario("/pages/partials/formCatalogo.html");
         catalogoView.formHTML = formCatalogoHTML;
@@ -78,6 +84,13 @@
         agendaView.formHTML = formAgendaHTML;
         const formCursoHTML = await carregarFormulario("/pages/partials/formCurso.html");
         estudoView.formHTML = formCursoHTML;
+        const formTransacaoHTML = await carregarFormulario("/pages/partials/formTransacao.html");
+        financeiroView.formHTML = formTransacaoHTML
+
+        //Adicionar transação
+        botaoTransacao.addEventListener("click", async () => {
+            await financeiroView.abrirModalCriarTransacao();
+        });
 
         //Adicionar catalogo
         botaoCatalogo.addEventListener("click", async () => {

@@ -1,28 +1,115 @@
-import { popularSelect } from "../../Utils/utils.js";
+import { popularSelect, limparFormulario } from "../../Utils/utils.js";
+import { calculaTempoData } from "../../Utils/metodoData.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
+import { ContasViewModel } from "../contas/ContasViewModel.js";
+import { abrirModalAcao } from "../../Utils/modal.js";
+import Transacao from "./transacaoModel.js"
 
 export class FinanceiroView {
   constructor(vm) {
     this.vm = vm;
   }
 
-  async editarTransacao(Id) {
-    const transacao = await this.vm.obterTransacaoPorID(Id)
+  async abrirModalExcluirTransacao(id) {
+      abrirModalAcao({
+          titulo: "Excluir transação",
+          conteudoHTML: `<p>Deseja realmente excluir esta transação?</p>`,
+          textoConfirmar: "Excluir",
+          classeBotao: "btn-danger",
 
-    if (transacao) {
-        document.getElementById('id-adicionar').value = Id;
-        document.getElementById('descricao-adicionar').value = transacao.Descricao;
-        document.getElementById('data-adicionar').value = new Date(transacao.Data).toISOString().slice(0,16);
-        document.getElementById('categoria-adicionar').value = transacao.Categoria;
-        document.getElementById('conta-adicionar').value = transacao.Conta;
-        document.getElementById('valor-adicionar').value = transacao.Valor;
-        document.getElementById('parcela-inicio').value = transacao.ParcelaInicio;
-        document.getElementById('parcela-fim').value = transacao.ParcelaFim;
-        document.getElementById('parcelamento-adicionar').value = transacao.Parcelamento;
-    } else {
-        alert('Transação não encontrado!');
-    }
+          onConfirmar: async () => {
+          await this.vm.excluirTransacao(id);
+          await this.listarTransacoes();
+          }
+      });
   };
+
+  async abrirModalCriarTransacao() {
+      abrirModalAcao({
+          titulo: "Adicionar transação",
+          conteudoHTML: this.formHTML,
+          textoConfirmar: "Salvar",
+
+          onConfirmar: async () => {
+          const form = document.getElementById("formTransacao");
+
+          if (!form.checkValidity()) {
+              form.reportValidity();
+              return false;
+          }
+
+          await this.salvarFormularioTransacao(form);
+          await this.listarTransacoes();
+          }
+      });
+
+      limparFormulario();
+
+      await this.listarCategoria("categoria-adicionar");
+      await this.listarContasSelect("contas-adicionar");
+  };
+
+  async abrirModalEditarTransacao(id) {
+      const transacao = await this.vm.obterTransacaoPorID(id);
+
+      abrirModalAcao({
+          titulo: "Editar transação",
+          conteudoHTML: this.formHTML,
+          textoConfirmar: "Salvar alterações",
+
+          onConfirmar: async () => {
+          const form = document.getElementById("formTransacao");
+
+          if (!form.checkValidity()) {
+              form.reportValidity();
+              return false;
+          }
+
+          await this.salvarFormularioTransacao(form);
+          await this.listarTransacoes();
+          }
+      });
+
+      await this.listarCategoria("categoria-adicionar");
+      await this.listarContasSelect("contas-adicionar");
+
+      document.getElementById('id-adicionar').value = id;
+      document.getElementById('descricao-adicionar').value = transacao.Descricao;
+      document.getElementById('data-adicionar').value = new Date(transacao.Data).toISOString().slice(0,16);
+      document.getElementById('categoria-adicionar').value = transacao.Categoria;
+      document.getElementById('conta-adicionar').value = transacao.Conta;
+      document.getElementById('valor-adicionar').value = transacao.Valor;
+      document.getElementById('parcela-inicio').value = transacao.ParcelaInicio;
+      document.getElementById('parcela-fim').value = transacao.ParcelaFim;
+      document.getElementById('parcelamento-adicionar').value = transacao.Parcelamento;
+  };
+
+  async salvarFormularioCatalogo(form) {
+          const idInput = form.querySelector('#id-adicionar')?.value || null;
+          const descricao = form.querySelector('#descricao-adicionar').value;
+          const categoria = form.querySelector('#categoria-adicionar').value;
+          const conta = form.querySelector('#conta-adicionar').value;
+          const data = form.querySelector('#data-adicionar').value;
+          const parcelaFim = form.querySelector('#parcela-fim').value;
+          const parcelaInicio = form.querySelector('#parcela-inicio').value;
+          const parcelamento = form.querySelector('#parcelamento-adicionar').value;
+          const valor = form.querySelector('#valor-adicionar').value;
+  
+          const transacao = new Transacao(
+            idInput ? idInput : null,
+            descricao,
+            data,
+            categoria,
+            conta,
+            Number(valor),
+            parcelaFim,
+            parcelaInicio,
+            parcelamento
+            );
+        
+            await vm.salvarTransacao(transacao);
+            this.listarTransacoes("tbtransacoes");
+      };
 
   async listarTransacoes(elementoId) {
     const tabela = document.getElementById(elementoId);
@@ -153,30 +240,41 @@ export class FinanceiroView {
     }    
   };
 
-  async listarContas(elementoDestinoId) {
-    const elementoDestino = document.getElementById(elementoDestinoId);
-    const contas = await this.vm.obterContas();
+  async renderTransacoesAVencer(elementoDestinoId, qtd) {
+      const elementoDestino = document.getElementById(elementoDestinoId);
+      const transacoesFiltrada = this.vm.filtrarTransacoesAVencer(qtd);
+       
+      if (elementoDestino) {
+        elementoDestino.innerHTML = "";
 
-    contas.forEach((conta) => {
-      const option = document.createElement('option');
-      option.value = conta.id;
-      option.textContent = conta.nome;
-
-      const li = document.createElement('li');
-      li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-      li.textContent = conta.Descricao;
-
-      const span = document.createElement('span');
-      span.classList.add('badge', 'bg-primary', 'rounded-pill');
-      span.textContent = `R$ ${conta.Saldo}`;
-
-      li.appendChild(span);
-      elementoDestino.appendChild(li);
-    });
-  };
+        if (transacoesFiltrada.length > 0) {
+          transacoesFiltrada.forEach((transacao) => {
+            const dataUTC = new Date(transacao.Data);
+            const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
+            elementoDestino.innerHTML += `            
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">${transacao.Descricao}</h5>
+                            <small>${calculaTempoData(dataLocal)}</small>
+                            </div>
+                            <small class="badge text-bg-info">${
+                              transacao.Categoria.descricao
+                            }</small>
+                        </a>
+                    `;
+          });
+        } else {
+            const pMensagem = document.createElement('p');
+            pMensagem.classList.add('mensagem-curso');
+            pMensagem.textContent = 'Não há transações pendentes no momento.';
+            elementoDestino.appendChild(pMensagem);
+        } 
+      } 
+    };
 
   async listarContasSelect(elementoId) {    
-    const contas =  await this.vm.obterContas()
+    const contasVM = new ContasViewModel();
+    const contas =  await contasVM.obterContas();
     
     popularSelect(contas,elementoId)
   };

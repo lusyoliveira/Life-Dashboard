@@ -74,7 +74,6 @@ export class CatalogoViewModel {
       await api.atualizarDados(payload, this.endpoint);
     } else {
       payload.Adicao = new Date();
-      payload.Score = payload.Score || 0;
       await api.salvarDados(payload, this.endpoint);
     }
 

@@ -3,20 +3,38 @@ import { FinanceiroViewModel } from "./modulos/financeiro/FinanceiroViewModel.js
 import { FinanceiroView } from "./modulos/financeiro/FinanceiroView.js"; 
 import { CategoriaViewModel } from "./modulos/categorias/CategoriasViewModel.js";
 import { CategoriasView } from "./modulos/categorias/CategoriasView.js";
-
-
-const botaoCategoria = document.getElementById('adiciona-categoria'); 
+import { ContasViewModel } from "./modulos/contas/ContasViewModel.js";
+import { ContasView } from "./modulos/contas/ContasView.js";
+import { carregarFormulario } from "./Utils/utils.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const cvm = new FinanceiroViewModel('contas');
-    const contasView = new FinanceiroView(cvm);
-
+    const fvm = new FinanceiroViewModel();
+    const financeiroView = new FinanceiroView(fvm);
     const categoriaVM = new CategoriaViewModel();
     const categoriaView = new CategoriasView(categoriaVM);
+    const contasVM = new ContasViewModel();
+    const contasView = new ContasView(contasVM);    
+    const botaoCategoria = document.getElementById('adiciona-categoria'); 
+    const botaoConta = document.getElementById('adicionarConta');
+    const botaoTransacao = document.getElementById('adicionarTransacao');
+    const formTransacaoHTML = await carregarFormulario("/pages/partials/formTransacao.html");
+    financeiroView.formHTML = formTransacaoHTML
+    const formContaHTML = await carregarFormulario("/pages/partials/formContas.html");
+    contasView.formHTML = formContaHTML
 
-  await contasView.listarContas('lista-contas');
-  // await contasView.listarContasSelect('lista-contas');
-  await categoriaView.renderCardCategorias('lista-categoria', 'Financeiro');
+    await contasView.listarContas();
+    await contasView.renderContas('lista-contas');
+    await categoriaView.renderCardCategorias('lista-categoria', 'Financeiro');
+    financeiroView.renderTransacoesAVencer('proximos-transacoes', 5)
+    //Adicionar conta
+    botaoConta.addEventListener("click", async () => {
+        await contasView.abrirModalCriarConta();
+    });
+
+    //Adicionar transação
+    botaoTransacao.addEventListener("click", async () => {
+        await financeiroView.abrirModalCriarTransacao();
+    });
 
   //Adiciona categoria
   botaoCategoria.addEventListener("click", async (evento) => { 

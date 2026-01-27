@@ -48,50 +48,20 @@
             <div class="col-4 mb-4">
                 <h4>Saldo</h4>
                 <ul class="list-group" id="lista-contas"></ul>
-                
-                <hr>
-
-                <h4>Proximas Transações</h4>
-                <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
-                        <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">List group item heading</h5>
-                        <small>3 days ago</small>
-                        </div>
-                        <p class="mb-1">Some placeholder content in a paragraph.</p>
-                        <small>And some small print.</small>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">List group item heading</h5>
-                        <small class="text-body-secondary">3 days ago</small>
-                        </div>
-                        <p class="mb-1">Some placeholder content in a paragraph.</p>
-                        <small class="text-body-secondary">And some muted small print.</small>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">List group item heading</h5>
-                        <small class="text-body-secondary">3 days ago</small>
-                        </div>
-                        <p class="mb-1">Some placeholder content in a paragraph.</p>
-                        <small class="text-body-secondary">And some muted small print.</small>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">List group item heading</h5>
-                        <small class="text-body-secondary">3 days ago</small>
-                        </div>
-                        <p class="mb-1">Some placeholder content in a paragraph.</p>
-                        <small class="text-body-secondary">And some muted small print.</small>
-                    </a>
+                <div class="d-flex justify-content-between align-items-center my-3 border-bottom">
+                    <h4>Próximas Transações</h4>
+                    <a href="./transacoes.html" class="btn btn-primary mb-3" alt="Ver Transações"><i class="bi bi-eye-fill"></i></a>
+                    <button class="btn btn-primary mb-3" id="adicionarTransacao" alt="Nova Transação"><i class="bi bi-plus-lg"></i></button>
                 </div>
-                <a class="icon-link icon-link-hover" href="./transacoes.html">
-                Todas as transações
-                <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
-                    <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
-                </svg>
-                </a>
+                <div class="list-group text-start" id="proximos-transacoes" data-filtro="transacoes" data-status="recentes"></div>   
+            </div>
+            <div class="col-6 mb-4">
+                <h4>Grafico</h4>                        
+            </div>
+        </div>
+
+        <div class="row row-cols-auto">
+            <div class="col-4 mb-4">
                 <div class="row mt-3">  
                     <div class="col">
                         <div class="card" data-filtro="categoria" data-tipo="categoria">
@@ -110,8 +80,16 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6 mb-4">
-                <h4>Grafico</h4>                        
+            <div class="col-8 mb-4">
+                <div class="table-responsive mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom">
+                        <h2 class="pb-1">Contas</h2>
+                        <button class="btn btn-primary mb-3" id="adicionarConta">
+                            <i class="bi bi-plus-lg"></i> Adicionar Conta
+                        </button>
+                    </div>
+                    <table id="tabelaContas" class="table-responsive table-hover datatable"></table>    
+                </div>                     
             </div>
         </div>
         <div class="col-8 mb-4">
@@ -172,9 +150,6 @@
         </ul>
     </footer>    
     <script src="../js/financeiro.js" type="module"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="../js/componentes/datatables.min.js"></script>
-    <script src="../js/componentes/iniciaDataTable.js"></script>
 </body>
 </html>
 

@@ -98,10 +98,11 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li> <a class="dropdown-item d-flex gap-2 align-items-center" href="#">
+                            <li> 
+                                <button class="dropdown-item d-flex gap-2 align-items-center" id="adicionarTransacao" alt="Nova Transação">
                                     <i class="bi bi-plus-square"></i>
-                                    Criar Diretório
-                                </a> 
+                                    Nova Transação
+                                </button> 
                             </li>
                         </ul>
                         <br>
@@ -113,9 +114,9 @@
                     </div>
                     <div class="col-6">
                         <h3 >Próximos Compromissos</h3>
-                          <div class="list-group text-start" id="proximos-compromissos" data-filtro="compromissos" data-status="recentes">
-                                
-                            </div>
+                        <div class="list-group text-start" id="proximos-compromissos" data-filtro="compromissos" data-status="recentes"></div>
+                        <h3 class="pt-3">Próximas Transações</h3>
+                        <div class="list-group text-start" id="proximos-transacoes" data-filtro="transacoes" data-status="recentes"></div>
                     </div>
                     <div class="col-3">
                         <div class="container-relogio justify-content-center" id="relogio"></div>
