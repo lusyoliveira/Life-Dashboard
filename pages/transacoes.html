@@ -45,46 +45,42 @@
     </header>
  
     <main class="container-fliud m-4">
-        <h1 class="pb-2 mb-4">Transações</h1>
-            <div class="container-fliud">    
-                <div class="d-flex justify-content-between align-items-center mb-3 pb-1 border-bottom">
-                    
-                    <button class="btn btn-primary mb-3" id="adicionarTransacao" type="button">
-                        <i class="bi bi-plus-lg"></i> Adicionar transação
-                    </button>
-                </div>            
-                <div class="row">
-                    <div class="table-responsive">
-                        <table class="table" id="tbtransacoes">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Descrição</th>
-                                    <th>Categoria</th>
-                                    <th>Conta</th>
-                                    <th>Valor</th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-group-divider" id="linha">
-                                
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>                           
-                </div>
-            </div>             
+        <h1>Transações</h1>
+        <div class="container-fliud">    
+            <div class="d-flex justify-content-end align-items-center mb-3 pb-1">                                
+                <button class="btn btn-primary" id="adicionarTransacao" alt="Nova Transação" type="button">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </div> 
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-primary" id="mesAnterior">
+                    <i class="bi bi-caret-left"></i>
+                </button>
+                <span class="fs-4" id="mesAno"></span>
+                <button class="btn btn-primary" id="mesProximo">
+                    <i class="bi bi-caret-right"></i>
+                </button>    
+            </div>           
+            <div class="row">
+                <div class="table-responsive">
+                    <table class="table" id="tbtransacoes">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Conta</th>
+                                <th>Valor</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider" id="linha"></tbody>
+
+                    </table>
+                </div>                           
+            </div>
+        </div>             
     </main>
     
     <!-- Estrutura do modal -->

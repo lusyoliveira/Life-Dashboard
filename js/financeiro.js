@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await contasView.listarContas();
     await contasView.renderContas('lista-contas');
     await categoriaView.renderCardCategorias('lista-categoria', 'Financeiro');
-    financeiroView.renderTransacoesAVencer('proximos-transacoes', 5)
+    await financeiroView.renderTransacoesAVencer('proximos-transacoes', 5)
     //Adicionar conta
     botaoConta.addEventListener("click", async () => {
         await contasView.abrirModalCriarConta();
@@ -58,5 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById('descricao-categoria').value = ''
       document.getElementById('input-id-categoria').value = ''
   });
+
+  financeiroView.renderGraficos();
 
 });

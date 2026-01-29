@@ -30,7 +30,8 @@ import { TiposView } from "./modulos/tipos/TiposView.js";
     await tipoView.renderCardTipos('lista-tipo', 'Agenda');
     await agendaView.listarAgenda();
 
-    agendaView.renderProximosCompromissos('proximos-compromissos', 7)
+    agendaView.renderProximosCompromissos('proximos-compromissos', 10)
+    agendaView.renderGraficos()
     
     //Adicionar Agendamento
     botaoAdicionar.addEventListener("click", async () => {

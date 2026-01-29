@@ -2,12 +2,18 @@ import { popularSelect, limparFormulario } from "../../Utils/utils.js";
 import { calculaTempoData } from "../../Utils/metodoData.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 import { ContasViewModel } from "../contas/ContasViewModel.js";
+import { graficoPizza } from "../../componentes/graficos/GraficosFactory.js";
 import { abrirModalAcao } from "../../Utils/modal.js";
 import Transacao from "./transacaoModel.js"
 
 export class FinanceiroView {
   constructor(vm) {
     this.vm = vm;
+
+    // Estado do mês exibido
+    const hoje = new Date();
+    this.mesAtual = hoje.getMonth();   // 0 a 11
+    this.anoAtual = hoje.getFullYear();
   }
 
   async abrirModalExcluirTransacao(id) {
@@ -19,7 +25,7 @@ export class FinanceiroView {
 
           onConfirmar: async () => {
           await this.vm.excluirTransacao(id);
-          await this.listarTransacoes();
+          await this.listarTransacoes('tbtransacoes');
           }
       });
   };
@@ -39,14 +45,14 @@ export class FinanceiroView {
           }
 
           await this.salvarFormularioTransacao(form);
-          await this.listarTransacoes();
           }
       });
 
       limparFormulario();
 
       await this.listarCategoria("categoria-adicionar");
-      await this.listarContasSelect("contas-adicionar");
+      await this.listarContasSelect("conta-adicionar");
+      await this.listarContasSelect("conta-origem-adicionar");
   };
 
   async abrirModalEditarTransacao(id) {
@@ -66,34 +72,48 @@ export class FinanceiroView {
           }
 
           await this.salvarFormularioTransacao(form);
-          await this.listarTransacoes();
+          await this.listarTransacoes('tbtransacoes');
           }
       });
 
       await this.listarCategoria("categoria-adicionar");
-      await this.listarContasSelect("contas-adicionar");
+      await this.listarContasSelect("conta-adicionar");
 
       document.getElementById('id-adicionar').value = id;
       document.getElementById('descricao-adicionar').value = transacao.Descricao;
       document.getElementById('data-adicionar').value = new Date(transacao.Data).toISOString().slice(0,16);
       document.getElementById('categoria-adicionar').value = transacao.Categoria;
       document.getElementById('conta-adicionar').value = transacao.Conta;
+      document.getElementById('conta-origem-adicionar').value = transacao.ContaOrigem;
       document.getElementById('valor-adicionar').value = transacao.Valor;
       document.getElementById('parcela-inicio').value = transacao.ParcelaInicio;
       document.getElementById('parcela-fim').value = transacao.ParcelaFim;
       document.getElementById('parcelamento-adicionar').value = transacao.Parcelamento;
   };
 
-  async salvarFormularioCatalogo(form) {
+  async salvarFormularioTransacao(form) {
           const idInput = form.querySelector('#id-adicionar')?.value || null;
           const descricao = form.querySelector('#descricao-adicionar').value;
           const categoria = form.querySelector('#categoria-adicionar').value;
           const conta = form.querySelector('#conta-adicionar').value;
+          const contaOrigem = form.querySelector('#conta-origem-adicionar').value;
           const data = form.querySelector('#data-adicionar').value;
           const parcelaFim = form.querySelector('#parcela-fim').value;
           const parcelaInicio = form.querySelector('#parcela-inicio').value;
           const parcelamento = form.querySelector('#parcelamento-adicionar').value;
           const valor = form.querySelector('#valor-adicionar').value;
+          const receita = form.querySelector('#receita-adicionar').value;
+          const despesa = form.querySelector('#despesa-adicionar').value;
+          const transaferencia = form.querySelector('#transaferencia-adicionar').value;
+          let tipo = null;
+
+          if (receita) {
+              tipo = 'R';
+          } else if (despesa) {
+              tipo = 'D';
+          } else if (transaferencia) {
+              tipo = 'T';
+          }
   
           const transacao = new Transacao(
             idInput ? idInput : null,
@@ -101,15 +121,56 @@ export class FinanceiroView {
             data,
             categoria,
             conta,
+            contaOrigem,
             Number(valor),
-            parcelaFim,
-            parcelaInicio,
-            parcelamento
-            );
-        
-            await vm.salvarTransacao(transacao);
-            this.listarTransacoes("tbtransacoes");
+            parcelaFim ? parcelaFim : null,
+            parcelaInicio ? parcelaInicio : null,
+            parcelamento ? parcelamento : false,
+            tipo
+          );
+            
+            await this.vm.salvarTransacao(transacao);
       };
+
+  mesAnterior() {
+    this.mesAtual--;
+
+    if (this.mesAtual < 0) {
+      this.mesAtual = 11;
+      this.anoAtual--;
+    }
+
+    this.atualizarTituloMes();
+    this.listarTransacoes('tbtransacoes');
+  }
+
+  mesProximo() {
+    this.mesAtual++;
+
+    if (this.mesAtual > 11) {
+      this.mesAtual = 0;
+      this.anoAtual++;
+    }
+
+    this.atualizarTituloMes();
+    this.listarTransacoes('tbtransacoes');
+  }
+  
+ atualizarTituloMes() {
+    const titulo = document.getElementById('mesAno');
+
+    const data = new Date(this.anoAtual, this.mesAtual, 1);
+
+    const mesPorExtenso = data.toLocaleDateString('pt-BR', {
+      month: 'long'
+    });
+
+    // Primeira letra maiúscula (opcional, mas fica bonito)
+    const mesFormatado =
+      mesPorExtenso.charAt(0).toUpperCase() + mesPorExtenso.slice(1);
+
+    titulo.textContent = `${mesFormatado} / ${this.anoAtual}`;
+  };
 
   async listarTransacoes(elementoId) {
     const tabela = document.getElementById(elementoId);
@@ -121,10 +182,15 @@ export class FinanceiroView {
     }
 
     const transacoes = await this.vm.obterTransacoes();
+    const transcoesMes = transacoes.filter(transacao => {
+      const dataTransacao = new Date(transacao.Data);
+      return dataTransacao.getMonth() === this.mesAtual && dataTransacao.getFullYear() === this.anoAtual;
+    });
 
     // Ordena por data
-    const listaOrdenada = transacoes.sort(
+    const listaOrdenada = transcoesMes.sort(
       (a, b) => new Date(a.Data) - new Date(b.Data)
+      
     );
 
     // Agrupa por dia (YYYY-MM-DD)
@@ -150,6 +216,17 @@ export class FinanceiroView {
       grupos[dataChave].total += Number(transacao.Valor);
       grupos[dataChave].itens.push(transacao);
     });
+
+    if (listaOrdenada.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 7;
+      td.textContent = 'Nenhuma transação neste mês';
+      td.classList.add('text-center');
+      tr.appendChild(td);
+      corpoTabela.appendChild(tr);
+      return;
+    }
 
     // Monta a tabela
     for (const chave in grupos) {
@@ -190,7 +267,7 @@ export class FinanceiroView {
 
         // CONTA
         const tdConta = document.createElement('td');
-        tdConta.textContent = transacao.Conta;
+        tdConta.textContent = transacao.Conta.Descricao;
 
         // VALOR
         const tdValor = document.createElement('td');
@@ -242,13 +319,13 @@ export class FinanceiroView {
 
   async renderTransacoesAVencer(elementoDestinoId, qtd) {
       const elementoDestino = document.getElementById(elementoDestinoId);
-      const transacoesFiltrada = this.vm.filtrarTransacoesAVencer(qtd);
-       
+      const transacoes= await this.vm.filtrarTransacoesAVencer(qtd);        
+
       if (elementoDestino) {
         elementoDestino.innerHTML = "";
 
-        if (transacoesFiltrada.length > 0) {
-          transacoesFiltrada.forEach((transacao) => {
+        if (transacoes.length > 0) {
+          transacoes.forEach((transacao) => {
             const dataUTC = new Date(transacao.Data);
             const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
             elementoDestino.innerHTML += `            
@@ -281,8 +358,18 @@ export class FinanceiroView {
 
   async listarCategoria(elementoId) {
     const categoriaVM = new CategoriaViewModel();
-    const categorias = await categoriaVM.obterCategoria('Agenda');
+    const categorias = await categoriaVM.obterCategoria('Financeiro');
 
     popularSelect(categorias, elementoId);
+  };
+
+  async renderGraficos() {
+      const dados = await this.vm.transacoesporCategoria();
+
+      graficoPizza(
+          "graficoCategoria",
+          dados,
+          "Gastos por Categoria"
+      );
   };
 }

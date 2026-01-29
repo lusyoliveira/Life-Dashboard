@@ -27,8 +27,7 @@ export class CatalogoViewModel {
         titulo.Score,
         titulo.Vezes,
         titulo.Adicao
-      );
- 
+      ); 
     return titulos;
   });  
   return this.catalogo;

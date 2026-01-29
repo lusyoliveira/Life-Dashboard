@@ -69,8 +69,8 @@
         estudoView.renderCursando("Cursando");
         tarefaView.listarTarefas('lista-tarefa')
         catalogoView.renderAssistindo(['Assistindo','Reassistindo'],'Assistindo')
-        agendaView.renderProximosCompromissos('proximos-compromissos', 5)
-        financeiroView.renderTransacoesAVencer('proximos-transacoes', 5)
+        agendaView.renderProximosCompromissos('proximos-compromissos', 7)
+        financeiroView.renderTransacoesAVencer('proximos-transacoes', 7)
         agendaView.renderCalendario('calendario')
         climaView.exibirClima('clima')
         contagemView.exibirContagem('contagemRegressiva')
@@ -86,6 +86,13 @@
         estudoView.formHTML = formCursoHTML;
         const formTransacaoHTML = await carregarFormulario("/pages/partials/formTransacao.html");
         financeiroView.formHTML = formTransacaoHTML
+        // const alertTrigger = document.getElementById('liveAlertPlaceholder')
+
+        // if (alertTrigger) {
+        //     alertTrigger.addEventListener('click', () => {
+        //         mostrarAlerta('Nice, you triggered this alert message!', 'success')
+        //     })
+        // }
 
         //Adicionar transação
         botaoTransacao.addEventListener("click", async () => {

@@ -5,7 +5,12 @@ const api = {
         
         try {
             const response = await fetch(`${urlBase}/${endpoint}`)
-            return await response.json()
+
+            if (response.status === 200) {
+                return await response.json()
+            } else {
+                return response.statusText
+            }
         } catch(error)  {
             alert('Erro ao buscar dados da API!')
             throw error

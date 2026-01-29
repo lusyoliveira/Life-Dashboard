@@ -10,7 +10,8 @@ export class ContasViewModel {
   async obterContas() {
 
     const contasData = await api.buscarDados(this.endpoint);
-
+    
+    
     this.contas = contasData
         .map((conta) => {
         const contas = new Contas(

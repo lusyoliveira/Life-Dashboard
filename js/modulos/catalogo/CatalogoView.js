@@ -312,8 +312,8 @@ export class CatalogoView {
             const imgCapa = document.createElement('img');
             imgCapa.src = titulo.Capa;
             imgCapa.classList.add('card-img-top');
-            imgCapa.width = 320;
-            imgCapa.height = 450;
+            imgCapa.width = 300;
+            imgCapa.height = 400;
 
             const divCardBody = document.createElement('div');
             divCardBody.classList.add('card-body');

@@ -3,6 +3,7 @@ import { popularSelect, limparFormulario } from "../../Utils/utils.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
+import { graficoPizza } from "../../componentes/graficos/GraficosFactory.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
 import { abrirModalAcao } from "../../Utils/modal.js";
@@ -420,6 +421,16 @@ export class AgendaView {
     const categorias = await categoriaVM.obterCategoria('Agenda');
 
     popularSelect(categorias, elementoId);
+  };
+
+  async renderGraficos() {
+      const dados = await this.vm.compromissosporCategoria();
+
+      graficoPizza(
+          "graficoCategoria",
+          dados,
+          "Compromissos por Categoria"
+      );
   };
 
 }

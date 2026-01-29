@@ -1,6 +1,7 @@
 import api from "../../servicos/metodoApi.js";
 import Transacao from "../financeiro/transacaoModel.js";
-import Contas from "../financeiro/contasModel.js";
+import Contas from "../contas/contasModel.js";
+import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 
 export class FinanceiroViewModel {
     constructor(endpoint = "transacoes") {
@@ -10,6 +11,7 @@ export class FinanceiroViewModel {
 
     async obterTransacoes() {
         const transacoesData = await api.buscarDados(this.endpoint);
+        
         this.transacoes = transacoesData.map(transacao => {
             const listaTransacoes = new Transacao(
                 transacao._id,
@@ -17,12 +19,14 @@ export class FinanceiroViewModel {
                 transacao.Data,
                 transacao.Categoria,
                 transacao.Conta,
+                transacao.ContaOrigem,
                 transacao.Valor,
                 transacao.ParcelaInicio,
                 transacao.ParcelaFim,
                 transacao.Parcelamento,  
+                transacao.Tipo
             );
-            return listaTransacoes;
+            return listaTransacoes;            
         })
         return this.transacoes;
     };
@@ -37,10 +41,12 @@ export class FinanceiroViewModel {
                 transacao.Data,
                 transacao.Categoria,
                 transacao.Conta,
+                transacao.ContaOrigem,
                 transacao.Valor,
                 transacao.ParcelaInicio,
                 transacao.ParcelaFim,
                 transacao.Parcelamento,  
+                transacao.Tipo  
         );       
         return transacoes;
     }
@@ -76,13 +82,36 @@ export class FinanceiroViewModel {
         return this.contas;
     };
 
-    filtrarTransacoesAVencer(qtd = 13) {
-        return [...this.transacoes]
-        .filter(transacao => {
+    async filtrarTransacoesAVencer(qtd = 13) {
+        const transacoes = await this.obterTransacoes();
+
+        const transacoesFiltrada = transacoes.filter(transacao => {
             const dataTransacao = new Date(transacao.Data);
+           
             return dataTransacao > new Date(); 
         })
+        .filter (transacoes => transacoes.Tipo === 'D')
         .sort((a, b) => new Date(a.Data) - new Date(b.Data))
         .slice(0, qtd);
+
+        return transacoesFiltrada;
+    };
+
+    async transacoesporCategoria() {
+        const categoriaVM = new CategoriaViewModel();
+        const categorias = await categoriaVM.obterCategoria('Financeiro');
+        const categoriasArray = categorias.map(c => c.Descricao);
+        await this.obterTransacoes();
+
+        const valores = categoriasArray.map(categoria =>
+            this.transacoes
+                .filter(t => t.Categoria.descricao === categoria)
+                .reduce((acc, t) => acc + t.Valor, 0)
+        );
+
+        return {
+            labels: categoriasArray,
+            data: valores
+        };
     };
 }

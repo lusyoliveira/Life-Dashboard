@@ -8,9 +8,6 @@ import "datatables.net-dt/css/dataTables.dataTables.css";
 window.$ = $;
 window.jQuery = $;
 
-/**
- * Cria ou recria um DataTable genérico
- */
 export function criarDataTable({
   tabelaId,
   dados = [],
@@ -23,7 +20,6 @@ export function criarDataTable({
     return null;
   }
 
-  // Destroi se já existir
   if ($.fn.DataTable.isDataTable(tabela)) {
     $(tabela).DataTable().destroy();
     tabela.innerHTML = "";

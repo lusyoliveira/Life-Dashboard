@@ -1,5 +1,6 @@
 import api from "../../servicos/metodoApi.js";
 import Agenda from "../agenda/agendaModel.js";
+import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
  
 export class AgendaViewModel {
   constructor(endpoint = "agenda") {
@@ -76,5 +77,21 @@ export class AgendaViewModel {
       .slice(0, qtd);
   };
 
+  async compromissosporCategoria() {
+      const categoriaVM = new CategoriaViewModel();
+      const categorias = await categoriaVM.obterCategoria('Agenda');
+      const categoriasArray = categorias.map(c => c.Descricao);
+      await this.obterAgenda();
+
+      const valores = categoriasArray.map(categoria =>
+          this.agenda
+              .filter(t => t.Categoria.descricao === categoria).length
+      );
+
+      return {
+          labels: categoriasArray,
+          data: valores
+      };
+  };
   
 }
