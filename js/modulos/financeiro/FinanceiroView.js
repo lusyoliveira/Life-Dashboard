@@ -51,8 +51,8 @@ export class FinanceiroView {
       limparFormulario();
 
       await this.listarCategoria("categoria-adicionar");
-      await this.listarContasSelect("conta-adicionar");
       await this.listarContasSelect("conta-origem-adicionar");
+      await this.listarContasSelect("conta-destino-adicionar");
   };
 
   async abrirModalEditarTransacao(id) {
@@ -77,34 +77,43 @@ export class FinanceiroView {
       });
 
       await this.listarCategoria("categoria-adicionar");
-      await this.listarContasSelect("conta-adicionar");
+      await this.listarContasSelect("conta-origem-adicionar");
+      await this.listarContasSelect("conta-destino-adicionar");
 
       document.getElementById('id-adicionar').value = id;
       document.getElementById('descricao-adicionar').value = transacao.Descricao;
       document.getElementById('data-adicionar').value = new Date(transacao.Data).toISOString().slice(0,16);
       document.getElementById('categoria-adicionar').value = transacao.Categoria;
-      document.getElementById('conta-adicionar').value = transacao.Conta;
+      document.getElementById('conta-destino-adicionar').value = transacao.ContaDestino;
       document.getElementById('conta-origem-adicionar').value = transacao.ContaOrigem;
       document.getElementById('valor-adicionar').value = transacao.Valor;
       document.getElementById('parcela-inicio').value = transacao.ParcelaInicio;
       document.getElementById('parcela-fim').value = transacao.ParcelaFim;
       document.getElementById('parcelamento-adicionar').value = transacao.Parcelamento;
+      if (transacao.Tipo === 'R') {
+          document.getElementById('receita-adicionar').checked = true;
+      } else if (transacao.Tipo === 'D') {
+          document.getElementById('despesa-adicionar').checked = true;
+      } else if (transacao.Tipo === 'T') {
+          document.getElementById('transaferencia-adicionar').checked = true;
+      }
+
   };
 
   async salvarFormularioTransacao(form) {
           const idInput = form.querySelector('#id-adicionar')?.value || null;
           const descricao = form.querySelector('#descricao-adicionar').value;
           const categoria = form.querySelector('#categoria-adicionar').value;
-          const conta = form.querySelector('#conta-adicionar').value;
+          const contaDestino = form.querySelector('#conta-destino-adicionar').value;
           const contaOrigem = form.querySelector('#conta-origem-adicionar').value;
           const data = form.querySelector('#data-adicionar').value;
           const parcelaFim = form.querySelector('#parcela-fim').value;
           const parcelaInicio = form.querySelector('#parcela-inicio').value;
           const parcelamento = form.querySelector('#parcelamento-adicionar').value;
           const valor = form.querySelector('#valor-adicionar').value;
-          const receita = form.querySelector('#receita-adicionar').value;
-          const despesa = form.querySelector('#despesa-adicionar').value;
-          const transaferencia = form.querySelector('#transaferencia-adicionar').value;
+          const receita = form.querySelector('#receita-adicionar').checked;
+          const despesa = form.querySelector('#despesa-adicionar').checked;
+          const transaferencia = form.querySelector('#transaferencia-adicionar').checked;
           let tipo = null;
 
           if (receita) {
@@ -120,7 +129,7 @@ export class FinanceiroView {
             descricao,
             data,
             categoria,
-            conta,
+            contaDestino,
             contaOrigem,
             Number(valor),
             parcelaFim ? parcelaFim : null,
@@ -128,8 +137,8 @@ export class FinanceiroView {
             parcelamento ? parcelamento : false,
             tipo
           );
-            
-            await this.vm.salvarTransacao(transacao);
+          
+          await this.vm.salvarTransacao(transacao);
       };
 
   mesAnterior() {
@@ -186,7 +195,7 @@ export class FinanceiroView {
       const dataTransacao = new Date(transacao.Data);
       return dataTransacao.getMonth() === this.mesAtual && dataTransacao.getFullYear() === this.anoAtual;
     });
-
+    
     // Ordena por data
     const listaOrdenada = transcoesMes.sort(
       (a, b) => new Date(a.Data) - new Date(b.Data)
@@ -249,6 +258,9 @@ export class FinanceiroView {
       trCabecalho.appendChild(tdCabecalho);
       corpoTabela.appendChild(trCabecalho);
       
+      console.log(grupo.itens);
+      
+
       /* ========= Transações do dia ========= */
       grupo.itens.forEach(transacao => {
         const tr = document.createElement('tr');
@@ -263,11 +275,28 @@ export class FinanceiroView {
 
         // CATEGORIA
         const tdCategoria = document.createElement('td');
-        tdCategoria.textContent = transacao.Categoria.descricao;
+
+        if (transacao.Categoria && transacao.Categoria.descricao) {
+          tdCategoria.textContent = transacao.Categoria.descricao;
+        }
 
         // CONTA
         const tdConta = document.createElement('td');
-        tdConta.textContent = transacao.Conta.Descricao;
+        if (transacao.Tipo === 'T' && parseInt(transacao.Valor) < 0) {
+          if (transacao.ContaOrigem && transacao.ContaOrigem.Descricao) {
+            tdConta.textContent = transacao.ContaOrigem.Descricao;
+          }
+        } else if (transacao.Tipo === 'T' && parseInt(transacao.Valor) > 0) {
+          if (transacao.ContaDestino && transacao.ContaDestino.Descricao) {
+          tdConta.textContent = transacao.ContaDestino.Descricao;
+          }
+        } else if (transacao.Tipo === 'R' || transacao.Tipo === 'D') {
+          if (transacao.ContaOrigem && transacao.ContaOrigem.Descricao) {
+            tdConta.textContent = transacao.ContaOrigem.Descricao;
+          }
+        } else {
+          tdConta.textContent = 'Conta não definida';
+        }
 
         // VALOR
         const tdValor = document.createElement('td');

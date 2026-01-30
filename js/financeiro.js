@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           descricao: descricaocategoria,
           Tipo: 'Financeiro'
       }          
-      await categoriaView.salvarCategoria(categoria);
+      await categoriaView.vm.salvarCategoria(categoria);
       await categoriaView.renderCardCategorias('lista-categorias', 'Financeiro');
 
       document.getElementById('descricao-categoria').value = ''

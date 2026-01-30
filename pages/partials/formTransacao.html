@@ -1,32 +1,5 @@
 <form class="row gy-2 gx-3 align-items-center" id="formTransacao" title="Adicionar transacao">    
-    <div class="row">
-        <div class="col-3">
-            <input type="hidden" id="id-adicionar" />
-            <label for="data-adicionar" class="col-form-label">Data:</label>
-            <input type="date" class="form-control" id="data-adicionar" title="Data" required>
-        </div>
-        <div class="col-6">
-            <label for="descricao-adicionar" class="col-form-label">Descrição:</label>
-            <input type="text" class="form-control" id="descricao-adicionar" title="Descrição" placeholder="Informe a transação" required>
-        </div>
-        <div class="col-3">
-            <label for="categoria-adicionar" class="col-form-label">Categoria:</label>
-            <select type="text" class="form-select" id="categoria-adicionar" title="Categoria" required></select>
-        </div>
-    </div>                        
-    <div class="row">
-        <div class="col-3">
-            <label for="conta-origem-adicionar" class="col-form-label">Conta Origem:</label>
-            <select type="text" class="form-select" id="conta-origem-adicionar" title="Conta Origem" required></select>
-        </div>
-        <div class="col-3">
-            <label for="conta-adicionar" class="col-form-label">Conta Destino:</label>
-            <select type="text" class="form-select" id="conta-adicionar" title="Conta Destino" required></select>
-        </div>
-        <div class="col-3">
-            <label for="valor-adicionar" class="col-form-label">Valor:</label>
-            <input type="text" class="form-control" id="valor-adicionar" title="valor" placeholder="0" required>
-        </div>
+    <div class="row d-flex justify-content-around mb-2">
         <div class="col-2 align-content-center">
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="receita-adicionar">
@@ -50,7 +23,36 @@
                     Transaferência
                 </label>
             </div>
-        </div>    
+        </div>         
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <input type="hidden" id="id-adicionar" />
+            <label for="data-adicionar" class="col-form-label">Data:</label>
+            <input type="date" class="form-control" id="data-adicionar" title="Data" required>
+        </div>
+        <div class="col-6">
+            <label for="descricao-adicionar" class="col-form-label">Descrição:</label>
+            <input type="text" class="form-control" id="descricao-adicionar" title="Descrição" placeholder="Informe a transação" required>
+        </div>
+        <div class="col-3">
+            <label for="categoria-adicionar" class="col-form-label">Categoria:</label>
+            <select type="text" class="form-select" id="categoria-adicionar" title="Categoria" required></select>
+        </div>
+    </div>                        
+    <div class="row">
+        <div class="col-3">
+            <label for="conta-origem-adicionar" class="col-form-label">Conta Origem:</label>
+            <select type="text" class="form-select" id="conta-origem-adicionar" title="Conta Origem" required></select>
+        </div>
+        <div class="col-3">
+            <label for="conta-destino-adicionar" class="col-form-label">Conta Destino:</label>
+            <select type="text" class="form-select" id="conta-destino-adicionar" title="Conta Destino" required></select>
+        </div>
+        <div class="col-3">
+            <label for="valor-adicionar" class="col-form-label">Valor:</label>
+            <input type="text" class="form-control" id="valor-adicionar" title="valor" placeholder="0" required>
+        </div>   
     </div>
     <div class="row">
         <div class="col-3">

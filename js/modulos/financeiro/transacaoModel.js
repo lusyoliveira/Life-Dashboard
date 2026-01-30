@@ -3,7 +3,7 @@ export default class Transacao {
     Descricao
     Data
     Categoria
-    Conta
+    ContaDestino
     ContaOrigem
     Valor
     ParcelaInicio
@@ -11,13 +11,13 @@ export default class Transacao {
     Parcelamento
     Tipo
 
-    constructor(id,descricao,data,categoria,conta,contaOrigem,valor,parcelaInicio,parcelaFim, parcelamento = false,tipo) {
+    constructor(id,descricao,data,categoria,contaDestino,contaOrigem,valor,parcelaInicio,parcelaFim, parcelamento = false,tipo) {
         this.Id = id
         this.Descricao = descricao
         this.Data = data
         this.Categoria = categoria
-        this.Conta = conta
-        this.ContaOrigem = contaOrigem ? contaOrigem : null
+        this.ContaDestino = contaDestino ? contaDestino : null
+        this.ContaOrigem = contaOrigem
         this.Valor = valor
         this.ParcelaInicio = parcelaInicio ? parcelaInicio : null
         this.ParcelaFim = parcelaFim ? parcelaFim : null

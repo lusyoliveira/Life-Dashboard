@@ -18,7 +18,7 @@ export class FinanceiroViewModel {
                 transacao.Descricao,
                 transacao.Data,
                 transacao.Categoria,
-                transacao.Conta,
+                transacao.ContaDestino,
                 transacao.ContaOrigem,
                 transacao.Valor,
                 transacao.ParcelaInicio,
@@ -40,7 +40,7 @@ export class FinanceiroViewModel {
                 transacao.Descricao,
                 transacao.Data,
                 transacao.Categoria,
-                transacao.Conta,
+                transacao.ContaDestino,
                 transacao.ContaOrigem,
                 transacao.Valor,
                 transacao.ParcelaInicio,
@@ -52,12 +52,47 @@ export class FinanceiroViewModel {
     }
 
     async salvarTransacao(transacao) {
+        
         if (transacao.id) {
         await api.atualizarDados(transacao, this.endpoint);
         } else {
-        await api.salvarDados(transacao, this.endpoint);
+
+            if (transacao.Tipo === 'T') {
+                const transacaoOrigem = { ...transacao };
+                transacaoOrigem.Valor = -Math.abs(transacao.Valor);
+                transacaoOrigem.Categoria = null;
+
+                await api.salvarDados(transacaoOrigem, this.endpoint);
+
+                const transacaoDestino = { ...transacao };
+                transacaoDestino.Valor = Math.abs(transacao.Valor);
+                transacaoDestino.Categoria = null;
+
+                await api.salvarDados(transacaoDestino, this.endpoint);
+                return this.obterTransacoes();
+
+            } else if (transacao.Tipo === 'R') {
+
+                const transacaoReceita = { ...transacao };
+                transacaoReceita.Valor = Math.abs(transacao.Valor);
+                transacaoReceita.ContaDestino = null;
+
+                await api.salvarDados(transacaoReceita, this.endpoint);
+                return this.obterTransacoes();
+
+            } else if (transacao.Tipo === 'D') {
+
+                const transacaoDespesa = { ...transacao };
+                transacaoDespesa.Valor = -Math.abs(transacao.Valor);
+                transacaoDespesa.ContaDestino = null;
+
+                await api.salvarDados(transacaoDespesa, this.endpoint);
+                return this.obterTransacoes();
+            } else {
+            await api.salvarDados(transacao, this.endpoint);
+            return this.obterTransacoes();
+            }
         }
-        return this.obterTransacoes();
     }
 
     async excluirTransacoes(id) {
@@ -101,13 +136,17 @@ export class FinanceiroViewModel {
         const categoriaVM = new CategoriaViewModel();
         const categorias = await categoriaVM.obterCategoria('Financeiro');
         const categoriasArray = categorias.map(c => c.Descricao);
+
         await this.obterTransacoes();
 
-        const valores = categoriasArray.map(categoria =>
-            this.transacoes
-                .filter(t => t.Categoria.descricao === categoria)
-                .reduce((acc, t) => acc + t.Valor, 0)
-        );
+        const valores = categoriasArray.map(categoria => {
+            return this.transacoes
+                .filter(t =>
+                    t.Categoria !== null &&
+                    t.Categoria.descricao === categoria
+                )
+                .reduce((acc, t) => acc + t.Valor, 0);
+        });
 
         return {
             labels: categoriasArray,
