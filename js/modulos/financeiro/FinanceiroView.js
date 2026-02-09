@@ -75,7 +75,7 @@ export class FinanceiroView {
           await this.listarTransacoes('tbtransacoes');
           }
       });
-
+     
       await this.listarCategoria("categoria-adicionar");
       await this.listarContasSelect("conta-origem-adicionar");
       await this.listarContasSelect("conta-destino-adicionar");
@@ -83,13 +83,13 @@ export class FinanceiroView {
       document.getElementById('id-adicionar').value = id;
       document.getElementById('descricao-adicionar').value = transacao.Descricao;
       document.getElementById('data-adicionar').value = new Date(transacao.Data).toISOString().slice(0,16);
-      document.getElementById('categoria-adicionar').value = transacao.Categoria;
-      document.getElementById('conta-destino-adicionar').value = transacao.ContaDestino;
-      document.getElementById('conta-origem-adicionar').value = transacao.ContaOrigem;
+      document.getElementById('categoria-adicionar').value = transacao.Categoria._id;
+      document.getElementById('conta-destino-adicionar').value = transacao.ContaDestino === null ? '' : transacao.ContaDestino._id;
+      document.getElementById('conta-origem-adicionar').value = transacao.ContaOrigem._id;
       document.getElementById('valor-adicionar').value = transacao.Valor;
       document.getElementById('parcela-inicio').value = transacao.ParcelaInicio;
       document.getElementById('parcela-fim').value = transacao.ParcelaFim;
-      document.getElementById('parcelamento-adicionar').value = transacao.Parcelamento;
+      document.getElementById('parcelamento-adicionar').checked = transacao.Parcelamento;
       if (transacao.Tipo === 'R') {
           document.getElementById('receita-adicionar').checked = true;
       } else if (transacao.Tipo === 'D') {
@@ -109,7 +109,7 @@ export class FinanceiroView {
           const data = form.querySelector('#data-adicionar').value;
           const parcelaFim = form.querySelector('#parcela-fim').value;
           const parcelaInicio = form.querySelector('#parcela-inicio').value;
-          const parcelamento = form.querySelector('#parcelamento-adicionar').value;
+          const parcelamento = form.querySelector('#parcelamento-adicionar').checked;
           const valor = form.querySelector('#valor-adicionar').value;
           const receita = form.querySelector('#receita-adicionar').checked;
           const despesa = form.querySelector('#despesa-adicionar').checked;
@@ -132,8 +132,8 @@ export class FinanceiroView {
             contaDestino,
             contaOrigem,
             Number(valor),
-            parcelaFim ? parcelaFim : null,
             parcelaInicio ? parcelaInicio : null,
+            parcelaFim ? parcelaFim : null,
             parcelamento ? parcelamento : false,
             tipo
           );
@@ -256,10 +256,7 @@ export class FinanceiroView {
       tdCabecalho.textContent = `${dataFormatada} — Total do dia: R$ ${grupo.total.toFixed(2)}`;
 
       trCabecalho.appendChild(tdCabecalho);
-      corpoTabela.appendChild(trCabecalho);
-      
-      console.log(grupo.itens);
-      
+      corpoTabela.appendChild(trCabecalho);    
 
       /* ========= Transações do dia ========= */
       grupo.itens.forEach(transacao => {
@@ -306,7 +303,7 @@ export class FinanceiroView {
         const tdBtnEditar = document.createElement('td');
         const btnEditar = document.createElement('button');
         btnEditar.classList.add('btn', 'btn-primary');
-        btnEditar.onclick = () => this.editarTransacao(transacao.Id);             
+        btnEditar.onclick = async () => await this.abrirModalEditarTransacao(transacao.Id);             
 
         const iconeEditar = document.createElement('i');
         iconeEditar.classList.add('bi', 'bi-pencil-fill');
@@ -318,13 +315,7 @@ export class FinanceiroView {
         const tdBtnExcluir = document.createElement('td');
         const btnExcluir = document.createElement('button');
         btnExcluir.classList.add('btn', 'btn-danger');
-        btnExcluir.onclick = async () => {
-          try {
-            await this.vm.excluirTransacoes(transacao.id);
-          } catch (error) {
-            alert("Erro ao excluir transação!");
-          }
-        };
+        btnExcluir.onclick = async () => await this.vm.abrirModalExcluirTransacao(transacao.Id);
         
         const iconeExcluir = document.createElement('i');
         iconeExcluir.classList.add('bi', 'bi-trash');

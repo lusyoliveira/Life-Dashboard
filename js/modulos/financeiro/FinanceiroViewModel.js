@@ -81,19 +81,37 @@ export class FinanceiroViewModel {
                 return this.obterTransacoes();
 
             } else if (transacao.Tipo === 'D') {
+                const transacaoDespesa = { ...transacao };                          
+debugger
+                if (transacao.Parcelamento && transacao.ParcelaFim > 0) {
+                    const totalParcelas = transacao.ParcelaFim; // - transacao.ParcelaInicio;
+                    const valorParcela = Math.abs(transacao.Valor) / (totalParcelas + 1);
 
-                const transacaoDespesa = { ...transacao };
-                transacaoDespesa.Valor = -Math.abs(transacao.Valor);
-                transacaoDespesa.ContaDestino = null;
+                    for (let i = 1; i <= totalParcelas; i++) {
+                        const novaData = new Date(transacao.Data);
+                        novaData.setMonth(novaData.getMonth() + i);
 
-                await api.salvarDados(transacaoDespesa, this.endpoint);
+                        const transacaoParcela = {
+                            ...transacaoDespesa,
+                            Data: novaData.toISOString().split('T')[0],
+                            Valor: -valorParcela,   
+                            ContaDestino: null,
+                        };
+                        await api.salvarDados(transacaoParcela, this.endpoint);
+                    }
+                } else {                    
+                    transacaoDespesa.Valor = -Math.abs(transacao.Valor);
+                    transacaoDespesa.ContaDestino = null;
+
+                    await api.salvarDados(transacaoDespesa, this.endpoint);
+                }
+
                 return this.obterTransacoes();
             } else {
-            await api.salvarDados(transacao, this.endpoint);
-            return this.obterTransacoes();
+                return 'Tipo Invalido';
             }
         }
-    }
+    };
 
     async excluirTransacoes(id) {
         await api.excluirDados(id, this.endpoint);
