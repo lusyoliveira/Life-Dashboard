@@ -125,12 +125,17 @@ export class AgendaView {
       );
       await this.vm.salvarAgenda(agendamento);
   };
+
   async listarAgenda() {
       const dados = await this.vm.obterAgenda();
 
+      const listaOrdenada = dados.sort(
+          (a, b) => new Date(a.Data).getTime() - new Date(b.Data).getTime()
+      );    
+      
       criarDataTable({
       tabelaId: "tabelaAgenda",
-      dados,
+      dados: listaOrdenada,
       colunas: [
           { title: "Título", data: "Titulo" },
           { title: "Status", data: "Status.descricao" },
@@ -139,7 +144,7 @@ export class AgendaView {
           {
               title: "Data",
               data: "Data",
-              render: (data) => formatarDataBR(data)
+              render: (Data) => formatarDataBR(Data)
           },
           colunaAcoes({ campoId: "id" })
 

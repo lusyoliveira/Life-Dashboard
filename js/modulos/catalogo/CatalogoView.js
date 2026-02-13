@@ -160,10 +160,13 @@ export class CatalogoView {
 
     async listarCatalogo() {
         const dados = await this.vm.obterCatalogo();
+        const listaOrdenada = dados.sort(
+          (a, b) => new Date(a.Adicao).getTime() - new Date(b.Adicao).getTime()
+      );  
 
         criarDataTable({
         tabelaId: "tabelaCatalogo",
-        dados,
+        dados: listaOrdenada,
         colunas: [
             { title: "Título", data: "Titulo" },
             { title: "Tipo", data: "Tipo.descricao" },

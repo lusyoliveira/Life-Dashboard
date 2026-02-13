@@ -7,11 +7,15 @@ export default class Transacao {
     ContaOrigem
     Valor
     ParcelaInicio
-    ParcelaFim
     Parcelamento
     Tipo
+    Recorrente
+    Periodicidade
+    RecorrenciaInicio
+    RecorrenciaFim
+    UltimaGeracao
 
-    constructor(id,descricao,data,categoria,contaDestino,contaOrigem,valor,parcelaInicio,parcelaFim, parcelamento = false,tipo) {
+    constructor(id,descricao,data,categoria,contaDestino,contaOrigem,valor,parcelaInicio,parcelamento = false,tipo,recorrente, periodicidade, recorrenciaInicio, recorrenciaFim, ultimaGeracao) {
         this.Id = id
         this.Descricao = descricao
         this.Data = data
@@ -20,9 +24,12 @@ export default class Transacao {
         this.ContaOrigem = contaOrigem
         this.Valor = valor
         this.ParcelaInicio = parcelaInicio ? parcelaInicio : null
-        this.ParcelaFim = parcelaFim ? parcelaFim : null
         this.Parcelamento = parcelamento ? parcelamento : false
         this.Tipo = tipo
-
+        this.Recorrente = recorrente ? recorrente : false
+        this.Periodicidade = periodicidade ? periodicidade : null
+        this.RecorrenciaInicio = recorrenciaInicio ? recorrenciaInicio : null
+        this.RecorrenciaFim = recorrenciaFim ? recorrenciaFim : null
+        this.UltimaGeracao = ultimaGeracao ? ultimaGeracao : null
     }
 }

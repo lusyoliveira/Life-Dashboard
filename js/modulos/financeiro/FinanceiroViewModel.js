@@ -22,9 +22,13 @@ export class FinanceiroViewModel {
                 transacao.ContaOrigem,
                 transacao.Valor,
                 transacao.ParcelaInicio,
-                transacao.ParcelaFim,
                 transacao.Parcelamento,  
-                transacao.Tipo
+                transacao.Tipo,
+                transacao.Recorrente,
+                transacao.Periodicidade,
+                transacao.RecorrenciaInicio,
+                transacao.RecorrenciaFim,
+                transacao.UltimaGeracao
             );
             return listaTransacoes;            
         })
@@ -36,17 +40,21 @@ export class FinanceiroViewModel {
         if (!transacao) return null;
 
         const transacoes = new Transacao(
-                transacao._id,
-                transacao.Descricao,
-                transacao.Data,
-                transacao.Categoria,
-                transacao.ContaDestino,
-                transacao.ContaOrigem,
-                transacao.Valor,
-                transacao.ParcelaInicio,
-                transacao.ParcelaFim,
-                transacao.Parcelamento,  
-                transacao.Tipo  
+            transacao._id,
+            transacao.Descricao,
+            transacao.Data,
+            transacao.Categoria,
+            transacao.ContaDestino,
+            transacao.ContaOrigem,
+            transacao.Valor,
+            transacao.ParcelaInicio,
+            transacao.Parcelamento,  
+            transacao.Tipo,
+            transacao.Recorrente,
+            transacao.Periodicidade,
+            transacao.RecorrenciaInicio,
+            transacao.RecorrenciaFim,
+            transacao.UltimaGeracao  
         );       
         return transacoes;
     }
@@ -56,7 +64,7 @@ export class FinanceiroViewModel {
         if (transacao.id) {
         await api.atualizarDados(transacao, this.endpoint);
         } else {
-
+            //verifica tipo de transação
             if (transacao.Tipo === 'T') {
                 const transacaoOrigem = { ...transacao };
                 transacaoOrigem.Valor = -Math.abs(transacao.Valor);
@@ -82,9 +90,9 @@ export class FinanceiroViewModel {
 
             } else if (transacao.Tipo === 'D') {
                 const transacaoDespesa = { ...transacao };                          
-debugger
-                if (transacao.Parcelamento && transacao.ParcelaFim > 0) {
-                    const totalParcelas = transacao.ParcelaFim; // - transacao.ParcelaInicio;
+                //verifica se é parcelamento e gera as parcelas
+                if (transacao.Parcelamento && transacao.ParcelaInicio > 0) {
+                    const totalParcelas = transacao.ParcelaInicio; // - transacao.ParcelaInicio;
                     const valorParcela = Math.abs(transacao.Valor) / (totalParcelas + 1);
 
                     for (let i = 1; i <= totalParcelas; i++) {
@@ -94,11 +102,18 @@ debugger
                         const transacaoParcela = {
                             ...transacaoDespesa,
                             Data: novaData.toISOString().split('T')[0],
-                            Valor: -valorParcela,   
+                            Valor: -Math.abs(valorParcela),
                             ContaDestino: null,
                         };
                         await api.salvarDados(transacaoParcela, this.endpoint);
                     }
+                } else if (transacao.Recorrente) {
+                    transacaoDespesa.UltimaGeracao = transacaoDespesa.Data;
+                    transacaoDespesa.RecorrenciaInicio = transacaoDespesa.Data;
+                    transacaoDespesa.Valor = -Math.abs(transacao.Valor);
+                    transacaoDespesa.ContaDestino = null;
+
+                    await api.salvarDados(transacaoDespesa, this.endpoint);
                 } else {                    
                     transacaoDespesa.Valor = -Math.abs(transacao.Valor);
                     transacaoDespesa.ContaDestino = null;
@@ -116,6 +131,45 @@ debugger
     async excluirTransacoes(id) {
         await api.excluirDados(id, this.endpoint);
         return this.obterTransacoes();
+    };
+
+    async gerarRecorrencias(mes, ano) {
+        const transacoes = await this.obterTransacoes();
+        const recorrentes = transacoes.filter(t => t.Recorrente);
+
+        for (const t of recorrentes) {
+
+            const ultima = new Date(t.UltimaGeracao);
+            const alvo = new Date(ano, mes, 1);
+
+            const mesmaCompetencia =
+                ultima.getMonth() === alvo.getMonth() &&
+                ultima.getFullYear() === alvo.getFullYear();
+
+            if (!mesmaCompetencia && ultima < alvo) {
+
+                const novaData = new Date(alvo);
+
+                const novaTransacao = {
+                    ...t,
+                    Id: null,
+                    Data: novaData.toISOString().split('T')[0],
+                    Recorrente: false, 
+                    UltimaGeracao: null,
+                    ContaDestino: null
+                };
+
+                await api.salvarDados(novaTransacao, this.endpoint);
+
+                await api.atualizarDados(
+                    {
+                        ...t,
+                        UltimaGeracao: novaData.toISOString().split('T')[0]
+                    },
+                    this.endpoint
+                );
+            }
+        }
     };
 
     async obterContas() {

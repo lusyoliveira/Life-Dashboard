@@ -30,6 +30,7 @@ export function criarDataTable({
     columns: colunas,
     responsive: true,
     pageLength: 10,
+    order: [],
     language: {
       url: "/datatables/pt-BR.json"
     },

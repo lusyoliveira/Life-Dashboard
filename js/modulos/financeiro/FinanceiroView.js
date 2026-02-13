@@ -1,5 +1,5 @@
 import { popularSelect, limparFormulario } from "../../Utils/utils.js";
-import { calculaTempoData } from "../../Utils/metodoData.js";
+import { calculaTempoData, formatarDataBR, formatarParaISO } from "../../Utils/metodoData.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 import { ContasViewModel } from "../contas/ContasViewModel.js";
 import { graficoPizza } from "../../componentes/graficos/GraficosFactory.js";
@@ -12,7 +12,7 @@ export class FinanceiroView {
 
     // Estado do mês exibido
     const hoje = new Date();
-    this.mesAtual = hoje.getMonth();   // 0 a 11
+    this.mesAtual = hoje.getMonth();  
     this.anoAtual = hoje.getFullYear();
   }
 
@@ -31,12 +31,12 @@ export class FinanceiroView {
   };
 
   async abrirModalCriarTransacao() {
-      abrirModalAcao({
-          titulo: "Adicionar transação",
-          conteudoHTML: this.formHTML,
-          textoConfirmar: "Salvar",
+    abrirModalAcao({
+        titulo: "Adicionar transação",
+        conteudoHTML: this.formHTML,
+        textoConfirmar: "Salvar",
 
-          onConfirmar: async () => {
+        onConfirmar: async () => {
           const form = document.getElementById("formTransacao");
 
           if (!form.checkValidity()) {
@@ -45,14 +45,59 @@ export class FinanceiroView {
           }
 
           await this.salvarFormularioTransacao(form);
-          }
-      });
+          await this.listarTransacoes('tbtransacoes');
+        }
+        
+    });
 
-      limparFormulario();
+    //ativa conta destino para transferência
+    const checkboxTransferencia = document.getElementById('transaferencia-adicionar');
+    const divContaDestino = document.getElementById('conta-destino-div');
 
-      await this.listarCategoria("categoria-adicionar");
-      await this.listarContasSelect("conta-origem-adicionar");
-      await this.listarContasSelect("conta-destino-adicionar");
+    checkboxTransferencia.addEventListener('change', () => {
+        if (checkboxTransferencia.checked) {
+            divContaDestino.classList.remove('d-none');
+            divContaDestino.classList.add('d-block');
+        } else {
+            divContaDestino.classList.remove('d-block');
+            divContaDestino.classList.add('d-none');
+        }
+    });
+
+    //ativa recorrencia
+    const checkboxRecorrente = document.getElementById('recorrente-adicionar');
+    const divrecorrrencia = document.getElementById('recorrencia');
+
+    checkboxRecorrente.addEventListener('change', () => {
+        if (checkboxRecorrente.checked) {
+            divrecorrrencia.classList.remove('d-none');
+            divrecorrrencia.classList.add('d-block');
+        } else {
+            divrecorrrencia.classList.remove('d-block');
+            divrecorrrencia.classList.add('d-none');
+        }
+    });
+
+    //ativa parcelamento
+    const checkboxParcelamento = document.getElementById('parcelamento-adicionar');
+    const divParcelamento = document.getElementById('parcelamento');
+
+    if (checkboxParcelamento) {
+        checkboxParcelamento.addEventListener('change', () => {
+            if (checkboxParcelamento.checked) {
+                divParcelamento.classList.remove('d-none');
+                divParcelamento.classList.add('d-block');
+            } else {
+                divParcelamento.classList.remove('d-block');
+                divParcelamento.classList.add('d-none');
+            }
+        });
+    }
+    limparFormulario();
+
+    await this.listarCategoria("categoria-adicionar");
+    await this.listarContasSelect("conta-origem-adicionar");
+    await this.listarContasSelect("conta-destino-adicionar");
   };
 
   async abrirModalEditarTransacao(id) {
@@ -87,8 +132,7 @@ export class FinanceiroView {
       document.getElementById('conta-destino-adicionar').value = transacao.ContaDestino === null ? '' : transacao.ContaDestino._id;
       document.getElementById('conta-origem-adicionar').value = transacao.ContaOrigem._id;
       document.getElementById('valor-adicionar').value = transacao.Valor;
-      document.getElementById('parcela-inicio').value = transacao.ParcelaInicio;
-      document.getElementById('parcela-fim').value = transacao.ParcelaFim;
+      document.getElementById('parcela-adicionar').value = transacao.ParcelaInicio;
       document.getElementById('parcelamento-adicionar').checked = transacao.Parcelamento;
       if (transacao.Tipo === 'R') {
           document.getElementById('receita-adicionar').checked = true;
@@ -97,49 +141,52 @@ export class FinanceiroView {
       } else if (transacao.Tipo === 'T') {
           document.getElementById('transaferencia-adicionar').checked = true;
       }
-
+      document.getElementById('recorrente-adicionar').checked = transacao.Recorrente;
+      document.getElementById('periodicidade-adicionar').value = transacao.Periodicidade;
   };
 
   async salvarFormularioTransacao(form) {
-          const idInput = form.querySelector('#id-adicionar')?.value || null;
-          const descricao = form.querySelector('#descricao-adicionar').value;
-          const categoria = form.querySelector('#categoria-adicionar').value;
-          const contaDestino = form.querySelector('#conta-destino-adicionar').value;
-          const contaOrigem = form.querySelector('#conta-origem-adicionar').value;
-          const data = form.querySelector('#data-adicionar').value;
-          const parcelaFim = form.querySelector('#parcela-fim').value;
-          const parcelaInicio = form.querySelector('#parcela-inicio').value;
-          const parcelamento = form.querySelector('#parcelamento-adicionar').checked;
-          const valor = form.querySelector('#valor-adicionar').value;
-          const receita = form.querySelector('#receita-adicionar').checked;
-          const despesa = form.querySelector('#despesa-adicionar').checked;
-          const transaferencia = form.querySelector('#transaferencia-adicionar').checked;
-          let tipo = null;
+    const idInput = form.querySelector('#id-adicionar')?.value || null;
+    const descricao = form.querySelector('#descricao-adicionar').value;
+    const categoria = form.querySelector('#categoria-adicionar').value;
+    const contaDestino = form.querySelector('#conta-destino-adicionar').value;
+    const contaOrigem = form.querySelector('#conta-origem-adicionar').value;
+    const data = form.querySelector('#data-adicionar').value;
+    const parcelaInicio = form.querySelector('#parcela-adicionar').value;
+    const parcelamento = form.querySelector('#parcelamento-adicionar').checked;
+    const valor = form.querySelector('#valor-adicionar').value;
+    const receita = form.querySelector('#receita-adicionar').checked;
+    const despesa = form.querySelector('#despesa-adicionar').checked;
+    const transaferencia = form.querySelector('#transaferencia-adicionar').checked;
+    const recorrente = form.querySelector('#recorrente-adicionar').checked;
+    const periodicidade = form.querySelector('#periodicidade-adicionar').value;
+    let tipo = null;
 
-          if (receita) {
-              tipo = 'R';
-          } else if (despesa) {
-              tipo = 'D';
-          } else if (transaferencia) {
-              tipo = 'T';
-          }
-  
-          const transacao = new Transacao(
-            idInput ? idInput : null,
-            descricao,
-            data,
-            categoria,
-            contaDestino,
-            contaOrigem,
-            Number(valor),
-            parcelaInicio ? parcelaInicio : null,
-            parcelaFim ? parcelaFim : null,
-            parcelamento ? parcelamento : false,
-            tipo
-          );
-          
-          await this.vm.salvarTransacao(transacao);
-      };
+    if (receita) {
+        tipo = 'R';
+    } else if (despesa) {
+        tipo = 'D';
+    } else if (transaferencia) {
+        tipo = 'T';
+    }
+
+    const transacao = new Transacao(
+      idInput ? idInput : null,
+      descricao,
+      formatarParaISO(data),
+      categoria,
+      contaDestino,
+      contaOrigem,
+      Number(valor),
+      parcelaInicio ? parcelaInicio : null,
+      parcelamento ? parcelamento : false,
+      tipo,
+      recorrente ? recorrente : false,
+      periodicidade ? periodicidade : null,
+    );
+    
+    await this.vm.salvarTransacao(transacao);
+  };
 
   mesAnterior() {
     this.mesAtual--;
@@ -151,7 +198,7 @@ export class FinanceiroView {
 
     this.atualizarTituloMes();
     this.listarTransacoes('tbtransacoes');
-  }
+  };
 
   mesProximo() {
     this.mesAtual++;
@@ -163,7 +210,7 @@ export class FinanceiroView {
 
     this.atualizarTituloMes();
     this.listarTransacoes('tbtransacoes');
-  }
+  };
   
  atualizarTituloMes() {
     const titulo = document.getElementById('mesAno');
@@ -174,7 +221,6 @@ export class FinanceiroView {
       month: 'long'
     });
 
-    // Primeira letra maiúscula (opcional, mas fica bonito)
     const mesFormatado =
       mesPorExtenso.charAt(0).toUpperCase() + mesPorExtenso.slice(1);
 
@@ -184,6 +230,7 @@ export class FinanceiroView {
   async listarTransacoes(elementoId) {
     const tabela = document.getElementById(elementoId);
     const corpoTabela = tabela.getElementsByTagName('tbody')[0];
+    await this.vm.gerarRecorrencias(this.mesAtual, this.anoAtual);
 
     // Limpa tbody
     while (corpoTabela.firstChild) {
@@ -192,22 +239,28 @@ export class FinanceiroView {
 
     const transacoes = await this.vm.obterTransacoes();
     const transcoesMes = transacoes.filter(transacao => {
-      const dataTransacao = new Date(transacao.Data);
-      return dataTransacao.getMonth() === this.mesAtual && dataTransacao.getFullYear() === this.anoAtual;
+    const dataSomente = transacao.Data.split('T')[0]; // "2026-02-11"
+    const [ano, mes, dia] = dataSomente.split('-');
+    const dataTransacao = new Date(ano, mes - 1, dia); // LOCAL
+
+    return dataTransacao.getMonth() === this.mesAtual &&
+      dataTransacao.getFullYear() === this.anoAtual;
     });
-    
+           
     // Ordena por data
     const listaOrdenada = transcoesMes.sort(
-      (a, b) => new Date(a.Data) - new Date(b.Data)
-      
+      (a, b) => a.Data.localeCompare(b.Data)
     );
 
     // Agrupa por dia (YYYY-MM-DD)
     const grupos = {};
 
     listaOrdenada.forEach(transacao => {
-      const dataObj = new Date(transacao.Data);
+      const dataSomente = transacao.Data.split('T')[0];
+      const [ano, mes, dia] = dataSomente.split('-');
+      const dataObj = new Date(ano, mes - 1, dia);
 
+      
       const dataChave = [
         dataObj.getFullYear(),
         String(dataObj.getMonth() + 1).padStart(2, '0'),
@@ -224,7 +277,7 @@ export class FinanceiroView {
 
       grupos[dataChave].total += Number(transacao.Valor);
       grupos[dataChave].itens.push(transacao);
-    });
+    });  
 
     if (listaOrdenada.length === 0) {
       const tr = document.createElement('tr');
@@ -235,8 +288,8 @@ export class FinanceiroView {
       tr.appendChild(td);
       corpoTabela.appendChild(tr);
       return;
-    }
-
+    };
+   
     // Monta a tabela
     for (const chave in grupos) {
       const grupo = grupos[chave];
@@ -248,16 +301,18 @@ export class FinanceiroView {
       tdCabecalho.colSpan = 7;
       tdCabecalho.classList.add('table-active');
       tdCabecalho.style.fontWeight = 'bold';
-
+     
+      // const dataUTC = new Date(grupo.data);
+      // const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
+      
       const [ano, mes, dia] = grupo.data.split('-');
       const dataFormatada = `${dia}/${mes}/${ano}`;
-
 
       tdCabecalho.textContent = `${dataFormatada} — Total do dia: R$ ${grupo.total.toFixed(2)}`;
 
       trCabecalho.appendChild(tdCabecalho);
       corpoTabela.appendChild(trCabecalho);    
-
+      
       /* ========= Transações do dia ========= */
       grupo.itens.forEach(transacao => {
         const tr = document.createElement('tr');
