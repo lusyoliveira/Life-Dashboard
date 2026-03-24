@@ -64,9 +64,9 @@ export class CatalogoViewModel {
       Progresso: titulo.Progresso
     };
 
-        payload.Adicao = titulo.Adicao instanceof Date 
-      ? titulo.Adicao 
-      : new Date(titulo.Adicao); 
+    payload.Adicao = titulo.Adicao instanceof Date 
+    ? titulo.Adicao 
+    : new Date(titulo.Adicao); 
    
     if (titulo.id) {
       payload.Adicao = new Date(titulo.Adicao);

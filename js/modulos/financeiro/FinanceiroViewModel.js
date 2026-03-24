@@ -1,6 +1,5 @@
 import api from "../../servicos/metodoApi.js";
 import Transacao from "../financeiro/transacaoModel.js";
-import Contas from "../contas/contasModel.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 
 export class FinanceiroViewModel {
@@ -170,23 +169,6 @@ export class FinanceiroViewModel {
                 );
             }
         }
-    };
-
-    async obterContas() {
-    const contasData = await api.buscarDados(this.endpoint);
-    this.contas = contasData.map(conta => {
-        const listaContas = new Contas(
-            conta._id,
-            conta.Agencia,
-            conta.Conta,
-            conta.Banco,
-            conta.Descricao,
-            conta.Tipo,
-            conta.Saldo,  
-        );
-        return listaContas;
-    })
-        return this.contas;
     };
 
     async filtrarTransacoesAVencer(qtd = 13) {

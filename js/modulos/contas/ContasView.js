@@ -111,14 +111,20 @@ export class ContasView {
             tipo,
             Number(saldo)
         );
-        debugger
         await this.vm.salvarContas(contaModel);
     };
 
     async listarContas() {
-        const dados = await this.vm.obterContas();
+    const dados = await this.vm.obterContas();
 
-        criarDataTable({
+    for (const conta of dados) {
+        conta.Saldo = await this.vm.calcularSaldo(
+            conta.id,
+            conta.Saldo // aqui é o saldo inicial
+        );
+    }
+
+    criarDataTable({
         tabelaId: "tabelaContas",
         dados,
         colunas: [
@@ -129,30 +135,62 @@ export class ContasView {
             { title: "Tipo", data: "Tipo" },
             { title: "Saldo", data: "Saldo" },
             colunaAcoes({ campoId: "id" })
+        ]
+    });
+};
+async listarContas() {
+    const dados = await this.vm.obterContas();
 
-            ]
-        });
-    };
+    for (const conta of dados) {
+        conta.Saldo = await this.vm.calcularSaldo(
+            conta.id,
+            conta.Saldo 
+        );
+    }
+
+    criarDataTable({
+        tabelaId: "tabelaContas",
+        dados,
+        colunas: [
+            { title: "Agência", data: "Agencia" },
+            { title: "Conta", data: "Conta" },
+            { title: "Banco", data: "Banco" },
+            { title: "Descrição", data: "Descricao" },
+            { title: "Tipo", data: "Tipo" },
+            colunaAcoes({ campoId: "id" })
+        ]
+    });
+};
 
     async renderContas(elementoDestinoId) {
         const elementoDestino = document.getElementById(elementoDestinoId);
+        elementoDestino.innerHTML = "";
+
         const contas = await this.vm.obterContas();
 
-        contas.forEach((conta) => {
-        const option = document.createElement('option');
-        option.value = conta.id;
-        option.textContent = conta.nome;
+        for (const conta of contas) {
 
-        const li = document.createElement('li');
-        li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-        li.textContent = conta.Descricao;
+            const saldoAtual = await this.vm.calcularSaldo(
+                conta.id,
+                conta.Saldo
+            );
 
-        const span = document.createElement('span');
-        span.classList.add('badge', 'bg-primary', 'rounded-pill');
-        span.textContent = `R$ ${conta.Saldo}`;
+            const li = document.createElement('li');
+            li.classList.add(
+                'list-group-item',
+                'd-flex',
+                'justify-content-between',
+                'align-items-center'
+            );
 
-        li.appendChild(span);
-        elementoDestino.appendChild(li);
-        });
-  };
+            li.textContent = conta.Descricao;
+
+            const span = document.createElement('span');
+            span.classList.add('badge', 'bg-primary', 'rounded-pill');
+            span.textContent = `R$ ${saldoAtual.toFixed(2)}`;
+
+            li.appendChild(span);
+            elementoDestino.appendChild(li);
+        }
+    }
 }

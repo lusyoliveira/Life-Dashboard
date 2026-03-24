@@ -1,5 +1,6 @@
 import api from "../../servicos/metodoApi.js";
 import Contas from "../contas/contasModel.js";
+import { FinanceiroViewModel } from "../financeiro/FinanceiroViewModel.js";
 
 export class ContasViewModel {
   constructor(endpoint = "contas") {
@@ -8,9 +9,7 @@ export class ContasViewModel {
   }
 
   async obterContas() {
-
     const contasData = await api.buscarDados(this.endpoint);
-    
     
     this.contas = contasData
         .map((conta) => {
@@ -28,8 +27,8 @@ export class ContasViewModel {
     return this.contas;
   };
 
-  async obterContasPorID(contasID) {
-        const contas = await api.buscarDadosPorId(contasID,this.endpoint);
+  async obterContaPorID(id) {
+      const contas = await api.buscarDadosPorId(id,this.endpoint);
       if (!contas) return null;
 
       const contasModel = new Contas(
@@ -55,10 +54,27 @@ export class ContasViewModel {
       await api.salvarDados(payload, this.endpoint);
     }
     return this.obterContas();
-  }
+  };
 
   async excluirContas(id) {
     await api.excluirDados(id, this.endpoint);
     return this.obterContas();
-  }
+  };
+  
+  async calcularSaldo(contaId, saldoInicial) {
+    const financeiroVM = new FinanceiroViewModel();
+    const transacoes = await financeiroVM.obterTransacoes();
+
+    const transacoesConta = transacoes.filter(t => 
+        t.ContaOrigem?._id === contaId ||
+        t.ContaDestino?._id === contaId
+    );
+
+    const somaMovimentacoes = transacoesConta.reduce((acc, t) => {
+        return acc + Number(t.Valor);
+    }, 0);
+
+    return Number(saldoInicial) + somaMovimentacoes;
+  };
+
 }

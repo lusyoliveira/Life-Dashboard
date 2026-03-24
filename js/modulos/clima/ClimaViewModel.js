@@ -101,10 +101,7 @@ export class ClimaViewModel {
                 dadosClima.daily_units,
                 dadosClima.daily
             );
-            
-            console.log(clima);
-            
-            debugger
+
             if (clima.id) {
             // salva o clima completo
                 await api.atualizarDados(clima, this.endpoint);

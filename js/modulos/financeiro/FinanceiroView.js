@@ -184,7 +184,7 @@ export class FinanceiroView {
       recorrente ? recorrente : false,
       periodicidade ? periodicidade : null,
     );
-    
+
     await this.vm.salvarTransacao(transacao);
   };
 
