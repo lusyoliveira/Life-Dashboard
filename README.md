@@ -12,15 +12,15 @@
 - API do MyAnimelist
 
 ## Funcionalidades
-- Agenda de Compromissos com integração com Gmail e Outlook
-- Controle de Tarefas
-- Controle Financeiro
-- Controle de Filmes, Séries, Animes
-- Controle de Hábitos
-- Previsão do Tempo
-- Diário
-- Contador de água
-- Contagem Regrassiva Personalizável
+- [x] Agenda de Compromissos
+- [x] Controle de Tarefas
+- [x] Controle Financeiro
+- [x] Controle de Filmes, Séries, Animes
+- [ ] Controle de Hábitos
+- [x] Previsão do Tempo
+- [ ] Diário
+- [x] Contador de água
+- [x] Contagem Regressiva Personalizável
 
 ## Rodando localmente
 Clone o projeto e entre no diretório
