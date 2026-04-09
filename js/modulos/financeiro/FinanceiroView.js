@@ -45,7 +45,7 @@ export class FinanceiroView {
           }
 
           await this.salvarFormularioTransacao(form);
-          await this.listarTransacoes('tbtransacoes');
+          //await this.listarTransacoes('tbtransacoes');
         }
         
     });
@@ -317,6 +317,7 @@ export class FinanceiroView {
       grupo.itens.forEach(transacao => {
         const tr = document.createElement('tr');
 
+      console.log(transacao)
         // Coluna DATA (vazia para alinhar)
         const tdDataVazia = document.createElement('td');
         tdDataVazia.textContent = '';
