@@ -24,8 +24,8 @@ export class FinanceiroView {
           classeBotao: "btn-danger",
 
           onConfirmar: async () => {
-          await this.vm.excluirTransacao(id);
-          await this.listarTransacoes('tbtransacoes');
+          await this.vm.excluirTransacoes(id);
+          //await this.listarTransacoes('tbtransacoes');
           }
       });
   };
@@ -317,7 +317,6 @@ export class FinanceiroView {
       grupo.itens.forEach(transacao => {
         const tr = document.createElement('tr');
 
-      console.log(transacao)
         // Coluna DATA (vazia para alinhar)
         const tdDataVazia = document.createElement('td');
         tdDataVazia.textContent = '';
@@ -371,7 +370,7 @@ export class FinanceiroView {
         const tdBtnExcluir = document.createElement('td');
         const btnExcluir = document.createElement('button');
         btnExcluir.classList.add('btn', 'btn-danger');
-        btnExcluir.onclick = async () => await this.vm.abrirModalExcluirTransacao(transacao.Id);
+        btnExcluir.onclick = async () => await this.abrirModalExcluirTransacao(transacao.Id);
         
         const iconeExcluir = document.createElement('i');
         iconeExcluir.classList.add('bi', 'bi-trash');
