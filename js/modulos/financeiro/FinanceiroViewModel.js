@@ -145,7 +145,7 @@ export class FinanceiroViewModel {
                 ultima.getMonth() === alvo.getMonth() &&
                 ultima.getFullYear() === alvo.getFullYear();
 
-            if (!mesmaCompetencia && ultima < alvo) {
+            if (ultima < alvo) {
 
                 const novaData = new Date(alvo);
 
