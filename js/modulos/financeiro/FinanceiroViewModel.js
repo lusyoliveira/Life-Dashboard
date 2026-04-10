@@ -1,6 +1,7 @@
 import api from "../../servicos/metodoApi.js";
 import Transacao from "../financeiro/transacaoModel.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
+import metodoData from "../../Utils/metodoData.js"
 
 export class FinanceiroViewModel {
     constructor(endpoint = "transacoes") {
@@ -132,41 +133,63 @@ export class FinanceiroViewModel {
         return this.obterTransacoes();
     };
 
-    async gerarRecorrencias(mes, ano) {
+    async gerarRecorrencias() {
         const transacoes = await this.obterTransacoes();
         const recorrentes = transacoes.filter(t => t.Recorrente);
 
+        const hoje = new Date();
+
         for (const t of recorrentes) {
 
+            const inicio = new Date(t.RecorrenciaInicio);
             const ultima = new Date(t.UltimaGeracao);
-            const alvo = new Date(ano, mes, 1);
 
-            const mesmaCompetencia =
-                ultima.getMonth() === alvo.getMonth() &&
-                ultima.getFullYear() === alvo.getFullYear();
+            // antes do início
+            if (hoje < inicio) continue;
 
-            if (ultima < alvo) {
+            let proxima = metodoData.calcularProximaData(ultima, t.Periodicidade);
 
-                const novaData = new Date(alvo);
+            // passou do fim
+            if (t.RecorrenciaFim) {
+                const fim = new Date(t.RecorrenciaFim);
+                if (proxima > fim) continue;
+            }
 
-                const novaTransacao = {
-                    ...t,
-                    Id: null,
-                    Data: novaData.toISOString().split('T')[0],
-                    Recorrente: false, 
-                    UltimaGeracao: null,
-                    ContaDestino: null
-                };
+            // gera múltiplas se estiver atrasado
+            while (proxima <= hoje) {
 
-                await api.salvarDados(novaTransacao, this.endpoint);
+                const jaExiste = transacoes.some(x => {
+                    if (x.Descricao !== t.Descricao) return false;
 
+                    const data = new Date(x.Data);
+
+                    return data.toDateString() === proxima.toDateString();
+                });
+
+                if (!jaExiste) {
+                    const novaTransacao = {
+                        ...t,
+                        Id: null,
+                        Data: proxima.toISOString().split('T')[0],
+                        Recorrente: false,
+                        UltimaGeracao: null,
+                        ContaDestino: null
+                    };
+
+                    await api.salvarDados(novaTransacao, this.endpoint);
+                }
+
+                // atualiza última geração
                 await api.atualizarDados(
                     {
-                        ...t,
-                        UltimaGeracao: novaData.toISOString().split('T')[0]
+                        _id: t.Id,
+                        UltimaGeracao: proxima.toISOString().split('T')[0]
                     },
                     this.endpoint
                 );
+
+                // próxima iteração
+                proxima = metodoData.calcularProximaData(proxima, t.Periodicidade);
             }
         }
     };

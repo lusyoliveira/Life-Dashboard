@@ -1,4 +1,4 @@
-import { calculaTempoData, formatarDataBR, formatarParaISO } from "../../Utils/metodoData.js";
+import metodoData from "../../Utils/metodoData.js"
 import { popularSelect, limparFormulario } from "../../Utils/utils.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 import { StatusViewModel } from "../status/StatusViewModel.js";
@@ -121,7 +121,7 @@ export class AgendaView {
         status,
         categoria,
         tipo,
-        formatarParaISO(data)
+        metodoData.formatarParaISO(data)
       );
       await this.vm.salvarAgenda(agendamento);
   };
@@ -144,7 +144,7 @@ export class AgendaView {
           {
               title: "Data",
               data: "Data",
-              render: (Data) => formatarDataBR(Data)
+              render: (Data) => metodoData.formatarDataBR(Data)
           },
           colunaAcoes({ campoId: "id" })
 
@@ -166,7 +166,7 @@ export class AgendaView {
                     <a href="#" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">${compromisso.Titulo}</h5>
-                        <small>${calculaTempoData(dataLocal)}</small>
+                        <small>${metodoData.calculaTempoData(dataLocal)}</small>
                         </div>
                         <small class="badge text-bg-info">${
                           compromisso.Categoria.descricao

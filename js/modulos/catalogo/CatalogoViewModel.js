@@ -1,6 +1,6 @@
 import api from "../../servicos/metodoApi.js";
 import Catalogo from "./catalogoModel.js";
-import { formatarHorasParaHMS } from "../../Utils/metodoData.js";
+import metodoData from "../../Utils/metodoData.js"
 
 export class CatalogoViewModel {
   constructor(endpoint = "catalogo") {
@@ -154,7 +154,7 @@ export class CatalogoViewModel {
   resumoGeral() {
     const totalDias = this.catalogo.reduce((acc, t) => acc + Number(t.Dias || 0), 0);
     const Horas = totalDias * 24;
-    const totalHoras = formatarHorasParaHMS(Horas);
+    const totalHoras = metodoData.formatarHorasParaHMS(Horas);
     const totalEpisodios = this.catalogo.reduce((acc, t) => acc + Number(t.Episodios || 0), 0);
     const totalAssistidos = this.catalogo.reduce((acc, t) => acc + Number(t.Assistidos || 0), 0);
     const somaPontuacoes = this.catalogo.reduce((acc, t) => acc + Number(t.Score || 0), 0);

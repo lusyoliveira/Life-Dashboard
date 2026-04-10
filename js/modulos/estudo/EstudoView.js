@@ -4,7 +4,7 @@ import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
 import { popularSelect, limparFormulario } from "../../Utils/utils.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
-import { formatarDataBR, formatarParaISO } from "../../Utils/metodoData.js";
+import metodoData from "../../Utils/metodoData.js"
 import { abrirModalAcao } from "../../Utils/modal.js";
 import Curso from "./estudoModel.js";
 
@@ -137,7 +137,7 @@ export class EstudoView {
             tituloCurso,
             instrutor,
             area,
-            formatarParaISO(dataCompra),
+            metodoData.formatarParaISO(dataCompra),
             Number(valor),
             status,
             certificado
@@ -160,7 +160,7 @@ export class EstudoView {
             {
                 title: "Comprado",
                 data: "Comprado",
-                render: (data) => formatarDataBR(data)
+                render: (data) => metodoData.formatarDataBR(data)
             },
             { title: "Valor", data: "Valor" },
             { title: "Status", data: "Status.descricao" },

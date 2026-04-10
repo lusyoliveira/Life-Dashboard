@@ -1,4 +1,4 @@
-import { calculaTempoData, formatarDataBR, formatarParaISO } from "../../Utils/metodoData.js";
+import metodoData from "../../Utils/metodoData.js"
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
@@ -145,8 +145,8 @@ export class CatalogoView {
             tipo,
             status,
             plataforma,
-            formatarParaISO(dataInicio),
-            dataFim ? formatarParaISO(dataFim) : null,
+            metodoData.formatarParaISO(dataInicio),
+            dataFim ? metodoData.formatarParaISO(dataFim) : null,
             Number(episodios),
             Number(assistidos),
             Number(temporada),
@@ -175,12 +175,12 @@ export class CatalogoView {
             {
                 title: "Início",
                 data: "Inicio",
-                render: (data) => formatarDataBR(data)
+                render: (data) => metodoData.formatarDataBR(data)
             },
             {
                 title: "Fim",
                 data: "Fim",
-                render: (data) => formatarDataBR(data)
+                render: (data) => metodoData.formatarDataBR(data)
             },
             { title: "Episódios", data: "Episodios" },
             { title: "Assistidos", data: "Assistidos" },
@@ -415,7 +415,7 @@ export class CatalogoView {
                     smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
                     const dataUTC = new Date(titulo.Adicao);                
                     const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
-                    smallDataAdicao.textContent = calculaTempoData(dataLocal);
+                    smallDataAdicao.textContent = metodoData.calculaTempoData(dataLocal);
         
                     divTitulo.appendChild(h6Titulo);
                     divProgresso.appendChild(divBarraProgresso);

@@ -1,5 +1,5 @@
 import { popularSelect, limparFormulario } from "../../Utils/utils.js";
-import { calculaTempoData, formatarDataBR, formatarParaISO } from "../../Utils/metodoData.js";
+import metodoData from "../../Utils/metodoData.js"
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 import { ContasViewModel } from "../contas/ContasViewModel.js";
 import { graficoPizza } from "../../componentes/graficos/GraficosFactory.js";
@@ -173,7 +173,7 @@ export class FinanceiroView {
     const transacao = new Transacao(
       idInput ? idInput : null,
       descricao,
-      formatarParaISO(data),
+      metodoData.formatarParaISO(data),
       categoria,
       contaDestino,
       contaOrigem,
@@ -230,8 +230,9 @@ export class FinanceiroView {
   async listarTransacoes(elementoId) {
     const tabela = document.getElementById(elementoId);
     const corpoTabela = tabela.getElementsByTagName('tbody')[0];
-    await this.vm.gerarRecorrencias(this.mesAtual, this.anoAtual);
 
+    await this.vm.gerarRecorrencias();
+    
     // Limpa tbody
     while (corpoTabela.firstChild) {
       corpoTabela.removeChild(corpoTabela.firstChild);
@@ -407,7 +408,7 @@ export class FinanceiroView {
                         <a href="#" class="list-group-item list-group-item-action">
                             <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">${transacao.Descricao}</h5>
-                            <small>${calculaTempoData(dataLocal)}</small>
+                            <small>${metodoData.calculaTempoData(dataLocal)}</small>
                             </div>
                             <small class="badge text-bg-info">${
                               transacao.Categoria.descricao
