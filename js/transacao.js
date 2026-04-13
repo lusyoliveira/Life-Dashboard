@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const botaoMesProximo = document.getElementById('mesProximo');
     const formTransacaoHTML = await carregarFormulario("/pages/partials/formTransacao.html");
     financeiroView.formHTML = formTransacaoHTML
-    //financeiroView.listarTransacoes('tbtransacoes');
+    financeiroView.listarTransacoes('tbtransacoes');
     financeiroView.atualizarTituloMes();
   
     //Adicionar transação
