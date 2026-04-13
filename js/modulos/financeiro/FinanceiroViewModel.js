@@ -7,6 +7,8 @@ export class FinanceiroViewModel {
     constructor(endpoint = "transacoes") {
         this.endpoint = endpoint;
         this.transacoes = [];
+        this.gerandoRecorrencia = false;
+        this.ultimaExecucao = null;
     }
 
     async obterTransacoes() {
@@ -134,64 +136,113 @@ export class FinanceiroViewModel {
     };
 
     async gerarRecorrencias() {
-        const transacoes = await this.obterTransacoes();
-        const recorrentes = transacoes.filter(t => t.Recorrente);
+        debugger
+        // já está rodando
+        if (this.gerandoRecorrencia) return;
 
-        const hoje = new Date();
+        const hoje = new Date().toDateString();
 
-        for (const t of recorrentes) {
+        // já executou hoje
+        if (this.ultimaExecucao === hoje) return;
 
-            const inicio = new Date(t.RecorrenciaInicio);
-            const ultima = new Date(t.UltimaGeracao);
+        this.gerandoRecorrencia = true;
 
-            // antes do início
-            if (hoje < inicio) continue;
+        try {
+            const transacoes = await this.obterTransacoes();
+            const recorrentes = transacoes.filter(t => t.Recorrente);
 
-            let proxima = metodoData.calcularProximaData(ultima, t.Periodicidade);
+            const agora = new Date();
 
-            // passou do fim
-            if (t.RecorrenciaFim) {
-                const fim = new Date(t.RecorrenciaFim);
-                if (proxima > fim) continue;
-            }
+            for (const t of recorrentes) {
 
-            // gera múltiplas se estiver atrasado
-            while (proxima <= hoje) {
+                const inicio = new Date(t.RecorrenciaInicio);
+                const ultima = new Date(t.UltimaGeracao);
 
-                const jaExiste = transacoes.some(x => {
-                    if (x.Descricao !== t.Descricao) return false;
+                if (agora < inicio) continue;
 
-                    const data = new Date(x.Data);
+                let proxima = metodoData.calcularProximaData(ultima, t.Periodicidade);
 
-                    return data.toDateString() === proxima.toDateString();
-                });
-
-                if (!jaExiste) {
-                    const novaTransacao = {
-                        ...t,
-                        Id: null,
-                        Data: proxima.toISOString().split('T')[0],
-                        Recorrente: false,
-                        UltimaGeracao: null,
-                        ContaDestino: null
-                    };
-
-                    await api.salvarDados(novaTransacao, this.endpoint);
+                if (t.RecorrenciaFim) {
+                    const fim = new Date(t.RecorrenciaFim);
+                    if (proxima > fim) continue;
                 }
 
-                // atualiza última geração
-                await api.atualizarDados(
-                    {
+                while (proxima <= agora) {
+
+                    const jaExiste = transacoes.some(x => {
+                        if (x.Descricao !== t.Descricao) return false;
+
+                        const data = new Date(x.Data);
+
+                        return data.toDateString() === proxima.toDateString();
+                    });
+
+                    if (!jaExiste) {
+                        const novaTransacao = {
+                            ...t,
+                            Id: null,
+                            Data: proxima.toISOString().split('T')[0],
+                            Recorrente: false,
+                            UltimaGeracao: null,
+                            ContaDestino: null
+                        };
+
+                        await api.salvarDados(novaTransacao, this.endpoint);
+                    }
+
+                    await api.atualizarDados({
+                        ...t,
                         _id: t.Id,
                         UltimaGeracao: proxima.toISOString().split('T')[0]
-                    },
-                    this.endpoint
-                );
+                    }, this.endpoint);
 
-                // próxima iteração
-                proxima = metodoData.calcularProximaData(proxima, t.Periodicidade);
+                    proxima = metodoData.calcularProximaData(proxima, t.Periodicidade);
+                }
             }
+
+            // marca execução
+            this.ultimaExecucao = hoje;
+
+        } finally {
+            this.gerandoRecorrencia = false;
         }
+    };
+
+    async filtrarTransacoesAVencer(qtd = 13) {
+        const transacoes = await this.obterTransacoes();
+
+        const transacoesFiltrada = transacoes.filter(transacao => {
+            const dataTransacao = new Date(transacao.Data);
+           
+            return dataTransacao > new Date(); 
+        })
+        .filter (transacoes => transacoes.Tipo === 'D')
+        .sort((a, b) => new Date(a.Data) - new Date(b.Data))
+        .slice(0, qtd);
+
+        return transacoesFiltrada;
+    };
+
+    async transacoesporCategoria() {
+        const categoriaVM = new CategoriaViewModel();
+        const categorias = await categoriaVM.obterCategoria('Financeiro');
+        const categoriasArray = categorias.map(c => c.Descricao);
+
+        await this.obterTransacoes();
+
+        const valores = categoriasArray.map(categoria => {
+            return this.transacoes
+                .filter(t =>
+                    t.Categoria !== null &&
+                    t.Categoria.descricao === categoria
+                )
+                .reduce((acc, t) => acc + t.Valor, 0);
+        });
+
+        return {
+            labels: categoriasArray,
+            data: valores
+        };
     };
 
     async filtrarTransacoesAVencer(qtd = 13) {
