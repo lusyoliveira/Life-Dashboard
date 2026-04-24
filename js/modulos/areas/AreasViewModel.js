@@ -13,7 +13,7 @@ export class AreaViewModel {
     this.areas = areaData      
         .map((area) => {
         const areas = new Area(
-          area._id,
+          area.id,
           area.descricao
         );               
       return areas;
@@ -26,7 +26,7 @@ export class AreaViewModel {
       if (!area) return null;
 
       const areaModel = new Area(
-          area._id,
+          area.id,
           area.descricao
         );       
         return areaModel

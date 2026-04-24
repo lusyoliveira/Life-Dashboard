@@ -11,13 +11,13 @@ export class TipoViewModel {
     const tipoData = await api.buscarDados(this.endpoint);
         
     this.tipos = tipoData    
-        .filter((umtipo) => umtipo.Tipo === tipo) 
+        .filter((umtipo) => umtipo.tipo === tipo) 
         .map((umtipo) => {
 
         const tipos = new Tipo(
-          umtipo._id,
+          umtipo.id,
           umtipo.descricao,
-          umtipo.Tipo
+          umtipo.tipo
         );              
       return tipos;      
     })     
@@ -29,9 +29,9 @@ export class TipoViewModel {
     if (!tipo) return null;
 
     const tipoModel = new Tipo(
-        tipo._id,
+        tipo.id,
         tipo.descricao,
-        tipo.Tipo
+        tipo.tipo
       );       
       return tipoModel
   };

@@ -28,7 +28,7 @@ export class ClimaView {
 
         const spanTemperatura = document.createElement('span');
         spanTemperatura.classList.add('fs-3', 'm-2');
-        spanTemperatura.textContent = `${clima.current.temperature_2m}°`;
+        spanTemperatura.textContent = `${clima.ClimaCurrent.temperature_2m}°`;
         
         const spanSitucao = document.createElement('span');
         spanSitucao.classList.add('fs-5', 'm-1');
@@ -60,11 +60,11 @@ export class ClimaView {
 
         const spanTemperaturaMaximaDomingo = document.createElement('span');
         spanTemperaturaMaximaDomingo.classList.add('fs-7');
-        spanTemperaturaMaximaDomingo.textContent = `${clima.daily.temperature_2m_max[0]}°`;
+        spanTemperaturaMaximaDomingo.textContent = `${clima.ClimaDaily[0].temperature_2m_max}°`;
 
         const spanTemperaturaMinimaDomingo = document.createElement('span');
         spanTemperaturaMinimaDomingo.classList.add('fs-7');
-        spanTemperaturaMinimaDomingo.textContent = `${clima.daily.temperature_2m_min[0]}°`;
+        spanTemperaturaMinimaDomingo.textContent = `${clima.ClimaDaily[0].temperature_2m_min}°`;
 
         const divContainerSegunda = document.createElement('div');
         divContainerSegunda.classList.add('col-md-auto');
@@ -81,11 +81,11 @@ export class ClimaView {
 
         const spanTemperaturaMaximaSegunda = document.createElement('span');
         spanTemperaturaMaximaSegunda.classList.add('fs-7');
-        spanTemperaturaMaximaSegunda.textContent = `${clima.daily.temperature_2m_max[1]}°`;
+        spanTemperaturaMaximaSegunda.textContent = `${clima.ClimaDaily[1].temperature_2m_max}°`;
 
         const spanTemperaturaMinimaSegunda = document.createElement('span');
         spanTemperaturaMinimaSegunda.classList.add('fs-7');
-        spanTemperaturaMinimaSegunda.textContent = `${clima.daily.temperature_2m_min[1]}°`;
+        spanTemperaturaMinimaSegunda.textContent = `${clima.ClimaDaily[1].temperature_2m_min}°`;
 
         const divContainerTerca = document.createElement('div');
         divContainerTerca.classList.add('col-md-auto');
@@ -102,11 +102,11 @@ export class ClimaView {
 
         const spanTemperaturaMaximaTerca = document.createElement('span');
         spanTemperaturaMaximaTerca.classList.add('fs-7');
-        spanTemperaturaMaximaTerca.textContent = `${clima.daily.temperature_2m_max[2]}°`;
+        spanTemperaturaMaximaTerca.textContent = `${clima.ClimaDaily[2].temperature_2m_max}°`;
 
         const spanTemperaturaMinimaTerca = document.createElement('span');
         spanTemperaturaMinimaTerca.classList.add('fs-7');
-        spanTemperaturaMinimaTerca.textContent = `${clima.daily.temperature_2m_min[2]}°`;
+        spanTemperaturaMinimaTerca.textContent = `${clima.ClimaDaily[2].temperature_2m_min}°`;
         
         const divContainerQuarta = document.createElement('div');
         divContainerQuarta.classList.add('col-md-auto');
@@ -123,11 +123,11 @@ export class ClimaView {
 
         const spanTemperaturaMaximaQuarta = document.createElement('span');
         spanTemperaturaMaximaQuarta.classList.add('fs-7');
-        spanTemperaturaMaximaQuarta.textContent = `${clima.daily.temperature_2m_max[3]}°`;
+        spanTemperaturaMaximaQuarta.textContent = `${clima.ClimaDaily[3].temperature_2m_max}°`;
 
         const spanTemperaturaMinimaQuarta = document.createElement('span');
         spanTemperaturaMinimaQuarta.classList.add('fs-7');
-        spanTemperaturaMinimaQuarta.textContent = `${clima.daily.temperature_2m_min[3]}°`;
+        spanTemperaturaMinimaQuarta.textContent = `${clima.ClimaDaily[3].temperature_2m_min}°`;
 
         const divContainerQuinta = document.createElement('div');
         divContainerQuinta.classList.add('col-md-auto');
@@ -144,11 +144,11 @@ export class ClimaView {
 
         const spanTemperaturaMaximaQuinta = document.createElement('span');
         spanTemperaturaMaximaQuinta.classList.add('fs-7');
-        spanTemperaturaMaximaQuinta.textContent = `${clima.daily.temperature_2m_max[4]}°`;
+        spanTemperaturaMaximaQuinta.textContent = `${clima.ClimaDaily[4].temperature_2m_max}°`;
 
         const spanTemperaturaMinimaQuinta = document.createElement('span');
         spanTemperaturaMinimaQuinta.classList.add('fs-7');
-        spanTemperaturaMinimaQuinta.textContent = `${clima.daily.temperature_2m_min[4]}°`;
+        spanTemperaturaMinimaQuinta.textContent = `${clima.ClimaDaily[4].temperature_2m_min}°`;
 
         const divContainerSexta = document.createElement('div');
         divContainerSexta.classList.add('col-md-auto');
@@ -165,11 +165,11 @@ export class ClimaView {
 
         const spanTemperaturaMaximaSexta = document.createElement('span');
         spanTemperaturaMaximaSexta.classList.add('fs-7');
-        spanTemperaturaMaximaSexta.textContent = `${clima.daily.temperature_2m_max[5]}°`;
+        spanTemperaturaMaximaSexta.textContent = `${clima.ClimaDaily[5].temperature_2m_max}°`;
 
         const spanTemperaturaMinimaSexta = document.createElement('span');
         spanTemperaturaMinimaSexta.classList.add('fs-7');
-        spanTemperaturaMinimaSexta.textContent = `${clima.daily.temperature_2m_min[5]}°`;
+        spanTemperaturaMinimaSexta.textContent = `${clima.ClimaDaily[5].temperature_2m_min}°`;
 
         const divContainerSabado = document.createElement('div');
         divContainerSabado.classList.add('col-md-auto');
@@ -186,11 +186,11 @@ export class ClimaView {
         
         const spanTemperaturaMaximaSabado = document.createElement('span');
         spanTemperaturaMaximaSabado.classList.add('fs-7');
-        spanTemperaturaMaximaSabado.textContent = `${clima.daily.temperature_2m_max[6]}°`;
+        spanTemperaturaMaximaSabado.textContent = `${clima.ClimaDaily[6].temperature_2m_max}°`;
 
         const spanTemperaturaMinimaSabado = document.createElement('span');
         spanTemperaturaMinimaSabado.classList.add('fs-7');
-        spanTemperaturaMinimaSabado.textContent = `${clima.daily.temperature_2m_min[6]}°`;
+        spanTemperaturaMinimaSabado.textContent = `${clima.ClimaDaily[6].temperature_2m_min}°`;
 
         divContainerDomingo.appendChild(divDomingo);
         divDomingo.appendChild(spanDomingo);

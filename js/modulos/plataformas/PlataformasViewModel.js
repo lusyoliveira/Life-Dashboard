@@ -11,12 +11,12 @@ export class PlataformaViewModel {
     const plataformaData = await api.buscarDados(this.endpoint);
     
     this.plataformas = plataformaData
-        .filter((plataforma) => plataforma.Tipo === tipo)        
+        .filter((plataforma) => plataforma.tipo === tipo)        
         .map((plataforma) => {
         const plataformas = new Plataforma(
-          plataforma._id,
+          plataforma.id,
           plataforma.descricao,
-          plataforma.Tipo
+          plataforma.tipo
         );               
       return plataformas;
     })     
@@ -28,9 +28,9 @@ export class PlataformaViewModel {
     if (!plataforma) return null;
 
     const plataformaModel = new Plataforma(
-        plataforma._id,
+        plataforma.id,
         plataforma.descricao,
-        plataforma.Tipo
+        plataforma.tipo
       );       
       return plataformaModel
   };

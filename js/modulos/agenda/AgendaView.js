@@ -138,9 +138,9 @@ export class AgendaView {
       dados: listaOrdenada,
       colunas: [
           { title: "Título", data: "Titulo" },
-          { title: "Status", data: "Status.descricao" },
-          { title: "Categoria", data: "Categoria.descricao" },
-          { title: "Tipo", data: "Tipo.descricao" },
+          { title: "Status", data: "Status" },
+          { title: "Categoria", data: "Categoria" },
+          { title: "Tipo", data: "Tipo" },
           {
               title: "Data",
               data: "Data",
@@ -169,7 +169,7 @@ export class AgendaView {
                         <small>${metodoData.calculaTempoData(dataLocal)}</small>
                         </div>
                         <small class="badge text-bg-info">${
-                          compromisso.Categoria.descricao
+                          compromisso.Categoria
                         }</small>
                     </a>
                 `;
@@ -241,11 +241,11 @@ export class AgendaView {
 
           const spanCategoria = document.createElement("span");
           spanCategoria.classList.add("badge", "text-bg-info");
-          spanCategoria.textContent = compromisso.Categoria.descricao;
+          spanCategoria.textContent = compromisso.Categoria;
 
           const spanStatus = document.createElement("span");
           spanStatus.classList.add("badge", "text-bg-success");
-          spanStatus.textContent = compromisso.Status.descricao;
+          spanStatus.textContent = compromisso.Status;
 
           divCompromisso.appendChild(divTitulo);
           divCompromisso.appendChild(spanCategoria);

@@ -12,12 +12,12 @@ export class CategoriaViewModel {
     const categoriaData = await api.buscarDados(this.endpoint);
     
     this.categorias = categoriaData
-        .filter((categoria) => categoria.Tipo === tipo)        
+        .filter((categoria) => categoria.tipo === tipo)        
         .map((categoria) => {
         const categorias = new Categoria(
-          categoria._id,
+          categoria.id,
           categoria.descricao,
-          categoria.Tipo
+          categoria.tipo
         );               
       return categorias;
     })     
@@ -29,9 +29,9 @@ export class CategoriaViewModel {
       if (!categoria) return null;
 
       const categoriaModel = new Categoria(
-          categoria._id,
+          categoria.id,
           categoria.descricao,
-          categoria.Tipo
+          categoria.tipo
         );       
         return categoriaModel
     };
