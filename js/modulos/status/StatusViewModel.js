@@ -12,12 +12,12 @@ export class StatusViewModel {
     const statusData = await api.buscarDados(this.endpoint);
     
     this.status = statusData
-        .filter((estado) => estado.Tipo === tipo)        
+        .filter((estado) => estado.tipo === tipo)        
         .map((estado) => {
         const status = new Status(
-          estado._id,
+          estado.id,
           estado.descricao,
-          estado.Tipo
+          estado.ipo
         );               
       return status;
     })     
@@ -29,9 +29,9 @@ export class StatusViewModel {
       if (!status) return null;
 
       const statusModel = new Status(
-          status._id,
+          status.id,
           status.descricao,
-          status.Tipo
+          status.tipo
         );       
         return statusModel
     };

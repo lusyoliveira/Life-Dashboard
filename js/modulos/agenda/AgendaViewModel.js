@@ -13,14 +13,14 @@ export class AgendaViewModel {
    
     this.agenda = agendaData.map((compromisso) => {
         const compromissos = new Agenda(
-          compromisso._id,
-          compromisso.Titulo,
-          compromisso.Status,
-          compromisso.Categoria,
-          compromisso.Tipo,
-          compromisso.Data,
-        );       
-        return compromissos;
+          compromisso.id,
+          compromisso.titulo,
+          compromisso.Status.descricao,
+          compromisso.Categoria.descricao,
+          compromisso.Tipo.descricao,
+          compromisso.data,
+        );              
+        return compromissos;        
     })     
     return this.agenda;
   };
@@ -30,11 +30,11 @@ export class AgendaViewModel {
     if (!compromisso) return null;
 
     const agenda = new Agenda(
-        compromisso._id,
+        compromisso.id,
         compromisso.Titulo,
-        compromisso.Status,
-        compromisso.Categoria,
-        compromisso.Tipo,
+        compromisso.Status.descricao,
+        compromisso.Categoria.descricao,
+        compromisso.Tipo.descricao,
         compromisso.Data,
       );       
       return agenda

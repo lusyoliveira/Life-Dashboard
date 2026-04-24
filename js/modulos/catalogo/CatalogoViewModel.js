@@ -13,20 +13,20 @@ export class CatalogoViewModel {
 
     this.catalogo = catalogoData.map((titulo) => {
       const titulos = new Catalogo(
-        titulo._id,
-        titulo.Titulo,
-        titulo.Capa,
-        titulo.Tipo,
-        titulo.Status,
-        titulo.Onde,
-        titulo.Inicio,
-        titulo.Fim,
-        titulo.Episodios,
-        titulo.Assistidos,
-        titulo.Temporadas,
-        titulo.Score,
-        titulo.Vezes,
-        titulo.Adicao
+          titulo.id,
+          titulo.titulo,
+          titulo.capa,
+          titulo.Tipo.descricao,
+          titulo.Status.descricao,
+          titulo.Plataforma.descricao,
+          titulo.inicio,
+          titulo.fim,
+          titulo.episodios,
+          titulo.assistidos,
+          titulo.temporadas,
+          titulo.score,
+          titulo.vezes,
+          titulo.adicao
       ); 
     return titulos;
   });  
@@ -38,20 +38,20 @@ export class CatalogoViewModel {
     if (!titulo) return null;  
 
     const catalogo = new Catalogo(
-      titulo._id,
-      titulo.Titulo,
-      titulo.Capa,
-      titulo.Tipo,
-      titulo.Status,
-      titulo.Onde,
-      titulo.Inicio,
-      titulo.Fim,
-      titulo.Episodios,
-      titulo.Assistidos,
-      titulo.Temporadas,
-      titulo.Score,
-      titulo.Vezes,
-      titulo.Adicao
+      titulo.id,
+      titulo.titulo,
+      titulo.capa,
+      titulo.Tipo.descricao,
+      titulo.Status.descricao,
+      titulo.Plataforma.descricao,
+      titulo.inicio,
+      titulo.fim,
+      titulo.episodios,
+      titulo.assistidos,
+      titulo.temporadas,
+      titulo.score,
+      titulo.vezes,
+      titulo.adicao
     );
 
     return catalogo;
@@ -85,16 +85,16 @@ export class CatalogoViewModel {
   };
 
    filtrarPorStatus(status) {
-    return this.catalogo.filter((t) => t.Status.descricao === status);
+    return this.catalogo.filter((t) => t.Status === status);
   };
 
   filtrarPorTipo(tipo) {
-    return this.catalogo.filter((t) => t.Tipo.descricao === tipo);
+    return this.catalogo.filter((t) => t.Tipo === tipo);
   };
 
   topPorScore(tipo, qtd = 4) {
     return [...this.catalogo]
-      .filter((t) => t.Tipo.descricao === tipo)
+      .filter((t) => t.Tipo === tipo)
       .sort((a, b) => b.Score - a.Score)
       .slice(0, qtd);
   };
@@ -105,7 +105,7 @@ export class CatalogoViewModel {
 
   recentesPorStatus(status, qtd = 4) {
     return this.catalogo
-      .filter((t) => t.Status.descricao === status)
+      .filter((t) => t.Status === status)
       .sort((a, b) => {
       const ta = a?.Adicao instanceof Date && !isNaN(a.Adicao) ? a.Adicao.getTime() : 0;
       const tb = b?.Adicao instanceof Date && !isNaN(b.Adicao) ? b.Adicao.getTime() : 0;
@@ -116,7 +116,7 @@ export class CatalogoViewModel {
   
   assistindo(status, qtd = 4) {
     return this.catalogo
-      .filter(titulo => status.includes(titulo.Status.descricao))
+      .filter(titulo => status.includes(titulo.Status))
       .slice(0, qtd);
   };
 
@@ -231,7 +231,7 @@ export class CatalogoViewModel {
       "Paramount",
     ];
     const valores = plataformas.map(
-      (p) => this.catalogo.filter((t) => t.Onde.descricao === p).length
+      (p) => this.catalogo.filter((t) => t.Plataforma === p).length
     );
     return { labels: plataformas, data: valores };
   };
