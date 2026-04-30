@@ -14,21 +14,20 @@ export class EstudoViewModel {
     
     this.cursos = cursosData.map(curso => {
       const cursos = new Curso(
-        curso._id,
-        curso.Capa,
-        curso.Escola,
-        curso.Aulas,
-        curso.Assistido,
-        curso.Horas,
-        curso.Name,
-        curso.Professor,
-        curso.Assunto,
-        curso.Comprado,
-        curso.Valor,
-        curso.Status,
-        curso.Certificado
+        curso.id,
+        curso.capa,
+        curso.Plataforma.descricao,
+        curso.aulas,
+        curso.assistido,
+        curso.horas,
+        curso.descricao,
+        curso.professor,
+        curso.Area.descricao,
+        curso.comprado,
+        curso.valor,
+        curso.Status.descricao,
+        curso.certificado
       );
-      //console.log(cursos);
       
         return cursos;
     });   
@@ -40,19 +39,19 @@ export class EstudoViewModel {
     if (!curso) return null;
 
       const cursos = new Curso(
-        curso._id,
-        curso.Capa,
-        curso.Escola,
-        curso.Aulas,
-        curso.Assistido,
-        curso.Horas,
-        curso.Name,
-        curso.Professor,
-        curso.Assunto,
-        curso.Comprado,
-        curso.Valor,
-        curso.Status,
-        curso.Certificado
+        curso.id,
+        curso.capa,
+        curso.Plataforma.descricao,
+        curso.aulas,
+        curso.assistido,
+        curso.horas,
+        curso.descricao,
+        curso.professor,
+        curso.Area.descricao,
+        curso.comprado,
+        curso.valor,
+        curso.Status.descricao,
+        curso.certificado
       );
 
     return cursos;

@@ -153,17 +153,17 @@ export class EstudoView {
         tabelaId: "tabelaCursos",
         dados,
         colunas: [
-            { title: "Curso", data: "Name" },
+            { title: "Curso", data: "Descricao" },
             { title: "Instrutor", data: "Professor" },
-            { title: "Escola", data: "Escola.descricao" },
-            { title: "Área", data: "Assunto.descricao" },
+            { title: "Escola", data: "Plataforma" },
+            { title: "Área", data: "Area" },
             {
                 title: "Comprado",
                 data: "Comprado",
                 render: (data) => metodoData.formatarDataBR(data)
             },
             { title: "Valor", data: "Valor" },
-            { title: "Status", data: "Status.descricao" },
+            { title: "Status", data: "Status" },
             { title: "Certificado", data: "Certificado" },
             colunaAcoes({ campoId: "id" })
 
@@ -189,7 +189,7 @@ export class EstudoView {
                     const imgCapa = document.createElement('img');
                     imgCapa.classList.add('card-img-top');
                     imgCapa.src = curso.Capa;
-                    imgCapa.alt = curso.Name;
+                    imgCapa.alt = curso.Descricao;
                     imgCapa.height = 250;
                     imgCapa.width = '100%';
 
@@ -199,14 +199,14 @@ export class EstudoView {
 
                     const h5Titulo = document.createElement('h5');
                     h5Titulo.classList.add('card-title');
-                    h5Titulo.textContent = curso.Name;
+                    h5Titulo.textContent = curso.Descricao;
 
                     const divBadge = document.createElement('div');
                     divBadge.classList.add('d-flex', 'justify-content-between', 'align-items-center');
 
                     const spanBadge = document.createElement('span');
                     spanBadge.classList.add('badge', 'text-bg-info');
-                    spanBadge.textContent = curso.Assunto;
+                    spanBadge.textContent = curso.Area;
 
                     const divProgresso = document.createElement('div');
                     divProgresso.classList.add('progress', 'mt-2');

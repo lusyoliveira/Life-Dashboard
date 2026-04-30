@@ -138,29 +138,6 @@ export class ContasView {
         ]
     });
 };
-async listarContas() {
-    const dados = await this.vm.obterContas();
-
-    for (const conta of dados) {
-        conta.Saldo = await this.vm.calcularSaldo(
-            conta.id,
-            conta.Saldo 
-        );
-    }
-
-    criarDataTable({
-        tabelaId: "tabelaContas",
-        dados,
-        colunas: [
-            { title: "Agência", data: "Agencia" },
-            { title: "Conta", data: "Conta" },
-            { title: "Banco", data: "Banco" },
-            { title: "Descrição", data: "Descricao" },
-            { title: "Tipo", data: "Tipo" },
-            colunaAcoes({ campoId: "id" })
-        ]
-    });
-};
 
     async renderContas(elementoDestinoId) {
         const elementoDestino = document.getElementById(elementoDestinoId);

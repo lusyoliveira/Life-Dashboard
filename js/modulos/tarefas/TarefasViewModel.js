@@ -13,7 +13,7 @@ export class TarefasViewModel {
     this.tarefas = tarefas.map(tarefa => {
         return {
             ...tarefa,
-            Adicionado: new Date(tarefa.Adicionado).toLocaleDateString('pt-BR')
+            adicionado: new Date(tarefa.adicionado).toLocaleDateString('pt-BR')
         };
     });
     
@@ -31,7 +31,7 @@ export class TarefasViewModel {
       this.tarefas = {
         ...tarefa,
         id: Number(tarefa.id),
-        Adicionado: new Date(tarefa.Adicionado).toLocaleDateString('pt-BR')
+        adicionado: new Date(tarefa.adicionado).toLocaleDateString('pt-BR')
       };
       return this.tarefas;
     } else {

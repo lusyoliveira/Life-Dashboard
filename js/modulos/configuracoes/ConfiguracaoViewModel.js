@@ -12,19 +12,19 @@ export class ConfiguracaoViewModel {
             
         this.configuracao = configuracaoData.map((configuracoes) => {
             const configuracao = new Configuracao(
-                configuracoes._id,
-                configuracoes.AtivaMAL,
-                configuracoes.AtivaOutlook,
-                configuracoes.ChaveOutlook,
-                configuracoes.AtivaGoogle,
-                configuracoes.ChaveGoogle,
-                configuracoes.Cidade,
-                configuracoes.Latitude,
-                configuracoes.Longitude,
-                configuracoes.AtivaClima,
-                configuracoes.AtualizaClima,
-                configuracoes.DataContagem,
-                configuracoes.DescricaoContagem
+                configuracoes.id,
+                configuracoes.ativaMAL,
+                configuracoes.ativaOutlook,
+                configuracoes.chaveOutlook,
+                configuracoes.ativaGoogle,
+                configuracoes.chaveGoogle,
+                configuracoes.cidade,
+                configuracoes.latitude,
+                configuracoes.longitude,
+                configuracoes.ativaClima,
+                configuracoes.atualizaClima,
+                configuracoes.dataContagem,
+                configuracoes.descricaoContagem
             );
             
             return configuracao;

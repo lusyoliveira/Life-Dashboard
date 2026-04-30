@@ -14,13 +14,13 @@ export class ContasViewModel {
     this.contas = contasData
         .map((conta) => {
         const contas = new Contas(
-          conta._id,
-          conta.Agencia,
-          conta.Conta,
-          conta.Banco,
-          conta.Descricao,
-          conta.Tipo,
-          conta.Saldo
+          conta.id,
+          conta.agencia,
+          conta.conta,
+          conta.banco,
+          conta.descricao,
+          conta.tipo,
+          conta.saldo
         );               
       return contas;
     })     
@@ -32,13 +32,13 @@ export class ContasViewModel {
       if (!contas) return null;
 
       const contasModel = new Contas(
-          contas._id,
-          contas.Agencia,
-          contas.Conta,
-          contas.Banco,
-          contas.Descricao,
-          contas.Tipo,
-          contas.Saldo
+          conta.id,
+          conta.agencia,
+          conta.conta,
+          conta.banco,
+          conta.descricao,
+          conta.tipo,
+          conta.saldo
         );       
         return contasModel
     };
@@ -66,12 +66,12 @@ export class ContasViewModel {
     const transacoes = await financeiroVM.obterTransacoes();
 
     const transacoesConta = transacoes.filter(t => 
-        t.ContaOrigem?._id === contaId ||
-        t.ContaDestino?._id === contaId
+        t.ContaOrigem?.id === contaId ||
+        t.ContaDestino?.id === contaId
     );
 
     const somaMovimentacoes = transacoesConta.reduce((acc, t) => {
-        return acc + Number(t.Valor);
+        return acc + Number(t.valor);
     }, 0);
 
     return Number(saldoInicial) + somaMovimentacoes;
