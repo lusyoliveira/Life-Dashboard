@@ -33,12 +33,12 @@ export class TarefasView {
                 divTarefa.classList.add('d-flex', 'gap-3', 'align-items-center');
 
                 const checkTarefa = document.createElement('input');
-                if (tarefa.Feito) {                
+                if (tarefa.feito) {                
                 checkTarefa.setAttribute('checked', 'checked')
                 } 
                 checkTarefa.classList.add('form-check-input', 'flex-shrink-0');
                 checkTarefa.type = 'checkbox';
-                checkTarefa.id = tarefa._id 
+                checkTarefa.id = tarefa.id 
                 checkTarefa.value = '';
                 checkTarefa.style = 'font-size: 1.375em';
 
@@ -46,15 +46,15 @@ export class TarefasView {
                 spanTarefa.classList.add('pt-1', 'form-checked-content');
                 
                 const strongTarefa = document.createElement('strong');
-                strongTarefa.innerText = tarefa.Tarefa;
+                strongTarefa.innerText = tarefa.tarefa;
         
                 //Estiliza nome do item
                 checkTarefa.addEventListener('change', async () => {
                     
                     const tarefaAtualizada = {
                         ...tarefa,
-                        Adicionado: new Date(tarefa.Adicionado).toLocaleDateString("pt-BR"),
-                        Feito: checkTarefa.checked
+                        adicionado: new Date(tarefa.adicionado).toLocaleDateString("pt-BR"),
+                        feito: checkTarefa.checked
                     };
 
                     if (checkTarefa.checked) { 
@@ -75,7 +75,7 @@ export class TarefasView {
                 btnEditar.setAttribute('id', 'botao-editar')
                 btnEditar.setAttribute('title', 'Editar Tarefa')
                 btnEditar.onclick = async ()  => {
-                    this.editarTarefa(tarefa._id)
+                    this.editarTarefa(tarefa.id)
                     
                     imagemBotao.classList.remove('bi', 'bi-plus-lg');
                     imagemBotao.classList.add('bi', 'bi-floppy-fill');
@@ -91,7 +91,7 @@ export class TarefasView {
                 btnExcluir.setAttribute('id', 'excluir-editar')
                 btnExcluir.setAttribute('title', 'Excluir Tarefa')
                 btnExcluir.onclick = async ()  => {                      
-                    await this.vm.excluirTarefa(tarefa._id)
+                    await this.vm.excluirTarefa(tarefa.id)
                 }
         
                 const iconeExcluir = document.createElement('i')
@@ -100,7 +100,7 @@ export class TarefasView {
                 
                 const smallTarefa = document.createElement('small');
                 smallTarefa.classList.add('d-block', 'text-body-secondary');
-                smallTarefa.innerText = `Adicionado em ${tarefa.Adicionado}`;
+                smallTarefa.innerText = `Adicionado em ${tarefa.adicionado}`;
         
                 btnEditar.appendChild(iconeEditar);
                 btnExcluir.appendChild(iconeExcluir);

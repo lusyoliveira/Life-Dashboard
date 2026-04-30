@@ -11,7 +11,7 @@ export class ContagemView {
         const configuracoes = (await this.vm.vm.obterConfiguracoes())[0];
         const tituloConfig = configuracoes.DescricaoContagem ?? "Contagem regressiva";
 
-        const hTitulo = document.createElement('h4');
+        const hTitulo = document.createElement('h5');
         hTitulo.classList.add('fst-italic');
         hTitulo.id = 'descricao-contagem';
         hTitulo.textContent = tituloConfig; // ← agora vem da configuração

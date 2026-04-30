@@ -1,5 +1,5 @@
 export default class Transacao {
-    Id
+    id
     Descricao
     Data
     Categoria
@@ -16,7 +16,7 @@ export default class Transacao {
     UltimaGeracao
 
     constructor(id,descricao,data,categoria,contaDestino,contaOrigem,valor,parcelaInicio,parcelamento = false,tipo,recorrente, periodicidade, recorrenciaInicio, recorrenciaFim, ultimaGeracao) {
-        this.Id = id
+        this.id = id
         this.Descricao = descricao
         this.Data = data
         this.Categoria = categoria

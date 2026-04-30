@@ -82,10 +82,10 @@ export class AgendaViewModel {
       const categorias = await categoriaVM.obterCategoria('Agenda');
       const categoriasArray = categorias.map(c => c.Descricao);
       await this.obterAgenda();
-
+      
       const valores = categoriasArray.map(categoria =>
           this.agenda
-              .filter(t => t.Categoria.descricao === categoria).length
+              .filter(t => t.Categoria === categoria).length
       );
 
       return {
