@@ -31,11 +31,11 @@ export class AgendaViewModel {
 
     const agenda = new Agenda(
         compromisso.id,
-        compromisso.Titulo,
+        compromisso.titulo,
         compromisso.Status.descricao,
         compromisso.Categoria.descricao,
         compromisso.Tipo.descricao,
-        compromisso.Data,
+        compromisso.data,
       );       
       return agenda
   };
