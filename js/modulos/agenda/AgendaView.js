@@ -8,6 +8,7 @@ import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
 import { abrirModalAcao } from "../../Utils/modal.js";
 import Agenda from "./agendaModel.js";
+import { LogarithmicScale } from "chart.js";
 
 export class AgendaView {
   constructor(vm) {
@@ -102,9 +103,9 @@ export class AgendaView {
     document.getElementById('id-adicionar').value = agenda.id;
     document.getElementById('titulo-adicionar').value = agenda.Titulo;
     document.getElementById('data-adicionar').value = new Date(agenda.Data).toISOString().slice(0,16);
-    document.getElementById('categoria-adicionar').value = agenda.Categoria._id;
-    document.getElementById('tipo-adicionar').value = agenda.Tipo._id;
-    document.getElementById('status-adicionar').value = agenda.Status._id; 
+    document.getElementById('categoria-adicionar').value = agenda.Categoria;
+    document.getElementById('tipo-adicionar').value = agenda.Tipo.id;
+    document.getElementById('status-adicionar').value = agenda.Status.id; 
   };
 
   async salvarFormularioAgenda(form) {
@@ -184,7 +185,6 @@ export class AgendaView {
     if (divAntigo) {
       divAntigo.remove();
     }
-   
     // Cria os dias do mês
     const primeiroDia = new Date(ano, mes).getDay();
     const totalDias = new Date(ano, mes + 1, 0).getDate();
