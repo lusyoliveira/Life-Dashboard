@@ -103,9 +103,9 @@ export class CatalogoView {
         document.getElementById('capa-adicionar').value = titulo.Capa;
         document.getElementById('data-inicio').value = new Date(titulo.Inicio).toISOString().slice(0, 16);
         document.getElementById('data-fim').value = titulo.Fim === null ? null : new Date(titulo.Fim).toISOString().slice(0, 16);
-        document.getElementById('tipo-adicionar').value = titulo.Tipo._id;
-        document.getElementById('status-adicionar').value = titulo.Status._id;
-        document.getElementById('plataforma-adicionar').value = titulo.Onde._id;
+        document.getElementById('tipo-adicionar').value = titulo.Tipo.id;
+        document.getElementById('status-adicionar').value = titulo.Status.id;
+        document.getElementById('plataforma-adicionar').value = titulo.Plataforma.id;
         document.getElementById('episodios-adicionar').value = titulo.Episodios;
         document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
         document.getElementById('temporada-adicionar').value = titulo.Temporadas;
@@ -119,16 +119,16 @@ export class CatalogoView {
         const capa = form.querySelector('#capa-adicionar').value;
         const dataInicio = form.querySelector('#data-inicio').value;
         const dataFim = form.querySelector('#data-fim').value;
-        const tipo = form.querySelector('#tipo-adicionar').value;
-        const status = form.querySelector('#status-adicionar').value;
-        const plataforma = form.querySelector('#plataforma-adicionar').value;
+        const tipoId = form.querySelector('#tipo-adicionar').value;
+        const statusId = form.querySelector('#status-adicionar').value;
+        const plataformaId = form.querySelector('#plataforma-adicionar').value;
         const episodios = form.querySelector('#episodios-adicionar').value;
         const assistidos = form.querySelector('#assistidos-adicionar').value;
         const temporada = form.querySelector('#temporada-adicionar').value;
         const pontuacao = form.querySelector('#pontuacao-adicionar').value;
         const vezes = form.querySelector('#vezes-adicionar').value;
 
-        let adicaoOriginal = null;
+        let adicaoOriginal = new Date();
 
         // edição → preservar Adicao
         if (idInput) {
@@ -142,9 +142,9 @@ export class CatalogoView {
             idInput,
             descricao,
             capa,
-            tipo,
-            status,
-            plataforma,
+            tipoId,
+            statusId,
+            plataformaId,
             metodoData.formatarParaISO(dataInicio),
             dataFim ? metodoData.formatarParaISO(dataFim) : null,
             Number(episodios),
@@ -162,16 +162,23 @@ export class CatalogoView {
         const dados = await this.vm.obterCatalogo();
         const listaOrdenada = dados.sort(
           (a, b) => new Date(a.Adicao).getTime() - new Date(b.Adicao).getTime()
-      );  
+      );       
 
         criarDataTable({
         tabelaId: "tabelaCatalogo",
         dados: listaOrdenada,
         colunas: [
             { title: "Título", data: "Titulo" },
-            { title: "Tipo", data: "Tipo.descricao" },
-            { title: "Status", data: "Status.descricao" },
-            { title: "Plataforma", data: "Onde.descricao" },
+            { title: "Tipo", 
+                data: "Tipo",
+                render: (data) => data.descricao
+             },
+            { title: "Status", data: "Status",
+                render: (data) => data.descricao
+             },
+            { title: "Plataforma", data: "Plataforma",
+                render: (data) => data.descricao
+             },
             {
                 title: "Início",
                 data: "Inicio",
@@ -368,7 +375,6 @@ export class CatalogoView {
 
         });
     }
-  
     
 
     renderCardStatus(status,elementoId) {

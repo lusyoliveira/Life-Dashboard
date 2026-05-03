@@ -13,21 +13,30 @@ export class CatalogoViewModel {
 
     this.catalogo = catalogoData.map((titulo) => {
       const titulos = new Catalogo(
-          titulo.id,
-          titulo.titulo,
-          titulo.capa,
-          titulo.Tipo.descricao,
-          titulo.Status.descricao,
-          titulo.Plataforma.descricao,
-          titulo.inicio,
-          titulo.fim,
-          titulo.episodios,
-          titulo.assistidos,
-          titulo.temporadas,
-          titulo.score,
-          titulo.vezes,
-          titulo.adicao
-      ); 
+      titulo.id,
+      titulo.titulo,
+      titulo.capa,      
+      {
+        id: titulo.tipoId,
+        descricao: titulo.Tipo.descricao
+      },
+      {
+        id: titulo.statusId,
+        descricao: titulo.Status.descricao
+      },
+      {
+        id: titulo.plataformaId,
+        descricao: titulo.Plataforma.descricao
+      },
+      titulo.inicio,
+      titulo.fim,
+      titulo.episodios,
+      titulo.assistidos,
+      titulo.temporadas,
+      titulo.score,
+      titulo.vezes,
+      titulo.adicao
+    );
     return titulos;
   });  
   return this.catalogo;
@@ -40,10 +49,19 @@ export class CatalogoViewModel {
     const catalogo = new Catalogo(
       titulo.id,
       titulo.titulo,
-      titulo.capa,
-      titulo.Tipo.descricao,
-      titulo.Status.descricao,
-      titulo.Plataforma.descricao,
+      titulo.capa,      
+      {
+        id: titulo.tipoId,
+        descricao: titulo.Tipo.descricao
+      },
+      {
+        id: titulo.statusId,
+        descricao: titulo.Status.descricao
+      },
+      {
+        id: titulo.plataformaId,
+        descricao: titulo.Plataforma.descricao
+      },
       titulo.inicio,
       titulo.fim,
       titulo.episodios,
@@ -58,21 +76,41 @@ export class CatalogoViewModel {
   }
 
   async salvarTitulo(titulo) {
-      const payload = {
-      ...titulo,
-      Dias: titulo.Dias,
-      Progresso: titulo.Progresso
-    };
+    //   const payload = {
+    //   ...titulo,
+    //   Dias: titulo.Dias,
+    //   Progresso: titulo.Progresso
+    // };
 
-    payload.Adicao = titulo.Adicao instanceof Date 
-    ? titulo.Adicao 
-    : new Date(titulo.Adicao); 
+    // payload.Adicao = titulo.Adicao instanceof Date 
+    // ? titulo.Adicao 
+    // : new Date(titulo.Adicao); 
+debugger
+    const payload = {
+      id: titulo.id,
+      titulo: titulo.Titulo,
+      capa: titulo.Capa,
+      tipoId: titulo.Tipo,
+      statusId: titulo.Status,
+      plataformaId: titulo.Plataforma,
+      inicio: titulo.Inicio,
+      fim: titulo.Fim,
+      episodios: titulo.Episodios,
+      assistidos: titulo.Assistidos,
+      temporadas: titulo.Temporadas,
+      score: titulo.Score,
+      vezes: titulo.Vezes,
+      adicao: titulo.Adicao,
+      dias: titulo.Dias,
+      progresso: titulo.Progresso
+    };
+    
    
     if (titulo.id) {
-      payload.Adicao = new Date(titulo.Adicao);
+      //payload.Adicao = new Date(titulo.Adicao);
       await api.atualizarDados(payload, this.endpoint);
     } else {
-      payload.Adicao = new Date();
+      //payload.Adicao = new Date();
       await api.salvarDados(payload, this.endpoint);
     }
 
@@ -185,7 +223,7 @@ export class CatalogoViewModel {
 
   fequentes(tipo, qtd = 4) {
     return [...this.catalogo]
-      .filter((t) => t.Tipo.descricao === tipo && t.Vezes > 1)
+      .filter((t) => t.Tipo === tipo && t.Vezes > 1)
       .sort((a, b) => b.Vezes - a.Vezes)
       .slice(0, qtd);
   };

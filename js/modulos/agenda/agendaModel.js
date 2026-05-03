@@ -6,10 +6,10 @@ export default class Agenda {
     Tipo
     Data
 
-    constructor (id, titulo,status,categoria,tipo,data) {
+    constructor (id,titulo,status,categoria,tipo,data) {
         this.id = id
         this.Titulo = titulo           
-        this.Status = status
+        this.Status = status  
         this.Categoria = categoria
         this.Tipo = tipo
         this.Data = data

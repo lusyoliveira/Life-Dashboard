@@ -3,8 +3,8 @@ export default class Categoria {
     Descricao
     Tipo
 
-    constructor (_id, descricao, tipo) {
-        this.id = _id
+    constructor (id, descricao, tipo) {
+        this.id = id
         this.Descricao = descricao  
         this.Tipo = tipo
     }
