@@ -103,29 +103,33 @@ export class AgendaView {
     document.getElementById('id-adicionar').value = agenda.id;
     document.getElementById('titulo-adicionar').value = agenda.Titulo;
     document.getElementById('data-adicionar').value = new Date(agenda.Data).toISOString().slice(0,16);
-    document.getElementById('categoria-adicionar').value = agenda.Categoria;
+    document.getElementById('categoria-adicionar').value = agenda.Categoria.id;
     document.getElementById('tipo-adicionar').value = agenda.Tipo.id;
     document.getElementById('status-adicionar').value = agenda.Status.id; 
   };
 
   async salvarFormularioAgenda(form) {
-      const idInput = form.querySelector('#id-adicionar')?.value || null;
-      const titulo = form.querySelector('#titulo-adicionar').value;
-      const data = form.querySelector('#data-adicionar').value;
-      const categoria = form.querySelector('#categoria-adicionar').value;
-      const tipo = form.querySelector('#tipo-adicionar').value;
-      const status = form.querySelector('#status-adicionar').value;
+    const idInput = form.querySelector('#id-adicionar')?.value || null;
+    const titulo = form.querySelector('#titulo-adicionar').value;
+    const data = form.querySelector('#data-adicionar').value;
+    const categoriaId = form.querySelector('#categoria-adicionar').value;
+    const tipoId = form.querySelector('#tipo-adicionar').value;
+    const statusId = form.querySelector('#status-adicionar').value;
 
-      const agendamento = new Agenda( 
-        idInput ? idInput : null,
-        titulo,
-        status,
-        categoria,
-        tipo,
-        metodoData.formatarParaISO(data)
-      );
-      await this.vm.salvarAgenda(agendamento);
-  };
+    const payload = {
+      titulo,
+      data: metodoData.formatarParaISO(data),
+      categoriaId,
+      tipoId,
+      statusId
+    };
+
+    if (idInput) {
+      payload.id = parseInt(idInput);
+    }
+
+    await this.vm.salvarAgenda(payload);
+  }
 
   async listarAgenda() {
       const dados = await this.vm.obterAgenda();
@@ -139,9 +143,21 @@ export class AgendaView {
       dados: listaOrdenada,
       colunas: [
           { title: "Título", data: "Titulo" },
-          { title: "Status", data: "Status" },
-          { title: "Categoria", data: "Categoria" },
-          { title: "Tipo", data: "Tipo" },
+          {
+            title: "Categoria",
+            data: "Categoria",
+            render: (data) => data.descricao
+          },
+          {
+            title: "Status",
+            data: "Status",
+            render: (data) => data.descricao
+          },
+          {
+            title: "Tipo",
+            data: "Tipo",
+            render: (data) => data.descricao
+          },
           {
               title: "Data",
               data: "Data",
@@ -170,7 +186,7 @@ export class AgendaView {
                         <small>${metodoData.calculaTempoData(dataLocal)}</small>
                         </div>
                         <small class="badge text-bg-info">${
-                          compromisso.Categoria
+                          compromisso.Categoria.descricao
                         }</small>
                     </a>
                 `;
@@ -241,11 +257,11 @@ export class AgendaView {
 
           const spanCategoria = document.createElement("span");
           spanCategoria.classList.add("badge", "text-bg-info");
-          spanCategoria.textContent = compromisso.Categoria;
+          spanCategoria.textContent = compromisso.Categoria.descricao;
 
           const spanStatus = document.createElement("span");
           spanStatus.classList.add("badge", "text-bg-success");
-          spanStatus.textContent = compromisso.Status;
+          spanStatus.textContent = compromisso.Status.descricao;
 
           divCompromisso.appendChild(divTitulo);
           divCompromisso.appendChild(spanCategoria);

@@ -4,7 +4,7 @@ export default class Catalogo {
     Capa
     Tipo
     Status
-    Onde
+    Plataforma
     Inicio
     Fim
     Episodios
@@ -14,13 +14,13 @@ export default class Catalogo {
     Vezes
     Adicao
 
-     constructor(_id, Titulo, Capa, Tipo, Status, Onde, Inicio, Fim, Episodios, Assistidos, Temporadas, Score = 0, Vezes = 0, Adicao = new Date()) {
-        this.id = _id
+     constructor(id, Titulo, Capa, Tipo, Status, Plataforma, Inicio, Fim, Episodios, Assistidos, Temporadas, Score = 0, Vezes = 0, Adicao = new Date()) {
+        this.id = id
         this.Titulo = Titulo
         this.Capa = Capa
         this.Tipo = Tipo
         this.Status = Status
-        this.Onde = Onde
+        this.Plataforma = Plataforma
         this.Inicio = Inicio ? new Date(Inicio) : null
         this.Fim = Fim ? new Date(Fim) : null
         this.Episodios = Episodios

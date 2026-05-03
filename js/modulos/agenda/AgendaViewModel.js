@@ -15,11 +15,20 @@ export class AgendaViewModel {
         const compromissos = new Agenda(
           compromisso.id,
           compromisso.titulo,
-          compromisso.Status.descricao,
-          compromisso.Categoria.descricao,
-          compromisso.Tipo.descricao,
+          {
+            id: compromisso.statusId,
+            descricao: compromisso.Status.descricao
+          },
+          {
+            id: compromisso.categoriaId,
+            descricao: compromisso.Categoria.descricao
+          },
+          {
+            id: compromisso.tipoId,
+            descricao: compromisso.Tipo.descricao
+          },
           compromisso.data,
-        );              
+        );             
         return compromissos;        
     })     
     return this.agenda;
@@ -30,13 +39,22 @@ export class AgendaViewModel {
     if (!compromisso) return null;
 
     const agenda = new Agenda(
-        compromisso.id,
-        compromisso.titulo,
-        compromisso.Status.descricao,
-        compromisso.Categoria.descricao,
-        compromisso.Tipo.descricao,
-        compromisso.data,
-      );       
+         compromisso.id,
+          compromisso.titulo,
+          {
+            id: compromisso.statusId,
+            descricao: compromisso.Status.descricao
+          },
+          {
+            id: compromisso.categoriaId,
+            descricao: compromisso.Categoria.descricao
+          },
+          {
+            id: compromisso.tipoId,
+            descricao: compromisso.Tipo.descricao
+          },
+          compromisso.data,
+        );                   
       return agenda
   };
 
@@ -85,7 +103,7 @@ export class AgendaViewModel {
       
       const valores = categoriasArray.map(categoria =>
           this.agenda
-              .filter(t => t.Categoria === categoria).length
+              .filter(t => t.Categoria.descricao === categoria).length
       );
 
       return {
