@@ -43,11 +43,20 @@ export class FinanceiroViewModel {
 
         const transacoes = new Transacao(
                 transacao.id,
-                transacao.escricao,
+                transacao.descricao,
                 transacao.data,
-                transacao.categoria,
-                transacao.contaDestino,
-                transacao.contaOrigem,
+                {
+                    id: transacao.categoriaId,
+                    descricao: transacao.categoria,
+                },
+                {
+                    id: transacao.contaDestinoId,
+                    descricao: transacao.contaDestino.descricao
+                },
+                {
+                    id: transacao.contaOrigemId,
+                    descricao: transacao.contaOrigem.descricao
+                },
                 transacao.valor,
                 transacao.parcelaInicio,
                 transacao.parcelamento,  
@@ -229,7 +238,7 @@ export class FinanceiroViewModel {
             return this.transacoes
                 .filter(t =>
                     t.Categoria !== null &&
-                    t.Categoria === categoria
+                    t.Categoria.descricao === categoria
                 )
                 .reduce((acc, t) => acc + t.valor, 0);
         });
@@ -259,7 +268,6 @@ export class FinanceiroViewModel {
         const categoriaVM = new CategoriaViewModel();
         const categorias = await categoriaVM.obterCategoria('Financeiro');
         const categoriasArray = categorias.map(c => c.Descricao);
-console.log(categorias);
 
         await this.obterTransacoes();
 
@@ -267,7 +275,7 @@ console.log(categorias);
             return this.transacoes
                 .filter(t =>
                     t.Categoria !== null &&
-                    t.Categoria === categoria
+                    t.Categoria.Descricao === categoria
                 )
                 .reduce((acc, t) => acc + t.Valor, 0);
         });

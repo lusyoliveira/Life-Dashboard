@@ -16,19 +16,27 @@ export class EstudoViewModel {
       const cursos = new Curso(
         curso.id,
         curso.capa,
-        curso.Plataforma.descricao,
+        {
+          id: curso.plataformaId,
+          descricao: curso.Plataforma.descricao
+        },
         curso.aulas,
         curso.assistido,
         curso.horas,
         curso.descricao,
         curso.professor,
-        curso.Area.descricao,
+        {
+          id: curso.areaId,
+          descricao: curso.Area.descricao
+        },
         curso.comprado,
         curso.valor,
-        curso.Status.descricao,
+        {
+          id: curso.statusId,
+          descricao: curso.Status.descricao
+        },
         curso.certificado
-      );
-      
+      );      
         return cursos;
     });   
     return this.cursos;
@@ -41,16 +49,25 @@ export class EstudoViewModel {
       const cursos = new Curso(
         curso.id,
         curso.capa,
-        curso.Plataforma.descricao,
+        {
+          id: curso.plataformaId,
+          descricao: curso.Plataforma.descricao
+        },
         curso.aulas,
         curso.assistido,
         curso.horas,
         curso.descricao,
         curso.professor,
-        curso.Area.descricao,
+        {
+          id: curso.areaId,
+          descricao: curso.Area.descricao
+        },
         curso.comprado,
         curso.valor,
-        curso.Status.descricao,
+        {
+          id: curso.statusId,
+          descricao: curso.Status.descricao
+        },
         curso.certificado
       );
 
@@ -73,7 +90,7 @@ export class EstudoViewModel {
 
   cursando(qtd = 3) {
       return this.cursos
-          .filter(curso => curso.Status === "Cursando")
+          .filter(curso => curso.Status.descricao === "Cursando")
           .slice(0, qtd);
   };
 

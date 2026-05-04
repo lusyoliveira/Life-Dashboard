@@ -99,16 +99,16 @@ export class EstudoView {
 
         document.getElementById('id-adicionar').value = curso.id;
         document.getElementById('capa-adicionar').value = curso.Capa;
-        document.getElementById('escola-adicionar').value = curso.Escola;
+        document.getElementById('escola-adicionar').value = curso.Plataforma.Id;
         document.getElementById('aulas-adicionar').value = curso.Aulas;
         document.getElementById('assistidos-adicionar').value = curso.Assistido;
         document.getElementById('horas-adicionar').value = curso.Horas;
-        document.getElementById('curso-adicionar').value = curso.Name;
+        document.getElementById('curso-adicionar').value = curso.Descricao;
         document.getElementById('instrutor-adicionar').value = curso.Professor;
-        document.getElementById('area-adicionar').value = curso.Assunto;
+        document.getElementById('area-adicionar').value = curso.Area.Id;
         document.getElementById('compra-adicionar').value = new Date(curso.Comprado).toISOString().slice(0, 16);
         document.getElementById('valor-adicionar').value = curso.Valor;
-        document.getElementById('status-adicionar').value = curso.Status;
+        document.getElementById('status-adicionar').value = curso.Status.Id;
         document.getElementById('certificado-adicionar').value = curso.Certificado;
     };
 
@@ -127,23 +127,27 @@ export class EstudoView {
         const status = form.querySelector('#status-adicionar').value;
         const certificado = form.querySelector('#certificado-adicionar').value;
 
-        const curso = new Curso(
-            idInput ? idInput : null,
+        const playload = {
             capa,
             escola,
-            Number(aulas),
-            Number(assistido),
-            Number(horas),
+            aulas,
+            assistido,
+            horas,
             tituloCurso,
             instrutor,
             area,
-            metodoData.formatarParaISO(dataCompra),
-            Number(valor),
+            dataCompra: metodoData.formatarParaISO(dataCompra),
+            valor,
             status,
             certificado
-        );
+        };
     
-        await this.vm.salvarCurso(curso);
+
+        if (idInput) {
+        payload.id = parseInt(idInput);
+        }
+
+        await this.vm.salvarCurso(playload);
         await this.listarCursos();
     };
     async listarCursos() {
@@ -155,15 +159,25 @@ export class EstudoView {
         colunas: [
             { title: "Curso", data: "Descricao" },
             { title: "Instrutor", data: "Professor" },
-            { title: "Escola", data: "Plataforma" },
-            { title: "Área", data: "Area" },
+            { title: "Escola", 
+                data: "Plataforma",
+                render: (data) => data.descricao
+            },
+            { title: "Área", 
+                data: "Area",
+                render: (data) => data.descricao
+            },
             {
                 title: "Comprado",
                 data: "Comprado",
                 render: (data) => metodoData.formatarDataBR(data)
             },
-            { title: "Valor", data: "Valor" },
-            { title: "Status", data: "Status" },
+            { title: "Valor", data: "Valor" },            
+            {
+                title: "Status",
+                data: "Status",
+                render: (data) => data.descricao
+            },
             { title: "Certificado", data: "Certificado" },
             colunaAcoes({ campoId: "id" })
 
@@ -206,7 +220,7 @@ export class EstudoView {
 
                     const spanBadge = document.createElement('span');
                     spanBadge.classList.add('badge', 'text-bg-info');
-                    spanBadge.textContent = curso.Area;
+                    spanBadge.textContent = curso.Area.descricao;
 
                     const divProgresso = document.createElement('div');
                     divProgresso.classList.add('progress', 'mt-2');
