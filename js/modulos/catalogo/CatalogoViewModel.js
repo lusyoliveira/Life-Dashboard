@@ -85,7 +85,6 @@ export class CatalogoViewModel {
     // payload.Adicao = titulo.Adicao instanceof Date 
     // ? titulo.Adicao 
     // : new Date(titulo.Adicao); 
-debugger
     const payload = {
       id: titulo.id,
       titulo: titulo.Titulo,
@@ -123,16 +122,16 @@ debugger
   };
 
    filtrarPorStatus(status) {
-    return this.catalogo.filter((t) => t.Status === status);
+    return this.catalogo.filter((t) => t.Status.descricao === status);
   };
 
   filtrarPorTipo(tipo) {
-    return this.catalogo.filter((t) => t.Tipo === tipo);
+    return this.catalogo.filter((t) => t.Tipo.descricao === tipo);
   };
 
   topPorScore(tipo, qtd = 4) {
     return [...this.catalogo]
-      .filter((t) => t.Tipo === tipo)
+      .filter((t) => t.Tipo.descricao === tipo)
       .sort((a, b) => b.Score - a.Score)
       .slice(0, qtd);
   };
@@ -143,7 +142,7 @@ debugger
 
   recentesPorStatus(status, qtd = 4) {
     return this.catalogo
-      .filter((t) => t.Status === status)
+      .filter((t) => t.Status.descricao === status)
       .sort((a, b) => {
       const ta = a?.Adicao instanceof Date && !isNaN(a.Adicao) ? a.Adicao.getTime() : 0;
       const tb = b?.Adicao instanceof Date && !isNaN(b.Adicao) ? b.Adicao.getTime() : 0;
@@ -154,7 +153,7 @@ debugger
   
   assistindo(status, qtd = 4) {
     return this.catalogo
-      .filter(titulo => status.includes(titulo.Status))
+      .filter(titulo => status.includes(titulo.Status.descricao))
       .slice(0, qtd);
   };
 
@@ -170,7 +169,7 @@ debugger
 
   estatisticasPorTipo(tipo) {
     const lista = this.filtrarPorTipo(tipo);
-
+          
     return {
       total: lista.length,
       dias: lista.reduce((acc, t) => acc + (t.Dias || 0), 0),
@@ -223,7 +222,7 @@ debugger
 
   fequentes(tipo, qtd = 4) {
     return [...this.catalogo]
-      .filter((t) => t.Tipo === tipo && t.Vezes > 1)
+      .filter((t) => t.Tipo.descricao === tipo && t.Vezes > 1)
       .sort((a, b) => b.Vezes - a.Vezes)
       .slice(0, qtd);
   };
@@ -269,7 +268,7 @@ debugger
       "Paramount",
     ];
     const valores = plataformas.map(
-      (p) => this.catalogo.filter((t) => t.Plataforma === p).length
+      (p) => this.catalogo.filter((t) => t.Plataforma.descricao === p).length
     );
     return { labels: plataformas, data: valores };
   };
