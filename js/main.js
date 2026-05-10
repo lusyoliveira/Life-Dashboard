@@ -68,7 +68,7 @@
 
         estudoView.renderCursando("Cursando");
         tarefaView.listarTarefas('lista-tarefa')
-        catalogoView.renderAssistindo(['Assistindo','Reassistindo'],'Assistindo')
+        catalogoView.renderAssistindo(['Assistindo','Re-Assistindo'],'Assistindo')
         agendaView.renderProximosCompromissos('proximos-compromissos', 7)
         financeiroView.renderTransacoesAVencer('proximos-transacoes', 7)
         agendaView.renderCalendario('calendario')
