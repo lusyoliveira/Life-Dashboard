@@ -12,6 +12,7 @@ export class AgendaViewModel {
     const agendaData = await api.buscarDados(this.endpoint);
    
     this.agenda = agendaData.map((compromisso) => {
+      
         const compromissos = new Agenda(
           compromisso.id,
           compromisso.titulo,

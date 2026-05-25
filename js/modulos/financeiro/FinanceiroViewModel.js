@@ -1,6 +1,6 @@
 import api from "../../servicos/metodoApi.js";
 import Transacao from "../financeiro/transacaoModel.js";
-import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
+import { CategoriaViewModel } from "../Categorias/CategoriasViewModel.js";
 import metodoData from "../../Utils/metodoData.js"
 
 export class FinanceiroViewModel {
@@ -13,27 +13,52 @@ export class FinanceiroViewModel {
 
     async obterTransacoes() {
         const transacoesData = await api.buscarDados(this.endpoint);
-        
-        this.transacoes = transacoesData.map(transacao => {
+
+        this.transacoes = transacoesData.map((transacao) => {
+
             const listaTransacoes = new Transacao(
                 transacao.id,
-                transacao.escricao,
+                transacao.descricao,
                 transacao.data,
-                transacao.categoria,
-                transacao.contaDestino,
-                transacao.contaOrigem,
+
+                // Categoria
+                transacao.Categoria
+                    ? {
+                        id: transacao.categoriaId,
+                        descricao: transacao.Categoria.descricao,
+                    }
+                    : null,
+
+                // Conta destino
+                transacao.ContaDestino
+                    ? {
+                        id: transacao.contaDestinoId,
+                        descricao: transacao.ContaDestino.descricao
+                    }
+                    : null,
+
+                // Conta origem
+                transacao.ContaOrigem
+                    ? {
+                        id: transacao.contaOrigemId,
+                        descricao: transacao.ContaOrigem.descricao
+                    }
+                    : null,
+
                 transacao.valor,
                 transacao.parcelaInicio,
-                transacao.parcelamento,  
+                transacao.parcelamento,
                 transacao.tipo,
-                transacao.recorrente,
-                transacao.periodicidade,
-                transacao.recorrenciaInicio,
+                transacao.Recorrente,
+                transacao.Periodicidade,
+                transacao.RecorrenciaInicio,
                 transacao.recorrenciaFim,
-                transacao.ultimaGeracao
+                transacao.UltimaGeracao
             );
-            return listaTransacoes;            
-        })
+
+            return listaTransacoes;
+        });
+
         return this.transacoes;
     };
 
@@ -46,8 +71,8 @@ export class FinanceiroViewModel {
                 transacao.descricao,
                 transacao.data,
                 {
-                    id: transacao.categoriaId,
-                    descricao: transacao.categoria,
+                    id: transacao.CategoriaId,
+                    descricao: transacao.Categoria,
                 },
                 {
                     id: transacao.contaDestinoId,
@@ -57,15 +82,15 @@ export class FinanceiroViewModel {
                     id: transacao.contaOrigemId,
                     descricao: transacao.contaOrigem.descricao
                 },
-                transacao.valor,
+                transacao.Valor,
                 transacao.parcelaInicio,
                 transacao.parcelamento,  
                 transacao.tipo,
-                transacao.recorrente,
-                transacao.periodicidade,
-                transacao.recorrenciaInicio,
+                transacao.Recorrente,
+                transacao.Periodicidade,
+                transacao.RecorrenciaInicio,
                 transacao.recorrenciaFim,
-                transacao.ultimaGeracao 
+                transacao.UltimaGeracao 
         );       
         return transacoes;
     }
@@ -76,58 +101,58 @@ export class FinanceiroViewModel {
         await api.atualizarDados(transacao, this.endpoint);
         } else {
             //verifica tipo de transação
-            if (transacao.tipo === 'T') {
+            if (transacao.Tipo === 'T') {
                 const transacaoOrigem = { ...transacao };
-                transacaoOrigem.valor = -Math.abs(transacao.valor);
-                transacaoOrigem.categoria = null;
+                transacaoOrigem.Valor = -Math.abs(transacao.Valor);
+                transacaoOrigem.Categoria = null;
 
                 await api.salvarDados(transacaoOrigem, this.endpoint);
 
                 const transacaoDestino = { ...transacao };
-                transacaoDestino.valor = Math.abs(transacao.valor);
-                transacaoDestino.categoria = null;
+                transacaoDestino.Valor = Math.abs(transacao.Valor);
+                transacaoDestino.Categoria = null;
 
                 await api.salvarDados(transacaoDestino, this.endpoint);
                 return this.obterTransacoes();
 
-            } else if (transacao.tipo === 'R') {
+            } else if (transacao.Tipo === 'R') {
 
                 const transacaoReceita = { ...transacao };
-                transacaoReceita.valor = Math.abs(transacao.valor);
-                transacaoReceita.contaDestino = null;
+                transacaoReceita.Valor = Math.abs(transacao.Valor);
+                transacaoReceita.ContaDestino = null;
 
                 await api.salvarDados(transacaoReceita, this.endpoint);
                 return this.obterTransacoes();
 
-            } else if (transacao.tipo === 'D') {
+            } else if (transacao.Tipo === 'D') {
                 const transacaoDespesa = { ...transacao };                          
                 //verifica se é parcelamento e gera as parcelas
-                if (transacao.parcelamento && transacao.parcelaInicio > 0) {
-                    const totalParcelas = transacao.parcelaInicio; 
-                    const valorParcela = Math.abs(transacao.Valor) / (totalParcelas + 1);
+                if (transacao.Parcelamento && transacao.ParcelaInicio > 0) {
+                    const totalParcelas = transacao.ParcelaInicio; 
+                    const ValorParcela = Math.abs(transacao.Valor) / (totalParcelas + 1);
 
                     for (let i = 1; i <= totalParcelas; i++) {
-                        const novaData = new Date(transacao.data);
+                        const novaData = new Date(transacao.Data);
                         novaData.setMonth(novaData.getMonth() + i);
 
                         const transacaoParcela = {
                             ...transacaoDespesa,
-                            data: novaData.toISOString().split('T')[0],
-                            valor: -Math.abs(valorParcela),
-                            contaDestino: null,
+                            Data: novaData.toISOString().split('T')[0],
+                            Valor: -Math.abs(ValorParcela),
+                            ContaDestino: null,
                         };
                         await api.salvarDados(transacaoParcela, this.endpoint);
                     }
-                } else if (transacao.recorrente) {
-                    transacaoDespesa.ultimaGeracao = transacaoDespesa.data;
-                    transacaoDespesa.recorrenciaInicio = transacaoDespesa.data;
-                    transacaoDespesa.valor = -Math.abs(transacao.valor);
-                    transacaoDespesa.contaDestino = null;
+                } else if (transacao.Recorrente) {
+                    transacaoDespesa.IltimaGeracao = transacaoDespesaData;
+                    transacaoDespesa.RecorrenciaInicio = transacaoDespesa.Data;
+                    transacaoDespesa.Valor = -Math.abs(transacao.Valor);
+                    transacaoDespesa.ContaDestino = null;
 
                     await api.salvarDados(transacaoDespesa, this.endpoint);
                 } else {                    
-                    transacaoDespesa.valor = -Math.abs(transacao.valor);
-                    transacaoDespesa.contaDestino = null;
+                    transacaoDespesa.Valor = -Math.abs(transacao.Valor);
+                    transacaoDespesa.ContaDestino = null;
 
                     await api.salvarDados(transacaoDespesa, this.endpoint);
                 }
@@ -146,20 +171,20 @@ export class FinanceiroViewModel {
 
     async gerarRecorrencias() {
         const transacoes = await this.obterTransacoes();
-        const recorrentes = transacoes.filter(t => t.recorrente);
+        const Recorrentes = transacoes.filter(t => t.Recorrente);
 
         const hoje = new Date();
 
-        for (const t of recorrentes) {
-            if (!t.recorrente) continue;
+        for (const t of Recorrentes) {
+            if (!t.Recorrente) continue;
 
-            const inicio = new Date(t.recorrenciaInicio);
-            const ultima = new Date(t.ultimaGeracao);
+            const inicio = new Date(t.RecorrenciaInicio);
+            const ultima = new Date(t.UltimaGeracao);
 
             // antes do início
             if (hoje < inicio) continue;
 
-            let proxima = metodoData.calcularProximaData(ultima, t.periodicidade);
+            let proxima = metodoData.calcularProximaData(ultima, t.Periodicidade);
 
             // passou do fim
             if (t.recorrenciaFim) {
@@ -172,9 +197,9 @@ export class FinanceiroViewModel {
                 const dataAtualizacao = proxima.toISOString().split('T')[0];
 
                 const jaExiste = transacoes.some(x => {
-                    if (x.descricao !== t.descricao) return false;
+                    if (x.Descricao !== t.Descricao) return false;
 
-                    const data = new Date(x.data);
+                    const data = new Date(x.Data);
 
                     return data.toDateString() === proxima.toDateString();
                 });
@@ -183,10 +208,10 @@ export class FinanceiroViewModel {
                     const novaTransacao = {
                         ...t,
                         id: null,
-                        data: proxima.toISOString().split('T')[0],
-                        recorrente: false,
-                        ultimaGeracao: null,
-                        contaDestino: null
+                        Data: proxima.toISOString().split('T')[0],
+                        Recorrente: false,
+                        UltimaGeracao: null,
+                        ContaDestino: null
                     };
 
                     await api.salvarDados(novaTransacao, this.endpoint);
@@ -197,13 +222,13 @@ export class FinanceiroViewModel {
                     {
                         ...t,
                         id: t.Id,
-                        ultimaGeracao: dataAtualizacao
+                        UltimaGeracao: dataAtualizacao
                     },
                     this.endpoint
                 );
 
                 // próxima iteração
-                const proximaIteracao = metodoData.calcularProximaData(proxima, t.periodicidade);
+                const proximaIteracao = metodoData.calcularProximaData(proxima, t.Periodicidade);
 
                 if (proximaIteracao.getTime() === proxima.getTime()) break;
 
@@ -216,73 +241,36 @@ export class FinanceiroViewModel {
         const transacoes = await this.obterTransacoes();
 
         const transacoesFiltrada = transacoes.filter(transacao => {
-            const dataTransacao = new Date(transacao.data);
+            const dataTransacao = new Date(transacao.Data);
            
             return dataTransacao > new Date(); 
         })
-        .filter (transacoes => transacoes.tipo === 'D')
-        .sort((a, b) => new Date(a.data) - new Date(b.data))
+        .filter (transacoes => transacoes.Tipo === 'D')
+        .sort((a, b) => new Date(a.Data) - new Date(b.Data))
         .slice(0, qtd);
 
         return transacoesFiltrada;
     };
 
     async transacoesporCategoria() {
-        const categoriaVM = new CategoriaViewModel();
-        const categorias = await categoriaVM.obterCategoria('Financeiro');
-        const categoriasArray = categorias.map(c => c.descricao);
+        const CategoriaVM = new CategoriaViewModel();
+        const Categorias = await CategoriaVM.obterCategoria('Financeiro');
+        const CategoriasArray = Categorias.map(c => c.Descricao);
+        
+        await this.obterTransacoes();      
 
-        await this.obterTransacoes();
-
-        const valores = categoriasArray.map(categoria => {
+        const Valores = CategoriasArray.map(Categoria => {
             return this.transacoes
                 .filter(t =>
                     t.Categoria !== null &&
-                    t.Categoria.descricao === categoria
-                )
-                .reduce((acc, t) => acc + t.valor, 0);
-        });
-
-        return {
-            labels: categoriasArray,
-            data: valores
-        };
-    };
-
-    async filtrarTransacoesAVencer(qtd = 13) {
-        const transacoes = await this.obterTransacoes();
-
-        const transacoesFiltrada = transacoes.filter(transacao => {
-            const dataTransacao = new Date(transacao.data);
-           
-            return dataTransacao > new Date(); 
-        })
-        .filter (transacoes => transacoes.tipo === 'D')
-        .sort((a, b) => new Date(a.data) - new Date(b.data))
-        .slice(0, qtd);
-
-        return transacoesFiltrada;
-    };
-
-    async transacoesporCategoria() {
-        const categoriaVM = new CategoriaViewModel();
-        const categorias = await categoriaVM.obterCategoria('Financeiro');
-        const categoriasArray = categorias.map(c => c.Descricao);
-
-        await this.obterTransacoes();
-
-        const valores = categoriasArray.map(categoria => {
-            return this.transacoes
-                .filter(t =>
-                    t.Categoria !== null &&
-                    t.Categoria.Descricao === categoria
+                    t.Categoria.Descricao === Categoria
                 )
                 .reduce((acc, t) => acc + t.Valor, 0);
         });
 
         return {
-            labels: categoriasArray,
-            data: valores
+            labels: CategoriasArray,
+            data: Valores
         };
     };
 }
