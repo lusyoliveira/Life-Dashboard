@@ -49,9 +49,9 @@ export class FinanceiroViewModel {
                 transacao.parcelaInicio,
                 transacao.parcelamento,
                 transacao.tipo,
-                transacao.Recorrente,
-                transacao.Periodicidade,
-                transacao.RecorrenciaInicio,
+                transacao.recorrente,
+                transacao.periodicidade,
+                transacao.recorrenciaInicio,
                 transacao.recorrenciaFim,
                 transacao.UltimaGeracao
             );
@@ -86,11 +86,11 @@ export class FinanceiroViewModel {
                 transacao.parcelaInicio,
                 transacao.parcelamento,  
                 transacao.tipo,
-                transacao.Recorrente,
-                transacao.Periodicidade,
-                transacao.RecorrenciaInicio,
+                transacao.recorrente,
+                transacao.periodicidade,
+                transacao.recorrenciaInicio,
                 transacao.recorrenciaFim,
-                transacao.UltimaGeracao 
+                transacao.UltimaGeracao
         );       
         return transacoes;
     }
@@ -191,7 +191,7 @@ export class FinanceiroViewModel {
                 const fim = new Date(t.recorrenciaFim);
                 if (proxima > fim) continue;
             }
-
+debugger
             // gera múltiplas se estiver atrasado
             while (proxima <= hoje) {
                 const dataAtualizacao = proxima.toISOString().split('T')[0];
@@ -263,7 +263,7 @@ export class FinanceiroViewModel {
             return this.transacoes
                 .filter(t =>
                     t.Categoria !== null &&
-                    t.Categoria.Descricao === Categoria
+                    t.Categoria.descricao === Categoria
                 )
                 .reduce((acc, t) => acc + t.Valor, 0);
         });
