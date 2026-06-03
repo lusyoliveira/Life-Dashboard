@@ -64,14 +64,14 @@ export class ContasViewModel {
   async calcularSaldo(contaId, saldoInicial) {
     const financeiroVM = new FinanceiroViewModel();
     const transacoes = await financeiroVM.obterTransacoes();
-
+    
     const transacoesConta = transacoes.filter(t => 
-        t.ContaOrigem?.id === contaId ||
+        t.ContaOrigem.id === contaId ||
         t.ContaDestino?.id === contaId
     );
 
     const somaMovimentacoes = transacoesConta.reduce((acc, t) => {
-        return acc + Number(t.valor);
+        return acc + Number(t.Valor);
     }, 0);
 
     return Number(saldoInicial) + somaMovimentacoes;

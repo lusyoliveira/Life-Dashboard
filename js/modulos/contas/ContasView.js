@@ -109,15 +109,16 @@ export class ContasView {
             banco,
             descricao,
             tipo,
-            Number(saldo)
+            saldo
         );
         await this.vm.salvarContas(contaModel);
     };
 
     async listarContas() {
     const dados = await this.vm.obterContas();
-
+    
     for (const conta of dados) {
+
         conta.Saldo = await this.vm.calcularSaldo(
             conta.id,
             conta.Saldo // aqui é o saldo inicial

@@ -126,15 +126,15 @@ const metodoData = {
       const data = new Date(base);
   
       switch (periodicidade) {
-          case 'MENSAL':
+          case 'Mensal':
               data.setMonth(data.getMonth() + 1);
               break;
   
-          case 'SEMANAL':
+          case 'Semanal':
               data.setDate(data.getDate() + 7);
               break;
   
-          case 'ANUAL':
+          case 'Anual':
               data.setFullYear(data.getFullYear() + 1);
               break;
       }
