@@ -14,8 +14,9 @@ export default class Transacao {
     RecorrenciaInicio
     RecorrenciaFim
     UltimaGeracao
+    RecorrenciaId
 
-    constructor(id,descricao,data,categoria,contaDestino,contaOrigem,valor,parcelaInicio,parcelamento = false,tipo,recorrente, periodicidade, recorrenciaInicio, recorrenciaFim, ultimaGeracao) {
+    constructor(id,descricao,data,categoria,contaDestino,contaOrigem,valor,parcelaInicio,parcelamento = false,tipo,recorrente, periodicidade, recorrenciaInicio, recorrenciaFim, ultimaGeracao, recorrenciaId) {
         this.id = id
         this.Descricao = descricao
         this.Data = data
@@ -31,5 +32,6 @@ export default class Transacao {
         this.RecorrenciaInicio = recorrenciaInicio ? recorrenciaInicio : null
         this.RecorrenciaFim = recorrenciaFim ? recorrenciaFim : null
         this.UltimaGeracao = ultimaGeracao ? ultimaGeracao : null
+        this.RecorrenciaId = recorrenciaId
     }
 }
