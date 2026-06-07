@@ -67,6 +67,20 @@ export class AgendaView {
           }
       });
 
+       //ativa recorrencia
+    const checkboxRecorrente = document.getElementById('recorrente-adicionar');
+    const divrecorrrencia = document.getElementById('periodicidade');
+
+    checkboxRecorrente.addEventListener('change', () => {
+        if (checkboxRecorrente.checked) {
+            divrecorrrencia.classList.remove('d-none');
+            divrecorrrencia.classList.add('d-block');
+        } else {
+            divrecorrrencia.classList.remove('d-block');
+            divrecorrrencia.classList.add('d-none');
+        }
+    });
+
       limparFormulario();
 
       await this.listarTipos('tipo-adicionar');
@@ -106,6 +120,8 @@ export class AgendaView {
     document.getElementById('categoria-adicionar').value = agenda.Categoria.id;
     document.getElementById('tipo-adicionar').value = agenda.Tipo.id;
     document.getElementById('status-adicionar').value = agenda.Status.id; 
+    document.getElementById('recorrente-adicionar').checked = agenda.Recorrente;
+    document.getElementById('periodicidade-adicionar').value = agenda.Periodicidade;
   };
 
   async salvarFormularioAgenda(form) {
@@ -115,13 +131,17 @@ export class AgendaView {
     const categoriaId = form.querySelector('#categoria-adicionar').value;
     const tipoId = form.querySelector('#tipo-adicionar').value;
     const statusId = form.querySelector('#status-adicionar').value;
+    const recorrente = form.querySelector('#recorrente-adicionar').checked;
+    const periodicidade = form.querySelector('#periodicidade-adicionar').value;
 
     const payload = {
       titulo,
       data: metodoData.formatarParaISO(data),
       categoriaId,
       tipoId,
-      statusId
+      statusId,
+      recorrente,
+      periodicidade,
     };
 
     if (idInput) {
@@ -137,6 +157,8 @@ export class AgendaView {
       const listaOrdenada = dados.sort(
           (a, b) => new Date(a.Data).getTime() - new Date(b.Data).getTime()
       );    
+
+      await this.vm.gerarRecorrencias();
       
       criarDataTable({
       tabelaId: "tabelaAgenda",

@@ -7,8 +7,8 @@ export class FinanceiroViewModel {
     constructor(endpoint = "transacoes") {
         this.endpoint = endpoint;
         this.transacoes = [];
-        this.gerandoRecorrencia = false;
-        this.ultimaExecucao = null;
+        //this.gerandoRecorrencia = false;
+       //this.ultimaExecucao = null;
     }
 
     async obterTransacoes() {
@@ -205,7 +205,6 @@ export class FinanceiroViewModel {
                 1
             );
 
-            debugger
             // gera múltiplas se estiver atrasado
            //while (competenciaProxima <= competenciaAtual) {
            if (competenciaProxima.toDateString() === competenciaAtual.toDateString()) {
