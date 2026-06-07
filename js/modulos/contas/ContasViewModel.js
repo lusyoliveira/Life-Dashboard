@@ -69,6 +69,7 @@ export class ContasViewModel {
         t.ContaOrigem.id === contaId ||
         t.ContaDestino?.id === contaId
     );
+console.log(transacoesConta);
 
     const somaMovimentacoes = transacoesConta.reduce((acc, t) => {
         return acc + Number(t.Valor);

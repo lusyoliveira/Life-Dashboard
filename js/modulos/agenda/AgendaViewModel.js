@@ -5,7 +5,7 @@ import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 export class AgendaViewModel {
   constructor(endpoint = "agenda") {
     this.endpoint = endpoint;
-    this.agenda = [];
+    this.agenda = [];    
   }
 
   async obterAgenda() {
@@ -29,6 +29,8 @@ export class AgendaViewModel {
             descricao: compromisso.Tipo.descricao
           },
           compromisso.data,
+          compromisso.recorrente,
+          compromisso.periodicidade
         );             
         return compromissos;        
     })     
@@ -55,6 +57,8 @@ export class AgendaViewModel {
             descricao: compromisso.Tipo.descricao
           },
           compromisso.data,
+          compromisso.recorrente,
+          compromisso.periodicidade
         );                   
       return agenda
   };
@@ -64,8 +68,7 @@ export class AgendaViewModel {
       ...compromisso
     };
 
-    if (compromisso.id) {
-      
+    if (compromisso.id) {      
       await api.atualizarDados(payload, this.endpoint);
     } else {
       await api.salvarDados(payload, this.endpoint);
@@ -113,4 +116,70 @@ export class AgendaViewModel {
       };
   };
   
+   async gerarRecorrencias() {
+        const compromissos = await this.obterAgenda();
+        const Recorrentes = compromissos.filter(t => t.Recorrente);
+
+        const hoje = new Date();
+        const competenciaAtual = new Date(
+                hoje.getFullYear(),
+                hoje.getMonth(),
+                1
+            );
+
+        for (const t of Recorrentes) {
+            if (!t.Recorrente) continue;
+
+            const inicio = new Date(t.RecorrenciaInicio);
+            const ultima = new Date(t.UltimaGeracao);
+
+            // antes do início
+            if (hoje < inicio) continue;
+
+            let proxima = metodoData.calcularProximaData(ultima, t.Periodicidade);
+
+            // passou do fim
+            if (t.RecorrenciaFim) {
+                const fim = new Date(t.RecorrenciaFim);
+                if (proxima > fim) continue;
+            }
+
+            const competenciaProxima = new Date(
+                proxima.getFullYear(),
+                proxima.getMonth(),
+                1
+            );
+
+            // gera múltiplas se estiver atrasado
+           if (competenciaProxima.toDateString() === competenciaAtual.toDateString()) {
+                const dataAtualizacao = proxima.toISOString().split('T')[0];
+
+                const jaExiste = compromissos.some(x => {
+                        return (
+                            x.RecorrenciaId === t.Id &&
+                            new Date(x.Data).toDateString() === proxima.toDateString()
+                        )
+                    }
+                );
+
+                if (jaExiste) {
+                      await api.atualizarDados(
+                      {
+                          ...t,
+                          id: t.id,
+                          data: dataAtualizacao
+                      },
+                      this.endpoint
+                  );
+                }
+
+                // próxima iteração
+                const proximaIteracao = metodoData.calcularProximaData(proxima, t.Periodicidade);
+
+                if (proximaIteracao.getTime() === proxima.getTime()) break;
+
+                proxima = proximaIteracao;
+            }
+        }
+    };
 }
