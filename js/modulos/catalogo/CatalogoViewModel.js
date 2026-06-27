@@ -157,7 +157,7 @@ export class CatalogoViewModel {
       .slice(0, qtd);
   };
 
-  recentes(qtd = 3) {
+  recentes(qtd = 4) {
     return [...this.catalogo]
       .sort((a, b) => {
       const ta = a?.Adicao instanceof Date && !isNaN(a.Adicao) ? a.Adicao.getTime() : 0;
