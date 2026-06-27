@@ -1,6 +1,7 @@
 import api from "../../servicos/metodoApi.js";
 import Agenda from "../agenda/agendaModel.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
+import metodoData from "../../Utils/metodoData.js"
  
 export class AgendaViewModel {
   constructor(endpoint = "agenda") {
@@ -118,8 +119,8 @@ export class AgendaViewModel {
   
    async gerarRecorrencias() {
         const compromissos = await this.obterAgenda();
-        const Recorrentes = compromissos.filter(t => t.Recorrente);
-
+        const recorrentes = compromissos.filter(t => t.Recorrente);
+debugger
         const hoje = new Date();
         const competenciaAtual = new Date(
                 hoje.getFullYear(),
@@ -127,36 +128,29 @@ export class AgendaViewModel {
                 1
             );
 
-        for (const t of Recorrentes) {
+        for (const t of recorrentes) {
             if (!t.Recorrente) continue;
 
-            const inicio = new Date(t.RecorrenciaInicio);
-            const ultima = new Date(t.UltimaGeracao);
+            const inicio = new Date(t.Data);
 
             // antes do início
             if (hoje < inicio) continue;
 
-            let proxima = metodoData.calcularProximaData(ultima, t.Periodicidade);
+            let proxima = metodoData.calcularProximaData(inicio, t.Periodicidade);
 
-            // passou do fim
-            if (t.RecorrenciaFim) {
-                const fim = new Date(t.RecorrenciaFim);
-                if (proxima > fim) continue;
-            }
 
             const competenciaProxima = new Date(
-                proxima.getFullYear(),
-                proxima.getMonth(),
+                inicio.getFullYear(),
+                inicio.getMonth(),
                 1
             );
 
-            // gera múltiplas se estiver atrasado
+            // quando for recorrencia anual, está gerando a competenciaProxima com o p´roximo ano, tornando esse if falso
            if (competenciaProxima.toDateString() === competenciaAtual.toDateString()) {
                 const dataAtualizacao = proxima.toISOString().split('T')[0];
 
                 const jaExiste = compromissos.some(x => {
                         return (
-                            x.RecorrenciaId === t.Id &&
                             new Date(x.Data).toDateString() === proxima.toDateString()
                         )
                     }

@@ -310,14 +310,14 @@ export class CatalogoView {
    
  // RECENTES
     renderRecentes(elementoId)  {
-        const recentes = this.vm.recentes(3);       
+        const recentes = this.vm.recentes(5);       
         const elementoDestino = document.getElementById(elementoId);
 
         if (!elementoDestino) return;
         elementoDestino.innerHTML = "";
         recentes.forEach(titulo => {
             const divCard = document.createElement('div');
-            divCard.classList.add('card', 'p-1', 'm-2');
+            divCard.classList.add('col','card', 'p-1', 'm-2');
 
             const imgCapa = document.createElement('img');
             imgCapa.src = titulo.Capa;

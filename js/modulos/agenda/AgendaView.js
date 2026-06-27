@@ -153,7 +153,6 @@ export class AgendaView {
 
   async listarAgenda() {
       const dados = await this.vm.obterAgenda();
-
       const listaOrdenada = dados.sort(
           (a, b) => new Date(a.Data).getTime() - new Date(b.Data).getTime()
       );    
