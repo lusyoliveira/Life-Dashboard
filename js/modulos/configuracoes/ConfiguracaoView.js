@@ -3,8 +3,51 @@ export class ConfiguracaoView {
         this.vm = vm;
     }
 
-    async configuracaoContagem(elementoId) {
-        const configuracoes = (await this.vm.obterConfiguracoes())[0] 
+    async carregarConfiguracoes() {
+    const configuracoes = (await this.vm.obterConfiguracoes())[0];
+
+    // Contagem
+    document.getElementById('data-contagem').value =
+        new Date(configuracoes.DataContagem).toISOString().slice(0, 16);
+
+    document.getElementById('descricao-contagem').value =
+        configuracoes.DescricaoContagem ?? "";
+
+    // MyAnimeList
+    document.getElementById('habilitar-mal').checked =
+        configuracoes.AtivaMAL;
+
+    // Google
+    document.getElementById('habilitar-google').checked =
+        configuracoes.AtivaGoogle;
+
+    document.getElementById('credencial-google').value =
+        configuracoes.ChaveGoogle ?? "";
+
+    // Outlook
+    document.getElementById('habilitar-outlook').checked =
+        configuracoes.AtivaOutlook;
+
+    document.getElementById('credencial-outlook').value =
+        configuracoes.ChaveOutlook ?? "";
+
+    // Clima
+    document.getElementById('habilitar-clima').checked =
+        configuracoes.AtivaClima;
+
+    document.getElementById('cidade').value =
+        configuracoes.Cidade ?? "";
+
+    document.getElementById('latitude').value =
+        configuracoes.Latitude ?? "";
+
+    document.getElementById('longitude').value =
+        configuracoes.Longitude ?? "";
+
+    document.getElementById('atualiza-clima').value =
+        configuracoes.AtualizaClima ?? "";
+}
+    async configuracaoContagem(elementoId, configuracoes) {
         const elementoDestino = document.getElementById(elementoId) 
 
         if (elementoDestino) {
@@ -22,7 +65,7 @@ export class ConfiguracaoView {
             inputDataContagem.setAttribute('id', 'data-contagem')
             inputDataContagem.setAttribute('placeholder', 'Informe a data')
             inputDataContagem.setAttribute('aria-label', 'Informe a data')  
-            inputDataContagem.value = new Date(configuracoes.DataContagem).toISOString().slice(0,16);
+            inputDataContagem.value = new Date(configuracoes.dataContagem).toISOString().slice(0,16);
 
             const divDescricaoContagem = document.createElement('div');
             divDescricaoContagem.classList.add('col')
@@ -38,7 +81,7 @@ export class ConfiguracaoView {
             inputDescricaoContagem.setAttribute('id', 'descricao-contagem')
             inputDescricaoContagem.setAttribute('placeholder', 'Informe a descrição')
             inputDescricaoContagem.setAttribute('aria-label', 'Informe a descrição')
-            inputDescricaoContagem.value = configuracoes.DescricaoContagem;
+            inputDescricaoContagem.value = configuracoes.descricaoContagem;
 
             divDescricaoContagem.appendChild(labelDataContagem);
             divDescricaoContagem.appendChild(inputDataContagem);
@@ -49,8 +92,7 @@ export class ConfiguracaoView {
         }        
     };
 
-    async configuracaoMAL(elementoId) {
-        const configuracoes = (await this.vm.obterConfiguracoes())[0];
+    async configuracaoMAL(elementoId, configuracoes) {
         const elementoDestino = document.getElementById(elementoId)
 
         if (elementoDestino) {
@@ -70,7 +112,7 @@ export class ConfiguracaoView {
             labelSwitch.textContent = 'Habilita MyAnimeList'
 
             const inputSwitch = document.createElement('input');
-                if (configuracoes.AtivaMAL) {                
+                if (configuracoes.ativaMAL) {                
                     inputSwitch.setAttribute('checked', 'checked')
                     } 
             inputSwitch.classList.add('form-check-input')
@@ -78,7 +120,7 @@ export class ConfiguracaoView {
             inputSwitch.setAttribute('role', 'switch')
             inputSwitch.setAttribute('id', 'habilitar-mal')
             inputSwitch.onclick = () => {
-                if (configuracoes.AtivaMAL) {                
+                if (configuracoes.ativaMAL) {                
                     inputSwitch.removeAttribute('checked', 'checked')
                 } else {               
                     inputSwitch.setAttribute('checked', 'checked') 
@@ -110,8 +152,7 @@ export class ConfiguracaoView {
             elementoDestino.appendChild(divMAL)
         }
     };
-    async configuracaoGoogle(elementoId) {
-        const configuracoes = (await this.vm.obterConfiguracoes())[0];
+    async configuracaoGoogle(elementoId, configuracoes) {
         const elementoDestino = document.getElementById(elementoId)
 
         if (elementoDestino) {
@@ -131,7 +172,7 @@ export class ConfiguracaoView {
             labelSwitch.textContent = 'Habilita Google'
 
             const inputSwitch = document.createElement('input');
-                if (configuracoes.AtivaGoogle) {                
+                if (configuracoes.ativaGoogle) {                
                         inputSwitch.setAttribute('checked', 'checked')
                         } 
             inputSwitch.classList.add('form-check-input')
@@ -139,7 +180,7 @@ export class ConfiguracaoView {
             inputSwitch.setAttribute('role', 'switch')
             inputSwitch.setAttribute('id', 'habilitar-google')
             inputSwitch.onclick = () => {
-                if (configuracoes.AtivaGoogle) {                
+                if (configuracoes.ativaGoogle) {                
                     inputSwitch.removeAttribute('checked', 'checked')
                 } else {               
                     inputSwitch.setAttribute('checked', 'checked') 
@@ -172,8 +213,7 @@ export class ConfiguracaoView {
         }
     };
 
-    async configuracaoOutlook(elementoId) {
-        const configuracoes = (await this.vm.obterConfiguracoes())[0];
+    async configuracaoOutlook(elementoId, configuracoes) {
         const elementoDestino = document.getElementById(elementoId)
 
         if (elementoDestino) {
@@ -193,7 +233,7 @@ export class ConfiguracaoView {
             labelSwitch.textContent = 'Habilita Outlook'
 
             const inputSwitch = document.createElement('input');
-                if (configuracoes.AtivaOutlook) {                
+                if (configuracoes.ativaOutlook) {                
                     inputSwitch.setAttribute('checked', 'checked')
                     } 
             inputSwitch.classList.add('form-check-input')
@@ -201,7 +241,7 @@ export class ConfiguracaoView {
             inputSwitch.setAttribute('role', 'switch')
             inputSwitch.setAttribute('id', 'habilitar-outlook')
             inputSwitch.onclick = () => {
-                if (configuracoes.AtivaOutlook) {                
+                if (configuracoes.ativaOutlook) {                
                     inputSwitch.removeAttribute('checked', 'checked')
                 } else {               
                     inputSwitch.setAttribute('checked', 'checked') 
@@ -234,8 +274,7 @@ export class ConfiguracaoView {
         }
     };
 
-    async  configuracaoClima(elementoId) {
-        const configuracoes = (await this.vm.obterConfiguracoes())[0];
+    async  configuracaoClima(elementoId, configuracoes) {
         const elementoDestino = document.getElementById(elementoId)   
 
         if (elementoDestino) {
@@ -255,7 +294,7 @@ export class ConfiguracaoView {
             labelSwitch.textContent = 'Habilita Clima'
 
             const inputSwitch = document.createElement('input');
-                if (configuracoes.AtivaClima) {                
+                if (configuracoes.ativaClima) {                
                 inputSwitch.setAttribute('checked', 'checked')
                 } 
             inputSwitch.classList.add('form-check-input')
@@ -263,7 +302,7 @@ export class ConfiguracaoView {
             inputSwitch.setAttribute('role', 'switch')
             inputSwitch.setAttribute('id', 'habilitar-clima')
             inputSwitch.onclick = () => {
-                if (configuracoes.AtivaClima) {                
+                if (configuracoes.ativaClima) {                
                     inputSwitch.removeAttribute('checked', 'checked')
                 } else {               
                     inputSwitch.setAttribute('checked', 'checked') 
@@ -279,7 +318,7 @@ export class ConfiguracaoView {
             inputCidade.setAttribute('placeholder', 'Informe a cidade')
             inputCidade.setAttribute('aria-label', 'Informe a cidade')
             inputCidade.setAttribute('id', 'cidade')
-            inputCidade.value = configuracoes.Cidade
+            inputCidade.value = configuracoes.cidade
 
             const btnBuscar = document.createElement('button')
             btnBuscar.classList.add('btn', 'btn-primary', 'm-2')
@@ -302,7 +341,7 @@ export class ConfiguracaoView {
             inputLatitude.setAttribute('placeholder', 'Informe a latitude')
             inputLatitude.setAttribute('aria-label', 'Informe a latitude')
             inputLatitude.setAttribute('id', 'latitude')
-            inputLatitude.value = configuracoes.Latitude
+            inputLatitude.value = configuracoes.latitude
 
             const labelLongitude = document.createElement('label');
             labelLongitude.classList.add('form-label')
@@ -315,7 +354,7 @@ export class ConfiguracaoView {
             inputLongitude.setAttribute('placeholder', 'Informe a longitude')
             inputLongitude.setAttribute('aria-label', 'Informe a longitude')
             inputLongitude.setAttribute('id', 'longitude')
-            inputLongitude.value = configuracoes.Longitude
+            inputLongitude.value = configuracoes.longitude
 
             const labelAtualizacao = document.createElement('label');
             labelAtualizacao.classList.add('form-label')
@@ -326,7 +365,7 @@ export class ConfiguracaoView {
             inputAtualizacao.classList.add('form-control')
             inputAtualizacao.setAttribute('type', 'number') 
             inputAtualizacao.setAttribute('id', 'atualiza-clima')
-            inputAtualizacao.value = configuracoes.AtualizaClima
+            inputAtualizacao.value = configuracoes.atualizaClima
 
             divLocalizacao.appendChild(labelAtualizacao)
             divLocalizacao.appendChild(inputAtualizacao)

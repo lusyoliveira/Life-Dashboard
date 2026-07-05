@@ -33,6 +33,7 @@ export class ConfiguracaoViewModel {
     };
 
     async salvarConfiguracao(configuracao) {
+        debugger
         if (configuracao.id) {
             await api.atualizarDados(configuracao, this.endpoint);
         } else {
