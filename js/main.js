@@ -57,7 +57,8 @@
         await cvm.obterCatalogo(); 
         await avm.obterAgenda();
         await contasVM.obterContas();
-        
+        await avm.gerarRecorrenciasAgenda();
+
         // const configuracoes = (await cfvm.obterConfiguracoes())[0] 
         // setInterval(async () => {
         //     if (configuracoes.AtualizaClima) {

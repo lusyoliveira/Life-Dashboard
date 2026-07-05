@@ -157,7 +157,7 @@ export class AgendaView {
           (a, b) => new Date(a.Data).getTime() - new Date(b.Data).getTime()
       );    
 
-      await this.vm.gerarRecorrencias();
+      //await this.vm.gerarRecorrencias();
       
       criarDataTable({
       tabelaId: "tabelaAgenda",

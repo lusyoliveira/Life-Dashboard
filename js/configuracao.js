@@ -7,15 +7,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const vm = new ConfiguracaoViewModel();
     const configuracaoView = new ConfiguracaoView(vm);
 
-    configuracaoView.configuracaoContagem('linha-contagem')
-    configuracaoView.configuracaoGoogle('linha-google')
-    configuracaoView.configuracaoMAL('linha-mal')
-    configuracaoView.configuracaoOutlook('linha-outlook')
-    configuracaoView.configuracaoClima('linha-clima')
+    const configuracoes = (await vm.obterConfiguracoes())[0];
+
+    await configuracaoView.configuracaoContagem('linha-contagem', configuracoes)
+    await configuracaoView.configuracaoGoogle('linha-google', configuracoes)
+    await configuracaoView.configuracaoMAL('linha-mal', configuracoes)
+    await configuracaoView.configuracaoOutlook('linha-outlook', configuracoes)
+    await configuracaoView.configuracaoClima('linha-clima', configuracoes)
+
 
     const btnSalvar = document.getElementById('btn-salvar');
     btnSalvar.addEventListener('click', async (e) =>{
         e.preventDefault();
+
+        //const idConfig = document.getElementById('id-adicionar').value;
         const ativaMAL = document.getElementById('habilitar-mal').checked;
         const ativaOutlook = document.getElementById('habilitar-outlook').checked;
         const chaveOutlook = document.getElementById('credencial-outlook').value;
@@ -28,8 +33,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const atualizaClima = document.getElementById('atualiza-clima').value;
         const dataContagem = document.getElementById('data-contagem').value;
         const descricaoContagem = document.getElementById('descricao-contagem').value;
-
-        console.log(ativaClima);
         
         const configuracoes = new Configuracao(
             1,
@@ -46,12 +49,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             dataContagem,
             descricaoContagem,
         );
+        
         await vm.salvarConfiguracao(configuracoes);
-        configuracaoView.configuracaoContagem('linha-contagem')
-        configuracaoView.configuracaoGoogle('linha-google')
-        configuracaoView.configuracaoMAL('linha-mal')
-        configuracaoView.configuracaoOutlook('linha-outlook')
-        configuracaoView.configuracaoClima('linha-clima')
-        e.target.reset();
+
+        await configuracaoView.carregarConfiguracoes();
     })
 });

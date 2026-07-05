@@ -117,63 +117,60 @@ export class AgendaViewModel {
       };
   };
   
-   async gerarRecorrencias() {
+   async gerarRecorrenciasAgenda() {
         const compromissos = await this.obterAgenda();
         const recorrentes = compromissos.filter(t => t.Recorrente);
-debugger
+
         const hoje = new Date();
         const competenciaAtual = new Date(
                 hoje.getFullYear(),
                 hoje.getMonth(),
                 1
             );
-
+  debugger
         for (const t of recorrentes) {
+
             if (!t.Recorrente) continue;
 
-            const inicio = new Date(t.Data);
+            const dataAtual = new Date(t.Data);
 
-            // antes do início
-            if (hoje < inicio) continue;
-
-            let proxima = metodoData.calcularProximaData(inicio, t.Periodicidade);
-
+            let proxima = metodoData.calcularProximaData(dataAtual, t.Periodicidade);
 
             const competenciaProxima = new Date(
-                inicio.getFullYear(),
-                inicio.getMonth(),
+                proxima.getFullYear(),
+                proxima.getMonth(),
                 1
             );
 
-            // quando for recorrencia anual, está gerando a competenciaProxima com o p´roximo ano, tornando esse if falso
-           if (competenciaProxima.toDateString() === competenciaAtual.toDateString()) {
-                const dataAtualizacao = proxima.toISOString().split('T')[0];
+          // quando for recorrencia anual, está gerando a competenciaProxima com o próximo ano, tornando esse if falso
+          if (competenciaProxima.toDateString() === competenciaAtual.toDateString()) {  
+            const dataAtualizacao = proxima.toISOString().split('T')[0];
 
-                const jaExiste = compromissos.some(x => {
-                        return (
-                            new Date(x.Data).toDateString() === proxima.toDateString()
-                        )
-                    }
-                );
-
-                if (jaExiste) {
-                      await api.atualizarDados(
-                      {
-                          ...t,
-                          id: t.id,
-                          data: dataAtualizacao
-                      },
-                      this.endpoint
-                  );
+            const jaExiste = compromissos.some(x => {
+                    return (
+                        new Date(x.Data).toDateString() === proxima.toDateString()
+                    )
                 }
+            );
 
-                // próxima iteração
-                const proximaIteracao = metodoData.calcularProximaData(proxima, t.Periodicidade);
-
-                if (proximaIteracao.getTime() === proxima.getTime()) break;
-
-                proxima = proximaIteracao;
+            if (!jaExiste) {
+                  await api.atualizarDados(
+                  {
+                      ...t,
+                      id: t.id,
+                      Data: dataAtualizacao
+                  },
+                  this.endpoint
+              );
             }
+
+            // próxima iteração
+            const proximaIteracao = metodoData.calcularProximaData(proxima, t.Periodicidade);
+
+            if (proximaIteracao.getTime() === proxima.getTime()) break;
+
+            proxima = proximaIteracao;
+          }
         }
     };
 }

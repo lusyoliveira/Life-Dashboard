@@ -206,7 +206,6 @@ export class FinanceiroViewModel {
             );
 
             // gera múltiplas se estiver atrasado
-           //while (competenciaProxima <= competenciaAtual) {
            if (competenciaProxima.toDateString() === competenciaAtual.toDateString()) {
                 const dataAtualizacao = proxima.toISOString().split('T')[0];
 
