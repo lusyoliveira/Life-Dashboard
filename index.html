@@ -9,8 +9,8 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4 bg-body-tertiary">
-        <div class="container-fluid">
+    <header class="bg-body-tertiary border-top">     
+        <nav class="d-flex flex-wrap justify-content-between align-items-center p-2">
             <!-- Esquerda: Título e Breadcrumb -->
             <div class="d-flex align-items-center">
                 <a class="navbar-brand fw-bold me-4" title="home" href="/index.html">Life Dashboard</a>
@@ -18,24 +18,71 @@
                     <ol class="breadcrumb mb-0"></ol>
                 </nav>
             </div>
-    
-            <!-- Direita: Pesquisa e Avatar -->
-            <div class="d-flex align-items-center ms-auto">
-                <form class="d-flex me-3" title="pesquisa" id="pesquisa" role="search">
-                    <input class="form-control" id="pesquisar" type="search" placeholder="Pesquisar..." aria-label="Pesquisar">
-                </form>
-    
-                <div class="d-flex justify-content-between align-items-lg-center gap-3">
-                    <a href="#" class="d-flex align-items-center text-decoration-none icones-navbar" title="usuario">
+
+            <!-- icones da aplicação-->
+            <div class="d-flex align-items-center">
+                <ul class="nav d-flex justify-content-between align-items-center gap-3">
+                    <li>
+                        <a class="icones-navbar" alt="Agenda" title="Agenda" href="/pages/agenda.html"> 
+                            <i class="bi bi-calendar"></i>
+                        </a>
+                    </li>
+                    <li> <a class="icones-navbar" alt="Astrologia" title="Astrologia" href="#"> 
+                            <i class="bi bi-stars"></i>
+                        </a> 
+                    </li>
+                    <li> <a class="icones-navbar" alt="Catálogo" title="Catálogo" href="/pages/catalogo.html">
+                            <i class="bi bi-tv"></i>
+                        </a> 
+                    </li>
+                    <li> <a class="icones-navbar" alt="Cuidados Pessoais" title="Cuidados Pessoais" href="#">
+                            <i class="bi bi-headset-vr"></i>
+                        </a> 
+                    </li> 
+                    <li> <a class="icones-navbar" alt="Diário" title="Diário" href="#"> 
+                            <i class="bi bi-book"></i>
+                        </a> 
+                    </li>                           
+                    <li> <a class="icones-navbar" alt="Estudo" title="Estudo" href="/pages/estudo.html">
+                            <i class="bi bi-backpack2"></i>
+                        </a> 
+                    </li>                            
+                    <li> <a class="icones-navbar" alt="Financeiro" title="Financeiro" href="/pages/financeiro.html">
+                            <i class="bi bi-cash"></i>
+                        </a> 
+                    </li>
+                    <li> <a class="icones-navbar" alt="Músicas" title="Músicas" href="#"> 
+                            <i class="bi bi-music-note-beamed"></i>
+                        </a> 
+                    </li>
+                </ul>
+            </div>            
+
+            <!-- menu do usuário-->
+            <div>
+                <div class="flex-shrink-0 dropdown"> 
+                    <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-person-circle"></i> 
-                    </a>Luciene
-                    <a href="#" title="Modo Escuro" class="icones-navbar"><i class="bi bi-moon-stars-fill"></i></a>
-                    <a href="./pages/configuracoes.html" alt="Configurações" class="icones-navbar" title="Configurações"><i class="bi bi-gear-fill"></i></a>                  
-                    <a href="./pages/login.html" alt="Sair" class="icones-navbar" title="sair"><i class="bi bi-box-arrow-right"></i></a>
-                </div>                    
+                    </a>
+                    <ul class="dropdown-menu text-small shadow" data-popper-placement="bottom-end"
+                        style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 34px);">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-moon-stars-fill"></i> Modo Escuro</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear-fill"></i> Configurações</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Sair</a></li>
+                    </ul>
+                </div>                
             </div>
+        </nav>
+        <div class="d-flex justify-content-center align-items-center border-top">
+            <form class="d-flex m-1" title="pesquisa" id="pesquisa" role="search">
+                <input class="form-control" id="pesquisar" type="search" placeholder="Pesquisar..." aria-label="Pesquisar">
+            </form>
         </div>
-    </nav>
+    </header>
+
 
     <main class="container-fliud m-4">
         <h1 class="pb-2 border-bottom">Bem Vindo!</h1>

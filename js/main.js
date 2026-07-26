@@ -54,14 +54,14 @@
     (async () => {
         const configuracoes = (await cfvm.obterConfiguracoes())[0] 
         //Se a configuração de clima estiver ativa, inicia o setInterval para atualizar o clima
-        if (configuracoes.ativaClima) {
-            setInterval(async () => {
-                if (configuracoes.atualizaClima) {
-                    await clvm.atualizarClima(configuracoes)
-                    climaView.exibirClima('clima')
-                }
-            }, configuracoes.atualizaClima ? configuracoes.atualizaClima * 60000 : 0); // Converte minutos para milissegundos
-        }
+        // if (configuracoes.ativaClima) {
+        //     setInterval(async () => {
+        //         if (configuracoes.atualizaClima) {
+        //             await clvm.atualizarClima(configuracoes)
+        //             climaView.exibirClima('clima')
+        //         }
+        //     }, configuracoes.atualizaClima ? configuracoes.atualizaClima * 60000 : 0); // Converte minutos para milissegundos
+        // }
         await evm.obterCursos(); 
         await tvm.obterTarefas();   
         await cvm.obterCatalogo(); 
