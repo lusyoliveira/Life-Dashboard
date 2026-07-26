@@ -127,7 +127,7 @@ export class AgendaViewModel {
                 hoje.getMonth(),
                 1
             );
-  debugger
+
         for (const t of recorrentes) {
 
             if (!t.Recorrente) continue;
