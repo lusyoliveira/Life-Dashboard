@@ -8,7 +8,7 @@ export class ContagemViewModel {
 
     async *contagemRegressiva() {
         const configuracoes = (await this.vm.obterConfiguracoes())[0];
-        const dataAlvo = new Date(configuracoes.DataContagem).getTime();
+        const dataAlvo = new Date(configuracoes.dataContagem).getTime();
 
         while (true) {
             const dataAtual = new Date().getTime();

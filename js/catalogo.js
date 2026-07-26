@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   await statusView.renderCardStatus('lista-status', 'Catalogo');
   await tipoView.renderCardTipos('lista-tipo', 'Catalogo');
   await catalogoView.listarCatalogo();
+
+  
         
   //Contagem
   const resumo = vm.resumoGeral();

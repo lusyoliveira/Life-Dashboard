@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,55 +21,73 @@
                     </ol>
                 </nav>
             </div>
-    
+
             <!-- Direita: Pesquisa e Avatar -->
             <div class="d-flex align-items-center ms-auto">
                 <form class="d-flex me-3" id="pesquisar" role="search">
-                    <input class="form-control" type="search" id="informa-pesquisa" placeholder="Pesquisar..." aria-label="Pesquisar">
+                    <input class="form-control" type="search" id="informa-pesquisa" placeholder="Pesquisar..."
+                        aria-label="Pesquisar">
                 </form>
-    
+
                 <div class="d-flex justify-content-between align-items-lg-center gap-3">
                     <a href="#" class="d-flex align-items-center text-decoration-none icones-navbar" title="usuario">
-                        <i class="bi bi-person-circle"></i> 
+                        <i class="bi bi-person-circle"></i>
                     </a>Luciene
                     <a href="#" title="Modo Escuro" class="icones-navbar"><i class="bi bi-moon-stars-fill"></i></a>
-                    <a href="./pages/configuracoes.html" alt="Configurações" class="icones-navbar" title="Configurações"><i class="bi bi-gear-fill"></i></a>                  
+                    <a href="./pages/configuracoes.html" alt="Configurações" class="icones-navbar"
+                        title="Configurações"><i class="bi bi-gear-fill"></i></a>
                     <a href="#" alt="Sair" class="icones-navbar" title="sair"><i class="bi bi-box-arrow-right"></i></a>
-                </div>                  
+                </div>
             </div>
         </div>
     </nav>
- 
+
     <main class="container-fliud m-4">
         <h1 class="pb-2 border-bottom mb-4">Configurações</h1>
         <div class="container-fliud">
             <div class="row">
                 <div class="col">
-                    <h3 class="border-bottom pb-2">Dados</h3>  
-                    <div class="mb-3">
-                        <input type="hidden" id="id-adicionar" />
-                        <div class="input-group">
-                            <span class="input-group-text" id="visible-addon">@</span>
-                            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="visible-addon">
-                            <input type="text" class="form-control d-none" placeholder="Hidden input" aria-label="Hidden input" aria-describedby="visible-addon">
-                        </div> 
+                    <h3 class="border-bottom pb-2">Dados do usuário</h3>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <input type="hidden" id="id-adicionar" />
+                            <div class="input-group">
+                                <span class="input-group-text" id="visible-addon">@</span>
+                                <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                                    aria-describedby="visible-addon">
+                                <input type="text" class="form-control d-none" placeholder="Hidden input"
+                                    aria-label="Hidden input" aria-describedby="visible-addon">
+                            </div>
+                        </div>
+                        <div class="col mb-3">
+                            <input type="text" class="form-control" id="nomeUsuario" placeholder="ex: Maria da Silva"
+                                aria-label="Nome Completo" aria-describedby="basic-addon1">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+                    <div class="row">
+                        <div class="col mb-3">
+                            <input type="email" class="form-control" id="exampleFormControlInput1"
+                                placeholder="name@example.com">
+                        </div>
+                        <div class="col mb-3">
+                            <input type="password" id="senhaAtual" class="form-control"
+                                aria-describedby="passwordHelpInline" placeholder="Senha Atual">
+                        </div>
                     </div>
-                    <div class="row g-3 align-items-center">
-                        <div class="col-auto">
-                            <label for="inputPassword6" class="col-form-label">Password</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="password" id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline">
-                        </div>
-                        <div class="col-auto">
-                            <span id="passwordHelpInline" class="form-text">
-                            Must be 8-20 characters long.
-                            </span>
-                        </div>
+                    <div class="row">
+                            <div class="col-auto">
+                                <input type="password" id="novaSenha" class="form-control"
+                                    aria-describedby="passwordHelpInline" placeholder="Nova Senha">
+                            </div>
+                            <div class="col-auto">
+                                <input type="password" id="confirmarSenha" class="form-control"
+                                    aria-describedby="passwordHelpInline" placeholder="Confirmar Senha">
+                            </div>
+                            <div class="col-auto">
+                                <span id="passwordHelpInline" class="form-text">
+                                    Deve ter entre 8 e 20 caracteres.
+                                </span>
+                            </div>
                     </div>
                     <div class="mb-3">
                         <label for="exampleFormControlTextarea1" class="form-label">Bio</label>
@@ -76,11 +95,13 @@
                     </div>
                     <div class="mb-3">
                         <div class="input-group">
-                            <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
-                            <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04">Confirmar</button>
+                            <input type="file" class="form-control" id="inputGroupFile04"
+                                aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                            <button class="btn btn-outline-secondary" type="button"
+                                id="inputGroupFileAddon04">Confirmar</button>
                         </div>
                     </div>
-                    <h3 class="border-bottom pb-2">Contagem Regressiva</h3>                        
+                    <h3 class="border-bottom pb-2">Contagem Regressiva</h3>
                     <div class="row" id="linha-contagem"></div>
                 </div>
                 <div class="col">
@@ -91,56 +112,51 @@
                     <br />
                     <div id="linha-outlook"></div>
                     <br />
-                    <div id="linha-clima"></div>                    
+                    <div id="linha-clima"></div>
                 </div>
             </div>
             <br />
             <div class="row mt-2">
                 <div class="col">
-                  <button type="submit" class="btn btn-primary" id="btn-salvar" title="Salvar Configurações">Salvar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-salvar"
+                        title="Salvar Configurações">Salvar</button>
                 </div>
             </div>
         </div>
     </main>
-    
+
     <!-- Estrutura do modal -->
     <div class="modal fade" id="modalAcao" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalAcaoTitulo"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAcaoTitulo"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
 
-            <div class="modal-body" id="modalAcaoBody"></div>
+                <div class="modal-body" id="modalAcaoBody"></div>
 
-            <div class="modal-footer">
-                <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal">
-                Cancelar
-                </button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
 
-                <button
-                type="button"
-                class="btn btn-primary"
-                id="modalAcaoConfirmar">
-                Confirmar
-                </button>
-            </div>
+                    <button type="button" class="btn btn-primary" id="modalAcaoConfirmar">
+                        Confirmar
+                    </button>
+                </div>
 
             </div>
         </div>
     </div>
-    
+
     <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        <div class="col-md-4 d-flex align-items-center"> 
+        <div class="col-md-4 d-flex align-items-center">
             <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1" aria-label="Bootstrap">
-            </a> 
-                <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Company, Inc</span> 
-            </div>
+            </a>
+            <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Company, Inc</span>
+        </div>
         <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
             <li class="ms-3">
                 <a class="text-body-secondary" href="#" aria-label="Instagram">
@@ -153,8 +169,8 @@
                 </a>
             </li>
         </ul>
-    </footer>    
+    </footer>
     <script src="../js/configuracao.js" type="module"></script>
 </body>
-</html>
 
+</html>
