@@ -7,7 +7,7 @@ import { ContasViewModel } from "./modulos/contas/ContasViewModel.js";
 import { ContasView } from "./modulos/contas/ContasView.js";
 import { carregarFormulario } from "./Utils/utils.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+export async function inicializarFinanceiro() {
     const fvm = new FinanceiroViewModel();
     const financeiroView = new FinanceiroView(fvm);
     const categoriaVM = new CategoriaViewModel();
@@ -62,4 +62,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   financeiroView.renderGraficos();
 
-});
+};
+

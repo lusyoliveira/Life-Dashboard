@@ -3,7 +3,7 @@ import { ConfiguracaoViewModel } from './modulos/configuracoes/ConfiguracaoViewM
 import { ConfiguracaoView } from './modulos/configuracoes/ConfiguracaoView.js'
 import Configuracao from './modulos/configuracoes/configuracaoModel.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
+export async function inicializarConfiguracao() {
     const vm = new ConfiguracaoViewModel();
     const configuracaoView = new ConfiguracaoView(vm);
 
@@ -54,4 +54,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         await configuracaoView.carregarConfiguracoes();
     })
-});
+};
+

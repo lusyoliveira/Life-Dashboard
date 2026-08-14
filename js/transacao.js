@@ -3,7 +3,7 @@ import { FinanceiroViewModel } from "./modulos/financeiro/FinanceiroViewModel.js
 import { FinanceiroView } from "./modulos/financeiro/FinanceiroView.js";
 import { carregarFormulario } from "./Utils/utils.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+export async function inicializarTransacao() {
     const vm = new FinanceiroViewModel();
     const financeiroView = new FinanceiroView(vm);
     const botaoTransacao = document.getElementById('adicionarTransacao');
@@ -24,4 +24,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     botaoMesAnterior.addEventListener('click', () => financeiroView.mesAnterior());
     botaoMesProximo.addEventListener('click', () => financeiroView.mesProximo());
 
-});
+};

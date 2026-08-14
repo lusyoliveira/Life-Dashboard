@@ -13,7 +13,7 @@
         <nav class="d-flex flex-wrap justify-content-between align-items-center p-2">
             <!-- Esquerda: Título e Breadcrumb -->
             <div class="d-flex align-items-center">
-                <a class="navbar-brand fw-bold me-4" title="home" href="/index.html">Life Dashboard</a>
+                <a class="navbar-brand fw-bold me-4" title="home" href="/index.html" data-link>Life Dashboard</a>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0"></ol>
                 </nav>
@@ -21,53 +21,24 @@
 
             <!-- icones da aplicação-->
             <div class="d-flex align-items-center">
-                <ul class="nav d-flex justify-content-between align-items-center gap-3">
-                    <li>
-                        <a class="icones-navbar" alt="Agenda" title="Agenda" href="/pages/agenda.html"> 
-                            <i class="bi bi-calendar"></i>
-                        </a>
-                    </li>
-                    <li> <a class="icones-navbar" alt="Astrologia" title="Astrologia" href="#"> 
-                            <i class="bi bi-stars"></i>
-                        </a> 
-                    </li>
-                    <li> <a class="icones-navbar" alt="Catálogo" title="Catálogo" href="/pages/catalogo.html">
-                            <i class="bi bi-tv"></i>
-                        </a> 
-                    </li>
-                    <li> <a class="icones-navbar" alt="Cuidados Pessoais" title="Cuidados Pessoais" href="#">
-                            <i class="bi bi-headset-vr"></i>
-                        </a> 
-                    </li> 
-                    <li> <a class="icones-navbar" alt="Diário" title="Diário" href="#"> 
-                            <i class="bi bi-book"></i>
-                        </a> 
-                    </li>                           
-                    <li> <a class="icones-navbar" alt="Estudo" title="Estudo" href="/pages/estudo.html">
-                            <i class="bi bi-backpack2"></i>
-                        </a> 
-                    </li>                            
-                    <li> <a class="icones-navbar" alt="Financeiro" title="Financeiro" href="/pages/financeiro.html">
-                            <i class="bi bi-cash"></i>
-                        </a> 
-                    </li>
-                    <li> <a class="icones-navbar" alt="Músicas" title="Músicas" href="#"> 
-                            <i class="bi bi-music-note-beamed"></i>
-                        </a> 
-                    </li>
-                </ul>
+                <form class="d-flex m-1" title="pesquisa" id="pesquisa" role="search">
+                <input class="form-control" id="pesquisar" type="search" placeholder="Pesquisar..." aria-label="Pesquisar">
+            </form>
             </div>            
 
             <!-- menu do usuário-->
-            <div>
+            <div class="d-flex justify-content-around align-items-center gap-5">
+                <div class="flex-shrink-0 icones-navbar" title="notificações">
+                    <i class="bi bi-bell-fill"></i>
+                </div>
                 <div class="flex-shrink-0 dropdown"> 
-                    <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle icones-navbar" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-person-circle"></i> 
                     </a>
                     <ul class="dropdown-menu text-small shadow" data-popper-placement="bottom-end"
                         style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 34px);">
                         <li><a class="dropdown-item" href="#"><i class="bi bi-moon-stars-fill"></i> Modo Escuro</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear-fill"></i> Configurações</a></li>
+                        <li><a class="dropdown-item" href="/pages/configuracoes.html" data-link><i class="bi bi-gear-fill"></i> Configurações</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -76,226 +47,88 @@
                 </div>                
             </div>
         </nav>
-        <div class="d-flex justify-content-center align-items-center border-top">
-            <form class="d-flex m-1" title="pesquisa" id="pesquisa" role="search">
-                <input class="form-control" id="pesquisar" type="search" placeholder="Pesquisar..." aria-label="Pesquisar">
-            </form>
-        </div>
     </header>
-
-
-    <main class="container-fliud m-4">
-        <h1 class="pb-2 border-bottom">Bem Vindo!</h1>
-            <div class="container-fliud text-center">
-                <div class="row" id="clima"> </div>
-            </div>
-
-            <hr>
-
-            <div class="container-fluid">
-                <div class="" id="calendario"></div> 
-            </div>
-            
-            <hr>
-
-            <div class="container-fliud text-center">
-                <div class="row">
-                    <div class="col-3">
-                        <ul class="dropdown-menu d-block position-static mx-0 border-0 shadow w-220px" data-bs-theme="dark">
-                            <li> <a class="dropdown-item d-flex gap-2 align-items-center" href="/pages/agenda.html"> 
-                                    <i class="bi bi-calendar"></i>
-                                    Agenda
-                                </a> 
-                            </li>
-                            <li> <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
-                                    <i class="bi bi-stars"></i>
-                                    Astrologia
-                                </a> 
-                            </li>
-                            <li> <a class="dropdown-item d-flex gap-2 align-items-center" href="#">
-                                    <i class="bi bi-headset-vr"></i>
-                                    Cuidados Pessoais
-                                </a> 
-                            </li> 
-                            <li> <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
-                                    <i class="bi bi-book"></i>
-                                    Diário
-                                </a> 
-                            </li>                           
-                            <li> <a class="dropdown-item d-flex gap-2 align-items-center" href="/pages/estudo.html">
-                                    <i class="bi bi-backpack2"></i>
-                                    Estudo
-                                </a> 
-                            </li>                            
-                            <li> <a class="dropdown-item d-flex gap-2 align-items-center" href="/pages/financeiro.html">
-                                    <i class="bi bi-cash"></i>
-                                    Financeiro
-                                </a> 
-                            </li>
-                            <li> <a class="dropdown-item d-flex gap-2 align-items-center" href="#"> 
-                                    <i class="bi bi-music-note-beamed"></i>
-                                    Músicas
-                                </a> 
-                            </li>
-                            <li> <a class="dropdown-item d-flex gap-2 align-items-center" href="/pages/catalogo.html">
-                                    <i class="bi bi-tv"></i>
-                                    Catálogo
-                                </a> 
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li> 
-                                <button class="dropdown-item d-flex gap-2 align-items-center" id="adicionarTransacao" alt="Nova Transação">
-                                    <i class="bi bi-plus-square"></i>
-                                    Nova Transação
-                                </button> 
-                            </li>
-                        </ul>
-                        <br>
-                        <div class="p-4 mb-3 bg-body-tertiary rounded" id="contagemRegressiva"></div>
-                        
-                        <ul class="list-group" id="lista-contas"></ul>
-
-                        <div class="p-4 mt-3 bg-body-tertiary rounded" id="contador"></div>
-                    </div>
-                    <div class="col-6">
-                        <h3 >Próximos Compromissos</h3>
-                        <div class="list-group text-start" id="proximos-compromissos" data-filtro="compromissos" data-status="recentes"></div>
-                        <h3 class="pt-3">Próximas Transações</h3>
-                        <div class="list-group text-start" id="proximos-transacoes" data-filtro="transacoes" data-status="recentes"></div>
-                    </div>
-                    <div class="col-3">
-                        <div class="container-relogio justify-content-center" id="relogio"></div>
-                        <h4 class="fst-italic">Entradas do Diário</h4>
-                        <ul class="list-unstyled">
-                            <li> 
-                                <a class="d-flex flex-column flex-lg-row gap-3 align-items-center py-3 link-body-emphasis text-decoration-none border-top"
-                                    href="#"> <svg aria-hidden="true" class="bd-placeholder-img " height="96"
-                                        preserveAspectRatio="xMidYMid slice" width="100%" xmlns="http://www.w3.org/2000/svg">
-                                        <rect width="100%" height="100%" fill="#777"></rect>
-                                    </svg>
-                                    <div class="col-lg-8">
-                                        <h6 class="mb-0">Example blog post title</h6> 
-                                        <small class="text-body-secondary">January 15, 2024</small>
-                                    </div>
-                                </a> 
-                            </li>
-                            <li> 
-                                <a class="d-flex flex-column flex-lg-row gap-3 align-items-center py-3 link-body-emphasis text-decoration-none border-top"
-                                    href="#"> <svg aria-hidden="true" class="bd-placeholder-img " height="96"
-                                        preserveAspectRatio="xMidYMid slice" width="100%" xmlns="http://www.w3.org/2000/svg">
-                                        <rect width="100%" height="100%" fill="#777"></rect>
-                                    </svg>
-                                    <div class="col-lg-8">
-                                        <h6 class="mb-0">This is another blog post title</h6> <small class="text-body-secondary">January 14,
-                                            2024</small>
-                                    </div>
-                                </a> 
-                            </li>
-                            <li> 
-                                <a class="d-flex flex-column flex-lg-row gap-3 align-items-center py-3 link-body-emphasis text-decoration-none border-top"
-                                    href="#"> <svg aria-hidden="true" class="bd-placeholder-img " height="96"
-                                        preserveAspectRatio="xMidYMid slice" width="100%" xmlns="http://www.w3.org/2000/svg">
-                                        <rect width="100%" height="100%" fill="#777"></rect>
-                                    </svg>
-                                    <div class="col-lg-8">
-                                        <h6 class="mb-0">Longer blog post title: This one has multiple lines!</h6> <small
-                                            class="text-body-secondary">January 13, 2024</small>
-                                    </div>
-                                </a> 
-                            </li>
-                        </ul>
-
-                        <h4 class="fst-italic">Tarefas</h4>
-                        <div class="input-group mb-3">
-                            <input type="hidden" class="form-control" id="id-tarefa">
-                            <input type="text" class="form-control" id="descricao-tarefa" placeholder="Nova tarefa..." aria-label="Nova tarefa...">
-                            <button class="btn btn-outline-secondary" type="button" title="Adicionar Tarefa" id="adiciona-tarefa"><i class="bi bi-plus-lg"></i></button>
-                        </div>
-                        <div class="list-group" id="lista-tarefa"></div>
-                    </div>
-                </div>
-            </div>
-
-            <br />
-
-            <div class="container-fliud"> 
-                <div class="d-flex justify-content-between align-items-center mb-3 pb-1 border-bottom">
-                    <h2>Assistindo</h2>
-                    <button class="btn btn-primary mb-3" id="adicionarCatalogo">
-                        <i class="bi bi-plus-lg"></i> Adicionar ao Catálogo
-                    </button>
-                </div>                   
-                <div class="row d-inline-flex justify-content-start" id="Assistindo" data-filtro="principal" data-status="Assistindo"></div>          
-            </div>
-
-            <br />
-
-            <div class="container-fliud">
-                <div class="d-flex justify-content-between align-items-center mb-3 pb-1 border-bottom">
-                    <h2>Cursando</h2>
-                    <button class="btn btn-primary mb-3" id="adicionarCurso">
-                        <i class="bi bi-plus-lg"></i> Adicionar curso
-                    </button>
-                </div>
-                <div class="row d-inline-flex justify-content-start" id="Cursando" data-filtro="cursos" data-status="Cursando"></div>
-            </div>
-    </main>
-    
-    <!-- Estrutura do modal -->
-    <div class="modal fade" id="modalAcao" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalAcaoTitulo"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body" id="modalAcaoBody"></div>
-
-            <div class="modal-footer">
-                <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal">
-                Cancelar
-                </button>
-
-                <button
-                type="button"
-                class="btn btn-primary"
-                id="modalAcaoConfirmar">
-                Confirmar
-                </button>
-            </div>
-
-            </div>
-        </div>
-    </div>
-
-    
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        <div class="col-md-4 d-flex align-items-center"> 
-            <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1" aria-label="Bootstrap">
-            </a> 
-                <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Company, Inc</span> 
-            </div>
-        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Instagram">
-                    <i class="bi bi-instagram"></i>
+<div class="d-flex">
+    <div class="d-flex flex-column flex-shrink-0 bg-body-tertiary" style="width: 4.5rem;"> <a href="/"
+            class="d-block p-3 link-body-emphasis text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right"
+            data-bs-original-title="Icon-only"> <svg class="bi pe-none" width="40" height="32" aria-hidden="true">
+                <use xlink:href="#bootstrap"></use>
+            </svg> <span class="visually-hidden">Icon-only</span> </a>
+        <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+            <li class="nav-item">
+                <a class="icones-navbar" alt="Agenda" title="Agenda" href="/pages/agenda.html" data-link>
+                    <i class="bi bi-calendar"></i>
                 </a>
             </li>
-            <li class="ms-3">
-                <a class="text-body-secondary" href="#" aria-label="Facebook">
-                    <i class="bi bi-facebook"></i>
+            <li> <a class="icones-navbar" alt="Astrologia" title="Astrologia" href="#" data-link>
+                    <i class="bi bi-stars"></i>
+                </a> </li>
+            <li> <a class="icones-navbar" alt="Catálogo" title="Catálogo" href="/pages/catalogo.html" data-link>
+                    <i class="bi bi-tv"></i>
+                </a></li>
+            <li> <a class="icones-navbar" alt="Cuidados Pessoais" title="Cuidados Pessoais" href="#" data-link>
+                    <i class="bi bi-headset-vr"></i>
+                </a>
+            </li>
+            <li> <a class="icones-navbar" alt="Diário" title="Diário" href="#" data-link>
+                    <i class="bi bi-book"></i>
+                </a>
+            </li>
+            <li> <a class="icones-navbar" alt="Estudo" title="Estudo" href="/pages/estudo.html" data-link>
+                    <i class="bi bi-backpack2"></i>
+                </a>
+            </li>
+            <li> <a class="icones-navbar" alt="Financeiro" title="Financeiro" href="/pages/financeiro.html" data-link>
+                    <i class="bi bi-cash"></i>
+                </a>
+            </li>
+            <li> <a class="icones-navbar" alt="Músicas" title="Músicas" href="#">
+                    <i class="bi bi-music-note-beamed"></i>
                 </a>
             </li>
         </ul>
-    </footer>
-<script src="./js/main.js" type="module"></script>
+       
+    </div>
+    <main class="container-fluid" id="content-area"></main>
+</div>
+        <!-- Estrutura do modal -->
+        <div class="modal fade" id="modalAcao" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+    
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAcaoTitulo"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+    
+                <div class="modal-body" id="modalAcaoBody"></div>
+    
+                <div class="modal-footer">
+                    <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+                    Cancelar
+                    </button>
+    
+                    <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="modalAcaoConfirmar">
+                    Confirmar
+                    </button>
+                </div>
+    
+                </div>
+            </div>
+        </div>
+        </div>
+<footer class="footer mt-auto py-3 bg-body-tertiary"> 
+    <div class="container"> 
+        <span class="text-body-secondary text-center">© 2025 Company, Inc</span> 
+    </div> 
+</footer>
+    <script type="module" src="/js/router.js"></script>
 </body>
 </html>
 
