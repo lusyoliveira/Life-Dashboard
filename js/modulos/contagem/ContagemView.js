@@ -53,10 +53,26 @@ export class ContagemView {
 
         // Consumir os valores emitidos pelo generator da VM
         for await (const valores of this.vm.contagemRegressiva()) {
-            document.getElementById("span-dias").textContent = valores.dias;
-            document.getElementById("span-horas").textContent = valores.horas;
-            document.getElementById("span-minutos").textContent = valores.minutos;
-            document.getElementById("span-segundos").textContent = valores.segundos;
+
+            // A página foi trocada
+            if (!elementoDestino.isConnected) {
+                return;
+            }
+
+            const dias = document.getElementById("span-dias");
+            const horas = document.getElementById("span-horas");
+            const minutos = document.getElementById("span-minutos");
+            const segundos = document.getElementById("span-segundos");
+
+            // Os elementos foram removidos
+            if (!dias || !horas || !minutos || !segundos) {
+                return;
+            }
+
+            dias.textContent = valores.dias;
+            horas.textContent = valores.horas;
+            minutos.textContent = valores.minutos;
+            segundos.textContent = valores.segundos;
         }
     }
 }

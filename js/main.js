@@ -23,6 +23,7 @@
     import { ContasViewModel } from "./modulos/contas/ContasViewModel.js";
     import { ContasView } from "./modulos/contas/ContasView.js";
 
+   export async function inicializarHome() {
     const botaoTarefa = document.getElementById('adiciona-tarefa'); 
     const botaoCatalogo = document.getElementById("adicionarCatalogo");   
     const botaoCurso = document.getElementById("adicionarCurso");
@@ -51,7 +52,7 @@
     const contasView = new ContasView(contasVM);  
 
 
-    (async () => {
+
         const configuracoes = (await cfvm.obterConfiguracoes())[0] 
         //Se a configuração de clima estiver ativa, inicia o setInterval para atualizar o clima
         // if (configuracoes.ativaClima) {
@@ -131,6 +132,5 @@
             tarefaView.listarTarefas('lista-tarefa')
         });
 
-    })();   
+    } 
 
- 

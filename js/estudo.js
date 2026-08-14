@@ -9,7 +9,7 @@ import { AreasView } from "./modulos/areas/AreasView.js";
 import { StatusViewModel } from "./modulos/status/StatusViewModel.js";
 import { StatusView } from "./modulos/status/StatusView.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+export async function inicializarEstudo() {
   const vm = new EstudoViewModel();
   const estudoView = new EstudoView(vm);
   const areasVM = new AreaViewModel();
@@ -103,5 +103,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById('input-id-status').value = ''
     });
 
-});
-
+};

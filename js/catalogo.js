@@ -9,7 +9,7 @@ import { StatusView } from "./modulos/status/StatusView.js";
 import { TipoViewModel } from "./modulos/tipos/TipoViewModel.js";
 import { TiposView } from "./modulos/tipos/TiposView.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+export async function inicializarCatalogo() {
   const vm = new CatalogoViewModel();
   const catalogoView = new CatalogoView(vm);  
   const plataformaVM = new PlataformaViewModel();
@@ -155,4 +155,5 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById('descricao-tipo').value = ''
       document.getElementById('input-id-tipo').value = ''
   });
-});
+};
+
