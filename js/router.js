@@ -31,10 +31,10 @@ const pageModules = {
         init: 'inicializarEstudo'
     },
 
-    '/pages/configuracao.html': {
-        script: '/js/configuracao.js',
-        init: 'inicializarConfiguracao'
-    },
+    '/pages/configuracoes.html': {
+    script: '/js/configuracao.js',
+    init: 'inicializarConfiguracao'
+},
 
     '/pages/login.html': {
         script: '/js/login.js',

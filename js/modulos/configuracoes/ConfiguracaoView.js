@@ -3,50 +3,74 @@ export class ConfiguracaoView {
         this.vm = vm;
     }
 
-    async carregarConfiguracoes() {
-    const configuracoes = (await this.vm.obterConfiguracoes())[0];
+        formatarDataParaInput(data) {
 
-    // Contagem
-    document.getElementById('data-contagem').value =
-        new Date(configuracoes.DataContagem).toISOString().slice(0, 16);
+        if (!data) {
+            return '';
+        }
 
-    document.getElementById('descricao-contagem').value =
-        configuracoes.DescricaoContagem ?? "";
+        const dataConvertida = new Date(data);
 
-    // MyAnimeList
-    document.getElementById('habilitar-mal').checked =
-        configuracoes.AtivaMAL;
+        if (Number.isNaN(dataConvertida.getTime())) {
+            console.warn('Data inválida:', data);
+            return '';
+        }
 
-    // Google
-    document.getElementById('habilitar-google').checked =
-        configuracoes.AtivaGoogle;
+        return dataConvertida.toISOString().slice(0, 16);
+    };
 
-    document.getElementById('credencial-google').value =
-        configuracoes.ChaveGoogle ?? "";
+        async carregarConfiguracoes() {
+        const configuracoes = (await this.vm.obterConfiguracoes())[0];
 
-    // Outlook
-    document.getElementById('habilitar-outlook').checked =
-        configuracoes.AtivaOutlook;
+        // Contagem
+        document.getElementById('data-contagem').value =
+            new Date(configuracoes.dataContagem).toISOString().slice(0, 16);
 
-    document.getElementById('credencial-outlook').value =
-        configuracoes.ChaveOutlook ?? "";
+        document.getElementById('descricao-contagem').value =
+            configuracoes.descricaoContagem ?? "";
 
-    // Clima
-    document.getElementById('habilitar-clima').checked =
-        configuracoes.AtivaClima;
+        // MyAnimeList
+        document.getElementById('habilitar-mal').checked =
+            configuracoes.ativaMAL;
 
-    document.getElementById('cidade').value =
-        configuracoes.Cidade ?? "";
+        // Google
+        document.getElementById('habilitar-google').checked =
+            configuracoes.AtivaGoogle;
 
-    document.getElementById('latitude').value =
-        configuracoes.Latitude ?? "";
+        document.getElementById('credencial-google').value =
+            configuracoes.chaveGoogle ?? "";
 
-    document.getElementById('longitude').value =
-        configuracoes.Longitude ?? "";
+        // Outlook
+        document.getElementById('habilitar-outlook').checked =
+            configuracoes.ativaOutlook;
 
-    document.getElementById('atualiza-clima').value =
-        configuracoes.AtualizaClima ?? "";
-}
+        document.getElementById('credencial-outlook').value =
+            configuracoes.chaveOutlook ?? "";
+
+        // Clima
+        document.getElementById('habilitar-clima').checked =
+            configuracoes.ativaClima;
+
+        document.getElementById('cidade').value =
+            configuracoes.cidade ?? "";
+
+        document.getElementById('latitude').value =
+            configuracoes.latitude ?? "";
+
+        document.getElementById('longitude').value =
+            configuracoes.longitude ?? "";
+
+        document.getElementById('atualiza-clima').value =
+            configuracoes.atualizaClima ?? "";
+
+        // TMDB
+        document.getElementById('habilitar-tmdb').checked =
+            configuracoes.ativaTMDB;
+        document.getElementById('credencial-tmdb').value =
+            configuracoes.chaveTMDB ?? "";
+            
+    };
+
     async configuracaoContagem(elementoId, configuracoes) {
         const elementoDestino = document.getElementById(elementoId) 
 
@@ -65,7 +89,7 @@ export class ConfiguracaoView {
             inputDataContagem.setAttribute('id', 'data-contagem')
             inputDataContagem.setAttribute('placeholder', 'Informe a data')
             inputDataContagem.setAttribute('aria-label', 'Informe a data')  
-            inputDataContagem.value = new Date(configuracoes.dataContagem).toISOString().slice(0,16);
+            inputDataContagem.value = this.formatarDataParaInput(configuracoes.dataContagem);
 
             const divDescricaoContagem = document.createElement('div');
             divDescricaoContagem.classList.add('col')
@@ -384,4 +408,64 @@ export class ConfiguracaoView {
             elementoDestino.appendChild(divClima)
         }
     }
+    async configuracaoTMDB(elementoId, configuracoes) {
+        const elementoDestino = document.getElementById(elementoId)
+
+        if (elementoDestino) {
+            const divTMDB = document.createElement('div');
+            divTMDB.classList.add('form-control')
+
+            const tituloTMDB = document.createElement('h4')
+            tituloTMDB.classList.add('pb-2')
+            tituloTMDB.textContent = 'The Movie Database'
+
+            const divSwitch = document.createElement('div');
+            divSwitch.classList.add('form-check', 'form-switch')
+
+            const labelSwitch = document.createElement('label');
+            labelSwitch.classList.add('form-label')
+            labelSwitch.setAttribute('for','habilitar-tmdb')
+            labelSwitch.textContent = 'Habilita The Movie Database'
+
+            const inputSwitch = document.createElement('input');
+                if (configuracoes.ativaTMDB) {                
+                    inputSwitch.setAttribute('checked', 'checked')
+                    } 
+            inputSwitch.classList.add('form-check-input')
+            inputSwitch.setAttribute('type', 'checkbox')
+            inputSwitch.setAttribute('role', 'switch')
+            inputSwitch.setAttribute('id', 'habilitar-tmdb')
+            inputSwitch.onclick = () => {
+                if (configuracoes.ativaTMDB) {                
+                    inputSwitch.removeAttribute('checked', 'checked')
+                } else {               
+                    inputSwitch.setAttribute('checked', 'checked') 
+                }
+            }
+
+            const divCredencial = document.createElement('div');
+            divCredencial.classList.add('form-text')
+
+            const labelCredencial = document.createElement('label');
+            labelCredencial.classList.add('form-label')
+            labelCredencial.setAttribute('for','credencial-tmdb')
+            labelCredencial.textContent = 'Informe as credenciais:'
+
+            const inputCredencial = document.createElement('input');
+            inputCredencial.classList.add('form-control')
+            inputCredencial.setAttribute('type', 'text')
+            inputCredencial.setAttribute('placeholder', 'Informe o client-ID')
+            inputCredencial.setAttribute('aria-label', 'Informe o client-ID')
+            inputCredencial.setAttribute('id', 'credencial-tmdb')
+
+            divSwitch.appendChild(labelSwitch)
+            divSwitch.appendChild(inputSwitch)
+            divCredencial.appendChild(labelCredencial)
+            divCredencial.appendChild(inputCredencial)
+            divTMDB.appendChild(tituloTMDB)
+            divTMDB.appendChild(divSwitch)
+            divTMDB.appendChild(divCredencial)
+            elementoDestino.appendChild(divTMDB)
+        }
+    };
 }
