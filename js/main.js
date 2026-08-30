@@ -51,8 +51,6 @@
     const contasVM = new ContasViewModel();
     const contasView = new ContasView(contasVM);  
 
-
-
         const configuracoes = (await cfvm.obterConfiguracoes())[0] 
         //Se a configuração de clima estiver ativa, inicia o setInterval para atualizar o clima
         // if (configuracoes.ativaClima) {
