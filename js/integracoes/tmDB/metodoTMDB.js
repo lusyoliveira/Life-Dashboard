@@ -1,16 +1,17 @@
-// 1. Correção da URL Base (adicionado "api." e "/3")
 const urlBase = 'https://api.themoviedb.org/3/search/multi';
-const apiKey = ''; // Substitua pelo seu TMDB API Key
 
-export class TMDBViewModel {  
-    constructor() { 
-        this.endpoint = 'tv';
-        this.programas = [];
-    }   
+const apiTMDB = { 
 
-    async obterPrograma(termoBusca) {
+    async obterPrograma(termoBusca,configuracoes) {
+         // Verifica se as configurações e a chave existem
+        // if (!configuracoes || !configuracoes.chaveTMDB) {
+        //     alert('A integração com o TMDB não está configurada corretamente.');
+        //     return [];
+        // }
+
+        const apiKey = configuracoes.chaveTMDB;
         const urlProgramas = `${urlBase}?api_key=${apiKey}&query=${encodeURIComponent(termoBusca)}&language=pt-BR`;   
-        
+
         try {
             const response = await fetch(urlProgramas);
             if (!response.ok) {
@@ -49,4 +50,6 @@ export class TMDBViewModel {
             throw error;
         }
     }
-}
+};
+
+export default apiTMDB;

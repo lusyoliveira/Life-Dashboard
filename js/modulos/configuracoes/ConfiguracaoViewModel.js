@@ -24,7 +24,9 @@ export class ConfiguracaoViewModel {
                 configuracoes.ativaClima,
                 configuracoes.atualizaClima,
                 configuracoes.dataContagem,
-                configuracoes.descricaoContagem
+                configuracoes.descricaoContagem,
+                configuracoes.ativaTMDB,
+                configuracoes.chaveTMDB
             );
             
             return configuracao;

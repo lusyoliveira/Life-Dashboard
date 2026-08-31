@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "lifedashboard",
+            "database": "C:\\Users\\Teste\\Documents\\lifedashboard.sqlite"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

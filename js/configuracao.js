@@ -1,11 +1,7 @@
 import "./Utils/bootstrap.js";
-
-import {    ConfiguracaoViewModel } from './modulos/configuracoes/ConfiguracaoViewModel.js';
-
-import {    ConfiguracaoView } from './modulos/configuracoes/ConfiguracaoView.js';
-
+import { ConfiguracaoViewModel } from './modulos/configuracoes/ConfiguracaoViewModel.js';
+import { ConfiguracaoView } from './modulos/configuracoes/ConfiguracaoView.js';
 import Configuracao from './modulos/configuracoes/configuracaoModel.js';
-
 
 export async function inicializarConfiguracao() {
 
@@ -15,8 +11,6 @@ export async function inicializarConfiguracao() {
     // Busca as configurações salvas
     const configuracoes =
         (await vm.obterConfiguracoes())[0];
-
-    console.log('Configurações:', configuracoes);
 
     // Cria os controles já preenchidos
     await configuracaoView.configuracaoContagem(
@@ -41,6 +35,10 @@ export async function inicializarConfiguracao() {
 
     await configuracaoView.configuracaoClima(
         'linha-clima',
+        configuracoes
+    );
+    await configuracaoView.configuracaoTMDB(
+        'linha-tmdb',
         configuracoes
     );
 

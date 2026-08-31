@@ -457,6 +457,7 @@ export class ConfiguracaoView {
             inputCredencial.setAttribute('placeholder', 'Informe o client-ID')
             inputCredencial.setAttribute('aria-label', 'Informe o client-ID')
             inputCredencial.setAttribute('id', 'credencial-tmdb')
+            inputCredencial.value = configuracoes.chaveTMDB
 
             divSwitch.appendChild(labelSwitch)
             divSwitch.appendChild(inputSwitch)
