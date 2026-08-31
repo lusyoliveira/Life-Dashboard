@@ -74,5 +74,7 @@ export class ContagemView {
             minutos.textContent = valores.minutos;
             segundos.textContent = valores.segundos;
         }
-    }
+    };
+
+  
 }

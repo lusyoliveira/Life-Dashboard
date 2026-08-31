@@ -160,6 +160,16 @@
                 <div class="row align-items-center" id="recentes" data-filtro="recentes" data-status="recentes"></div>
             </div>   
 
+            <div class="container-fluid">
+                <h2 class="pb-1 border-bottom">🔍 Pesquisar e adicionar titulos</h2>
+                <div class="input-group mb-3">
+                    <input class="form-control" type="text" id="search-input" placeholder="Pesquisar filmes, séries ou animes no catálogo global...">
+                    <button class="btn btn-outline-secondary" id="search-button">Buscar</button>
+                </div>
+                
+            </div>
+            <div id="results-grid" class="grid-busca"><p style="color:#666;">Digite algo acima para iniciar...</p></div>
+            
             <div class="col">
                 <div class="card" data-filtro="tipo" data-tipo="tipo">
                     <div class="card-header">
@@ -209,15 +219,16 @@
             </div>
         </div> 
         
-        <div class="table-responsive mb-2">
-            <div class="d-flex justify-content-between align-items-center mb-3 border-bottom">
-                <h2 class="pb-1">Catálogo Completo</h2>
-                <button class="btn btn-primary mb-3" id="adicionarCatalogo">
-                    <i class="bi bi-plus-lg"></i> Adicionar ao Catálogo
-                </button>
-            </div>
-            <table id="tabelaCatalogo" class="table table-striped"></table>
+        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom">
+            <h2 class="pb-1">📋 Minha Coleção</h2>
+            <button class="btn btn-primary mb-3" id="adicionarCatalogo">
+                <i class="bi bi-plus-lg"></i> Adicionar ao Catálogo
+            </button>
         </div>
+        <!-- Grid onde as mídias salvas vão aparecer -->
+        <div id="saved-grid" class="grid-colecao"></div> 
+
+        
 
         <div class="container-fluid" >
             <h2 class="pb-1 border-bottom">Estatísticas</h2>

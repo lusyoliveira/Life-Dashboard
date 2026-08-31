@@ -13,6 +13,9 @@ export class CatalogoView {
     constructor(vm) {
         this.vm = vm;
         this.registrarEventosTabela();
+        // Novas propriedades para controle da paginação da coleção
+        this.paginaAtualColecao = 1;
+        this.itensPorPaginaColecao = 4; // Ajuste este número para quantos cards 
     }   
 
     registrarEventosTabela() {
@@ -804,4 +807,205 @@ export class CatalogoView {
 
         popularSelect(plataforma, elementoId);
     };
+    
+    async renderizarCardsBusca(termobusca, elementoId) {
+        const items = await this.vm.buscarMidias(termobusca, elementoId);
+        const elementoDestino = document.getElementById(elementoId);
+        
+        // Se a página mudar ou o elemento ainda não existir, para a execução sem quebrar o código
+        if (!elementoDestino) {
+            console.warn(`Aviso: O elemento "${elementoId}" ainda não está pronto no DOM.`);
+            return; 
+        }
+
+        elementoDestino.innerHTML = '';
+        
+        if (!items || items.length === 0) {
+            elementoDestino.innerHTML = '<p>Nenhuma mídia encontrada no TMDB.</p>';
+            return;
+        }
+        
+        items.forEach(item => { 
+            elementoDestino.appendChild(this.criarCardMidia(item, false)); 
+        });
+    };
+
+    criarCardMidia(item, isEstatico) {
+        const card = document.createElement('div');
+        card.className = 'card-busca';
+        const capa = item.image ? item.image : "https://placeholder.co";
+        const tituloLimpo = item.title.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+        
+        let areaAcaoHtml = '';
+        if (!isEstatico) {
+            areaAcaoHtml = 
+                '<select id="status-' + item.id + '" class="status-select" onchange="alternarFormulario(\'' + item.id + '\', this.value)">' +
+                    '<option value="">-- Mudar Status --</option>' +
+                    '<option value="watching">Assistindo</option>' +
+                    '<option value="completed">Completado</option>' +
+                    '<option value="plan_to_watch">Planejado</option>' +
+                    '<option value="dropped">Abandonado</option>' +
+                    '<option value="on_hold">Em Espera</option>' +
+                '</select>' +
+                '<div id="form-' + item.id + '" class="form-tracker">' +
+                    '<div class="form-group"><label>Plataforma</label>' +
+                        '<select id="plat-' + item.id + '">' +
+                            '<option value="Netflix">Netflix</option><option value="Crunchyroll">Crunchyroll</option>' +
+                            '<option value="Disney+">Disney+</option><option value="Prime Video">Prime Video</option>' +
+                            '<option value="Max">Max</option><option value="Stremio">Stremio/Torrent</option>' +
+                        '</select>' +
+                    '</div>' +
+                    '<div class="form-row">' +
+                        '<div class="form-group" style="flex:1;"><label>Minha Nota TMDB</label>' +
+                            '<select id="rate-' + item.id + '">' +
+                                '<option value="10">⭐ (10) Obra-Prima</option><option value="9">⭐ (9) Excelente</option>' +
+                                '<option value="8">⭐ (8) Muito Bom</option><option value="7">⭐ (7) Bom</option>' +
+                                '<option value="6">⭐ (6) OK</option><option value="5">⭐ (5) Mediano</option>' +
+                                '<option value="4">⭐ (4) Ruim</option><option value="3">⭐ (3) Muito Ruim</option>' +
+                                '<option value="2">⭐ (2) Horrível</option><option value="1">⭐ (1) Tragédia</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div class="form-group" style="width:75px;"><label>Episódios</label>' +
+                            '<input type="number" id="ep-' + item.id + '" value="0" min="0">' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="form-group form-row-check">' +
+                        '<input type="checkbox" id="rew-' + item.id + '"><label for="rew-' + item.id + '">Estou revendo</label>' +
+                    '</div>' +
+                    '<div class="form-row">' +
+                        '<div class="form-group"><label>Início</label><input type="date" id="start-' + item.id + '"></div>' +
+                        '<div class="form-group"><label>Fim</label><input type="date" id="end-' + item.id + '"></div>' +
+                    '</div>' +
+                    '<button class="btn-salvar" onclick="salvarItemCompleto(\'' + item.id + '\',\'' + tituloLimpo + '\',\'' + item.type + '\',\'' + capa + '\')">Confirmar</button>' +
+                '</div>';
+        } else {
+            areaAcaoHtml = '<p style="margin:5px 0 0 0; font-size:12px; color:#666;">📍 Plataforma: '+(item.platform || 'N/I')+'</p>';
+        }
+
+        card.innerHTML = 
+            '<img src="' + capa + '" alt="' + tituloLimpo + '">' +
+            '<div class="card-content-busca">' +
+                '<div>' +
+                    '<span class="badge badge-' + item.type.toLowerCase() + '">' + item.type + '</span>' +
+                    '<h3 class="title-busca">' + item.title + '</h3>' +
+                '</div>' +
+                '<div>' + areaAcaoHtml + '</div>' +
+            '</div>';
+        return card;
+    }
+
+    alternarFormulario(id, val) {
+        document.getElementById('form-' + id).style.display = val !== "" ? 'block' : 'none';
+    }
+
+    async carregarListaPessoal() {
+        const savedGrid = document.getElementById('saved-grid');
+        if (!savedGrid) return;
+        
+        savedGrid.innerHTML = '<p>Carregando sua lista...</p>';
+
+        try {
+            const dados = await this.vm.obterCatalogo();
+            const listaOrdenada = dados.sort(
+                (b,a) => new Date(a.Adicao).getTime() - new Date(b.Adicao).getTime()
+            ); 
+
+            if (!listaOrdenada || listaOrdenada.length === 0) {
+                savedGrid.innerHTML = '<p>Sua lista está vazia. Volte para a busca e adicione mídias!</p>';
+                return;
+            }
+
+            savedGrid.innerHTML = '';
+            
+            // LÓGICA DE PAGINAÇÃO: Calcula quais itens pertencem à página ativa
+            const indiceInicio = (this.paginaAtualColecao - 1) * this.itensPorPaginaColecao;
+            const indiceFim = indiceInicio + this.itensPorPaginaColecao;
+            const itensPaginados = listaOrdenada.slice(indiceInicio, indiceFim);
+
+            // Renderiza apenas os cards da página atual
+            itensPaginados.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card-colecao';
+
+                const dataInicio = item.Inicio ? metodoData.formatarDataBR(item.Inicio) : 'Não iniciada';
+                const dataFim = item.Fim ? metodoData.formatarDataBR(item.Fim) : 'Não finalizada';
+                const textoNota = item.Score ? item.Score : 'Sem nota';
+
+                card.innerHTML = 
+                    '<img src="' + item.Capa + '" alt="' + item.Titulo + '">' +
+                    '<div class="card-content-colecao">' +
+                        '<div>' +
+                            '<span class="badge badge-' + item.Status.descricao + '">' + item.Status.descricao + '</span>' +
+                            '<h3 class="title-colecao" title="' + item.Titulo + '">' + item.Titulo + '</h3>' +
+                            '<p class="user-details">' +
+                                '<strong>Tipo:</strong> ' + item.Tipo.descricao + '<br>' +
+                                '<strong>Onde:</strong> ' + item.Plataforma.descricao + '<br>' +
+                                '<strong>Início:</strong> ' + dataInicio + '<br>' +
+                                '<strong>Fim:</strong> ' + dataFim + '' +
+                            '</p>' +
+                        '</div>' +
+                        '<div class="rating-indicator">' +
+                            'Minha Nota: ' + textoNota +
+                        '</div>' +
+                    '</div>';
+
+                savedGrid.appendChild(card);
+            });
+
+            // Adiciona a barra de paginação logo abaixo dos cards
+            const totalPaginas = Math.ceil(listaOrdenada.length / this.itensPorPaginaColecao);
+            this.renderizarControlesPaginacao(savedGrid, totalPaginas);
+
+        } catch (error) {
+            savedGrid.innerHTML = '<p>Erro ao carregar sua lista.</p>';
+            console.error(error);
+        }
+    }
+
+    // NOVO MÉTODO: Cria os botões visuais e adiciona os eventos de clique
+        renderizarControlesPaginacao(containerAlvo, totalPaginas) {
+        // 1. CORREÇÃO: Remove qualquer barra de paginação antiga de dentro do grid para não duplicar
+        const paginacaoAntiga = containerAlvo.querySelector('.paginacao-container');
+        if (paginacaoAntiga) {
+            paginacaoAntiga.remove();
+        }
+
+        if (totalPaginas <= 1) return; // Não desenha se tudo couber em uma única página
+
+        const barraPaginacao = document.createElement('div');
+        barraPaginacao.className = 'paginacao-container d-flex justify-content-center align-items-center gap-3 mt-4 w-100';
+
+        // Botão Voltar
+        const btnAnterior = document.createElement('button');
+        btnAnterior.className = 'btn btn-sm btn-outline-primary';
+        btnAnterior.textContent = '◀ Anterior';
+        btnAnterior.disabled = this.paginaAtualColecao === 1;
+        btnAnterior.addEventListener('click', () => {
+            this.paginaAtualColecao--;
+            this.carregarListaPessoal();
+        });
+
+        // Indicador numérico (Ex: Página 1 de 5)
+        const indicadorPagina = document.createElement('span');
+        indicadorPagina.className = 'fw-bold text-muted mx-2';
+        indicadorPagina.textContent = `Página ${this.paginaAtualColecao} de ${totalPaginas}`;
+
+        // Botão Avançar
+        const btnProximo = document.createElement('button');
+        btnProximo.className = 'btn btn-sm btn-outline-primary';
+        btnProximo.textContent = 'Próximo ▶';
+        btnProximo.disabled = this.paginaAtualColecao === totalPaginas;
+        btnProximo.addEventListener('click', () => {
+            this.paginaAtualColecao++;
+            this.carregarListaPessoal();
+        });
+
+        barraPaginacao.appendChild(btnAnterior);
+        barraPaginacao.appendChild(indicadorPagina);
+        barraPaginacao.appendChild(btnProximo);
+        
+        // 2. CORREÇÃO: Insere a barra diretamente no final do container de dados
+        containerAlvo.appendChild(barraPaginacao);
+    }
+
 }

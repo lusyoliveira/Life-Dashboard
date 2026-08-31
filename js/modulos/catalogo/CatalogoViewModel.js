@@ -1,6 +1,8 @@
 import api from "../../servicos/metodoApi.js";
+import apiTMDB from "../../integracoes/tmDB/metodoTMDB.js";
 import Catalogo from "./catalogoModel.js";
 import metodoData from "../../Utils/metodoData.js"
+    import { ConfiguracaoViewModel } from "../configuracoes/ConfiguracaoViewModel.js";
 
 export class CatalogoViewModel {
   constructor(endpoint = "catalogo") {
@@ -273,6 +275,21 @@ export class CatalogoViewModel {
     return { labels: plataformas, data: valores };
   };
 
+  //pesquisa TMDB
+   async buscarMidias(nome, elementoId) {
+    const elementoDestino = document.getElementById(elementoId);
+     
+     elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
+     try {          
+            const cfvm = new ConfiguracaoViewModel('configuracoes');
+            const dadosConfig = (await cfvm.obterConfiguracoes())[0];
+            const catalogoTMDB = await apiTMDB.obterPrograma(nome, dadosConfig);
+   
+            return catalogoTMDB
+        } catch (error) {
+             elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
+        }
+    }
   
 }
 

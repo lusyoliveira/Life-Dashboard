@@ -1,69 +1,62 @@
 const contentArea = document.getElementById('content-area');
 
+// 1. Alterado: Agora mapeamos direto a função que importa o arquivo
 const pageModules = {
     '/pages/home.html': {
-        script: '/js/main.js',
+        importar: () => import('/js/main.js'),
         init: 'inicializarHome'
     },
-
     '/pages/agenda.html': {
-        script: '/js/agenda.js',
+        importar: () => import('/js/agenda.js'),
         init: 'inicializarAgenda'
     },
-
     '/pages/transacoes.html': {
-        script: '/js/transacoes.js',
-        init: 'inicializarTransacoes'
+        importar: () => import('/js/transacao.js'),
+        init: 'inicializarTransacao'
     },
-
     '/pages/catalogo.html': {
-        script: '/js/catalogo.js',
+        importar: () => import('/js/catalogo.js'),
         init: 'inicializarCatalogo'
     },
-
     '/pages/financeiro.html': {
-        script: '/js/financeiro.js',
+        importar: () => import('/js/financeiro.js'),
         init: 'inicializarFinanceiro'
     },
-
     '/pages/estudo.html': {
-        script: '/js/estudo.js',
+        importar: () => import('/js/estudo.js'),
         init: 'inicializarEstudo'
     },
-
     '/pages/configuracoes.html': {
-    script: '/js/configuracao.js',
-    init: 'inicializarConfiguracao'
-},
-
+        importar: () => import('/js/configuracao.js'),
+        init: 'inicializarConfiguracao'
+    },
     '/pages/login.html': {
-        script: '/js/login.js',
+        importar: () => import('/js/login.js'),
         init: 'inicializarLogin'
     }
 };
 
-
 async function carregarModulo(url) {
-
     const moduloConfig = pageModules[url];
 
     if (!moduloConfig) {
         return;
     }
 
-    const modulo = await import(moduloConfig.script);
+    // 2. Alterado: Executa a função mapeada acima
+    const modulo = await moduloConfig.importar();
 
     const inicializar = modulo[moduloConfig.init];
 
     if (typeof inicializar !== 'function') {
         console.error(
-            `Função ${moduloConfig.init} não encontrada em ${moduloConfig.script}`
+            `Função ${moduloConfig.init} não encontrada no módulo.`
         );
         return;
     }
 
     await inicializar();
-}
+};
 
 
 async function navigateTo(url, addHistory = true) {

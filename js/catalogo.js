@@ -23,15 +23,18 @@ export async function inicializarCatalogo() {
   const botaoStatus = document.getElementById('adiciona-status'); 
   const botaoTipo = document.getElementById('adiciona-tipo'); 
   const formCatalogoHTML = await carregarFormulario("/pages/partials/formCatalogo.html");
+  //Pesquisa TMDB
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const resultsGrid = document.getElementById('results-grid');
   catalogoView.formHTML = formCatalogoHTML
 
   await plataformaView.renderCardPlataformas('lista-plataforma', 'Catalogo');
   await statusView.renderCardStatus('lista-status', 'Catalogo');
   await tipoView.renderCardTipos('lista-tipo', 'Catalogo');
-  await catalogoView.listarCatalogo();
+  //await catalogoView.listarCatalogo();
+  await catalogoView.carregarListaPessoal();
 
-  
-        
   //Contagem
   const resumo = vm.resumoGeral();
   catalogoView.renderContagemGeral("geral-progresso", "Progresso", resumo);
@@ -54,7 +57,7 @@ export async function inicializarCatalogo() {
   catalogoView.renderContagemGeral("contagem-show", "Show", resumo);
   catalogoView.renderContagemGeral("contagem-reality", "Reality", resumo);
   //catalogoView.renderContagemGeral('contagem-manga','Manga', resumo)
-
+ 
   //Estatísticas
   catalogoView.renderEstatistica("Serie", "estatistica-serie");
   catalogoView.renderEstatistica("Filme", "estatistica-filme");
@@ -134,7 +137,7 @@ export async function inicializarCatalogo() {
   });
 
   //Adiciona tipo   
-  botaoTipo.addEventListener("click", async (evento) => { 
+    botaoTipo.addEventListener("click", async (evento) => { 
       evento.preventDefault();   
 
       const descricaotipo = document.getElementById('descricao-tipo').value
@@ -154,6 +157,21 @@ export async function inicializarCatalogo() {
       
       document.getElementById('descricao-tipo').value = ''
       document.getElementById('input-id-tipo').value = ''
-  });
+    });
+
+    //Pesquisa TMDB
+    
+     searchButton.addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        if (query) catalogoView.renderizarCardsBusca(query,'results-grid');
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            if (query) catalogoView.renderizarCardsBusca(query,'results-grid');
+        }
+    });
+
 };
 
