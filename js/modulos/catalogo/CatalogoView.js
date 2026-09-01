@@ -130,6 +130,16 @@ export class CatalogoView {
         const temporada = form.querySelector('#temporada-adicionar').value;
         const pontuacao = form.querySelector('#pontuacao-adicionar').value;
         const vezes = form.querySelector('#vezes-adicionar').value;
+        const idtmdb = form.querySelector('#id-tmdb-adicionar').value;
+        const originalName = form.querySelector('#original-name-adicionar').value;
+        const overview = form.querySelector('#overview-adicionar').value;
+        const posterPath = form.querySelector('#poster-path-adicionar').value;
+        const mediaType = form.querySelector('#media-type-adicionar').value;
+        const genresIds = form.querySelector('#genres-ids-adicionar').value;
+        const popularity = form.querySelector('#popularity-adicionar').value;
+        const firstAirDate = form.querySelector('#first-air-date-adicionar').value;
+        const year = form.querySelector('#year-adicionar').value;
+        const voteAverage = form.querySelector('#vote-average-adicionar').value;
 
         let adicaoOriginal = new Date();
 
@@ -155,7 +165,17 @@ export class CatalogoView {
             Number(temporada),
             Number(pontuacao),
             Number(vezes),
-            adicaoOriginal
+            adicaoOriginal,
+            idtmdb,
+            originalName,
+            overview,
+            posterPath,
+            mediaType,
+            genresIds,
+            popularity,
+            firstAirDate,
+            year,
+            voteAverage
         );
         
         await this.vm.salvarTitulo(titulo);

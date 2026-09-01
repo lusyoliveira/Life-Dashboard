@@ -13,8 +13,18 @@ export default class Catalogo {
     Score
     Vezes
     Adicao
+    ID_TMDB
+    Original_Name
+    Overview    
+    Poster_Path
+    Media_Type
+    Genres_Ids
+    Popularity
+    First_Air_Date
+    Year
+    Vote_Average
 
-     constructor(id, Titulo, Capa, Tipo, Status, Plataforma, Inicio, Fim, Episodios, Assistidos, Temporadas, Score = 0, Vezes = 0, Adicao = new Date()) {
+     constructor(id, Titulo, Capa, Tipo, Status, Plataforma, Inicio, Fim, Episodios, Assistidos, Temporadas, Score = 0, Vezes = 0, Adicao = new Date(), ID_TMDB = null, Original_Name = null, Overview = null, Poster_Path = null, Media_Type = null, Genres_Ids = null, Popularity = null, First_Air_Date = null, Year = null, Vote_Average = null) {
         this.id = id
         this.Titulo = Titulo
         this.Capa = Capa
@@ -29,6 +39,16 @@ export default class Catalogo {
         this.Score = Score ?? 0
         this.Vezes = Vezes ?? 0
         this.Adicao = Adicao ? new Date(Adicao) : new Date()
+        this.ID_TMDB = ID_TMDB
+        this.Original_Name = Original_Name
+        this.Overview = Overview
+        this.Poster_Path = Poster_Path
+        this.Media_Type = Media_Type
+        this.Genres_Ids = Genres_Ids
+        this.Popularity = Popularity
+        this.First_Air_Date = First_Air_Date
+        this.Year = Year
+        this.Vote_Average = Vote_Average
     }
 
     get Dias() {

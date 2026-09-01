@@ -37,7 +37,17 @@ export class CatalogoViewModel {
       titulo.temporadas,
       titulo.score,
       titulo.vezes,
-      titulo.adicao
+      titulo.adicao,
+      titulo.id_TMDB,
+      titulo.original_name,
+      titulo.overview,
+      titulo.poster_path,
+      titulo.media_type,
+      titulo.genres_ids,
+      titulo.popularity,
+      titulo.first_air_date,
+      titulo.year,
+      titulo.vote_average
     );
     return titulos;
   });  
@@ -71,22 +81,26 @@ export class CatalogoViewModel {
       titulo.temporadas,
       titulo.score,
       titulo.vezes,
-      titulo.adicao
+      titulo.adicao,
+      titulo.id_TMDB,
+      titulo.original_name,
+      titulo.overview,
+      titulo.poster_path,
+      titulo.media_type,
+      titulo.genres_ids,
+      titulo.popularity,
+      titulo.first_air_date,
+      titulo.year,
+      titulo.vote_average
     );
 
     return catalogo;
   }
 
   async salvarTitulo(titulo) {
-    //   const payload = {
-    //   ...titulo,
-    //   Dias: titulo.Dias,
-    //   Progresso: titulo.Progresso
-    // };
+     // 1. Transforma o link da imagem em dados literais (Base64)
+    const imagemLiteralBase64 = await converterUrlParaBase64(titulo.Poster_Path);
 
-    // payload.Adicao = titulo.Adicao instanceof Date 
-    // ? titulo.Adicao 
-    // : new Date(titulo.Adicao); 
     const payload = {
       id: titulo.id,
       titulo: titulo.Titulo,
@@ -103,10 +117,19 @@ export class CatalogoViewModel {
       vezes: titulo.Vezes,
       adicao: titulo.Adicao,
       dias: titulo.Dias,
-      progresso: titulo.Progresso
+      progresso: titulo.Progresso,
+      id_TMDB: titulo.ID_TMDB,
+      original_name: titulo.Original_Name,
+      overview: titulo.Overview,
+      poster_path: imagemLiteralBase64, // 2. Passa a imagem convertida para o campo que vai para o banco
+      media_type: titulo.Media_Type,
+      genres_ids: titulo.Genres_Ids,
+      popularity: titulo.Popularity,
+      first_air_date: titulo.First_Air_Date,
+      year: titulo.Year,
+      vote_average: titulo.Vote_Average
     };
-    
-   
+       
     if (titulo.id) {
       //payload.Adicao = new Date(titulo.Adicao);
       await api.atualizarDados(payload, this.endpoint);
@@ -277,20 +300,62 @@ export class CatalogoViewModel {
 
   //pesquisa TMDB
    async buscarMidias(nome, elementoId) {
-    const elementoDestino = document.getElementById(elementoId);
-     
-     elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
-     try {          
-            const cfvm = new ConfiguracaoViewModel('configuracoes');
-            const dadosConfig = (await cfvm.obterConfiguracoes())[0];
-            const catalogoTMDB = await apiTMDB.obterPrograma(nome, dadosConfig);
-   
-            return catalogoTMDB
-        } catch (error) {
-             elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
+      const elementoDestino = document.getElementById(elementoId);
+      
+      elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
+      try {          
+              const cfvm = new ConfiguracaoViewModel('configuracoes');
+              const dadosConfig = (await cfvm.obterConfiguracoes())[0];
+              const catalogoTMDB = await apiTMDB.obterPrograma(nome, dadosConfig);
+    
+              return catalogoTMDB
+          } catch (error) {
+              elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
         }
-    }
+    };
   
+    async salvarItemCompleto(id, titulo, tipo, urlCapa) {
+      try {
+          // Exibe um aviso visual rápido enquanto converte a imagem
+          console.log("Baixando e convertendo imagem...");
+          
+          // 1. Transforma o link da imagem em dados literais (Base64)
+          const imagemLiteralBase64 = await converterUrlParaBase64(urlCapa);
+
+          const statusSelecionado = document.getElementById(`status-${id}`).value;
+          const plataformaSelecionada = document.getElementById(`plat-${id}`).value;
+          const notaSelecionada = document.getElementById(`rate-${id}`).value;
+          const episodiosDigitados = document.getElementById(`ep-${id}`).value;
+          const dataInicio = document.getElementById(`start-${id}`).value;
+          const dataFim = document.getElementById(`end-${id}`).value;
+
+          const novoTitulo = {
+              id: null,
+              Titulo: titulo,
+              // 2. Passa a imagem convertida para o campo que vai para o banco
+              Capa: imagemLiteralBase64, 
+              Tipo: tipo === 'Filme' ? '1' : '2',
+              Status: statusSelecionado,
+              Plataforma: plataformaSelecionada,
+              Inicio: dataInicio ? new Date(dataInicio).toISOString() : new Date().toISOString(),
+              Fim: dataFim ? new Date(dataFim).toISOString() : null,
+              Episodios: Number(episodiosDigitados),
+              Assistidos: Number(episodiosDigitados),
+              Temporadas: 1,
+              Score: Number(notaSelecionada),
+              Vezes: 1,
+              Adicao: new Date().toISOString()
+          };
+
+          await catalogoView.vm.salvarTitulo(novoTitulo);
+          alert('Mídia salva com a imagem direto no seu banco!');
+          await catalogoView.carregarListaPessoal();
+
+      } catch (error) {
+          console.error('Erro ao salvar mídia:', error);
+      }
+  };
+
 }
 
 
