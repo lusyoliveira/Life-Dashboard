@@ -26,7 +26,6 @@ export async function inicializarCatalogo() {
   //Pesquisa TMDB
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
-    const resultsGrid = document.getElementById('results-grid');
   catalogoView.formHTML = formCatalogoHTML
 
   await plataformaView.renderCardPlataformas('lista-plataforma', 'Catalogo');

@@ -185,79 +185,37 @@
 }
 
 /* pesquisa tmdb */
-        .grid-busca { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .card-busca { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; position: relative; }
-        .card-busca img { width: 100%; height: 320px; object-fit: cover; background: #ddd; }
-        .card-content-busca { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .title-busca { font-size: 15px; font-weight: bold; margin: 0 0 5px 0; }
+.badge { display: inline-block; padding: 2px 6px; font-size: 10px; border-radius: 10px; font-weight: bold; color: white; margin-bottom: 8px; text-transform: uppercase; }
+.badge-anime { background: #ff4757; }
+.badge-filme { background: #1e90ff; }
+.badge-série { background: #2ed573; }
+.form-tracker { background: #242222; padding: 10px; border-radius: 6px; border: 1px solid #e3e3e3; margin-top: 10px; display: none; }
+.form-group { display: flex; flex-direction: column; margin-bottom: 8px; }
+.form-row { display: flex; gap: 8px; }
+.form-group label { font-size: 10px; font-weight: bold; color: #555; margin-bottom: 3px; text-transform: uppercase; }
+.form-tracker select, .form-tracker input { padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background: white; width: 100%; box-sizing: border-box; }
+.form-row-check { flex-direction: row; align-items: center; gap: 5px; margin: 5px 0; }
+.form-row-check input { width: auto; }
+.btn-salvar { width: 100%; margin-top: 8px; padding: 8px; background: #2ed573; color: white; font-size: 13px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; }
+.status-select { font-weight: bold; color: #0082c9; width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+.btn-nav-perfil { padding: 12px 20px; background: #2ed573; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-weight: bold; font-size: 14px; }
 
-        .badge { display: inline-block; padding: 2px 6px; font-size: 10px; border-radius: 10px; font-weight: bold; color: white; margin-bottom: 8px; text-transform: uppercase; }
-        .badge-anime { background: #ff4757; }
-        .badge-filme { background: #1e90ff; }
-        .badge-série { background: #2ed573; }
-        .form-tracker { background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px solid #e3e3e3; margin-top: 10px; display: none; }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 8px; }
-        .form-row { display: flex; gap: 8px; }
-        .form-group label { font-size: 10px; font-weight: bold; color: #555; margin-bottom: 3px; text-transform: uppercase; }
-        .form-tracker select, .form-tracker input { padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background: white; width: 100%; box-sizing: border-box; }
-        .form-row-check { flex-direction: row; align-items: center; gap: 5px; margin: 5px 0; }
-        .form-row-check input { width: auto; }
-        .btn-salvar { width: 100%; margin-top: 8px; padding: 8px; background: #2ed573; color: white; font-size: 13px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; }
-        .status-select { font-weight: bold; color: #0082c9; width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
-        .btn-nav-perfil { padding: 12px 20px; background: #2ed573; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-weight: bold; font-size: 14px; }
 
-         /* Badges e Infos Internas */
-        .badge { display: inline-block; padding: 2px 6px; font-size: 10px; border-radius: 10px; font-weight: bold; color: white; margin-bottom: 6px; text-transform: uppercase; }
-        .badge-assistindo { background: #2ed573; }
-        .badge-completado { background: #1e90ff; }
-        .badge-planejado { background: #ffa500; }
-        .badge-dropped { background: #ff4757; }
-        .badge-emEspera { background: #747d8c; }
+.paginacao-container {
+    grid-column: 1 / -1; /* Se for CSS Grid, força a ocupar todas as colunas de ponta a ponta */
+    width: 100%;         /* Se for Flexbox, força a ocupar a largura total */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-         /* Grade de Itens Salvos */
-        .grid-colecao { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
-        .card-colecao {
-            display: flex;
-            flex-direction: column; /* Alinha a imagem e o conteúdo em linha vertical */
-            width: 250px;           /* Define uma largura fixa ideal para o card vertical */
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: #1e1e1e; /* Mantém o fundo escuro do seu layout */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            margin: 10px;
-        }
-        .card-colecao img {
-            width: 100%;
-            height: 320px;          /* Ajusta a altura da capa proporcionalmente */
-            object-fit: cover;      /* Evita que a capa fique esticada ou distorcida */
-        }
-        .card-content-colecao .card-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 15px;
-            height: 100%;           /* Garante que o bloco de notas fique sempre no rodapé */
-        }
-        .title-colecao { font-size: 15px; font-weight: bold; margin: 0 0 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .user-details { font-size: 12px; color: #555; line-height: 1.4; margin: 0; }
-        .user-details strong { color: #f9f9f9; }
-        .rating-indicator { font-size: 12px; font-weight: bold; margin-top: 4px; }
-
-        .paginacao-container {
-        grid-column: 1 / -1; /* Se for CSS Grid, força a ocupar todas as colunas de ponta a ponta */
-        width: 100%;         /* Se for Flexbox, força a ocupar a largura total */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .paginacao-container button {
-        background-color: var(--cor-azul);
-        color: var(--cor-branco);
-        border: none;
-        padding: 8px 12px;
-        margin: 0 4px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-    }
+.paginacao-container button {
+    background-color: var(--cor-azul);
+    color: var(--cor-branco);
+    border: none;
+    padding: 8px 12px;
+    margin: 0 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}

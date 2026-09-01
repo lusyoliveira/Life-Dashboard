@@ -2,7 +2,7 @@ import metodoData from "../../Utils/metodoData.js"
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
-import { popularSelect, limparFormulario } from "../../Utils/utils.js";
+import { popularSelect, limparFormulario, renderizarControlesPaginacao } from "../../Utils/utils.js";
 import { graficoBarra } from "../../componentes/graficos/GraficosFactory.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
@@ -829,94 +829,190 @@ export class CatalogoView {
     };
     
     async renderizarCardsBusca(termobusca, elementoId) {
-        const items = await this.vm.buscarMidias(termobusca, elementoId);
         const elementoDestino = document.getElementById(elementoId);
         
-        // Se a página mudar ou o elemento ainda não existir, para a execução sem quebrar o código
         if (!elementoDestino) {
             console.warn(`Aviso: O elemento "${elementoId}" ainda não está pronto no DOM.`);
             return; 
         }
 
-        elementoDestino.innerHTML = '';
-        
-        if (!items || items.length === 0) {
-            elementoDestino.innerHTML = '<p>Nenhuma mídia encontrada no TMDB.</p>';
-            return;
+        // Define o estado visual de carregamento
+        elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
+
+        try {
+            const items = await this.vm.buscarMidias(termobusca, elementoId);
+            
+            // Limpa o estado de carregamento
+            elementoDestino.innerHTML = '';
+            
+            if (!items || items.length === 0) {
+                elementoDestino.innerHTML = '<p>Nenhuma mídia encontrada no TMDB.</p>';
+                return;
+            }
+            
+            // CRUCIAL: Cria uma div com a classe row do Bootstrap para gerenciar a grade de cards
+            const divLinha = document.createElement('div');
+            divLinha.className = 'row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4';
+            // ^ Explicando as classes acima:
+            // row-cols-1: 1 card por linha em telas muito pequenas (celular)
+            // row-cols-sm-2: 2 cards por linha em telas pequenas
+            // row-cols-md-3: 3 cards por linha em telas médias
+            // row-cols-lg-4: 4 cards por linha em telas grandes (computador)
+            // g-4: Adiciona um espaçamento (gap) agradável entre as linhas e colunas
+
+            items.forEach(item => { 
+                // 1. Cria a coluna que vai limitar o tamanho do card
+                const divColuna = document.createElement('div');
+                divColuna.className = 'col';
+
+                // 2. Cria o card usando o método que você já reestruturou com Bootstrap
+                const elementoCard = this.criarCardMidia(item, false);
+
+                // 3. Coloca o card dentro da coluna, e a coluna dentro da linha
+                divColuna.appendChild(elementoCard);
+                divLinha.appendChild(divColuna);
+            });
+
+            // 4. Injeta a linha completa preenchida de colunas na tela
+            elementoDestino.appendChild(divLinha);
+
+        } catch (error) {
+            elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
+            console.error(error);
         }
-        
-        items.forEach(item => { 
-            elementoDestino.appendChild(this.criarCardMidia(item, false)); 
-        });
     };
 
-    criarCardMidia(item, isEstatico) {
+        criarCardMidia(item, isEstatico) {
         const card = document.createElement('div');
-        card.className = 'card-busca';
-        const capa = item.image ? item.image : "https://placeholder.co";
+        card.className = 'card h-100';
+        const capa = item.image ? item.image : "https://placeholder.com";
         const tituloLimpo = item.title.replace(/"/g, '&quot;').replace(/'/g, "\\'");
         
-        let areaAcaoHtml = '';
+        card.innerHTML = `
+            <img class="card-img-top" src="${capa}" alt="${tituloLimpo}">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-end mb-2">
+                        <span class="badge bg-secondary text-capitalize">${item.type}</span>
+                        <strong class="text-warning">⭐ ${item.score || 'N/A'}</strong>
+                    </div>
+                    <h5 class="card-title">${item.title}</h5>
+                    <p class="card-text small text-muted text-truncate-3">${item.synopsis || 'Sem sinopse disponível.'}</p>
+                </div>
+                
+                <!-- Div âncora criada para gerenciar os elementos dinâmicos de ação -->
+                <div class="action-container-${item.id} mt-3"></div>
+            </div>
+        `;
+
+        const containerAcao = card.querySelector(`.action-container-${item.id}`);
+
         if (!isEstatico) {
-            areaAcaoHtml = 
-                '<select id="status-' + item.id + '" class="status-select" onchange="alternarFormulario(\'' + item.id + '\', this.value)">' +
-                    '<option value="">-- Mudar Status --</option>' +
-                    '<option value="watching">Assistindo</option>' +
-                    '<option value="completed">Completado</option>' +
-                    '<option value="plan_to_watch">Planejado</option>' +
-                    '<option value="dropped">Abandonado</option>' +
-                    '<option value="on_hold">Em Espera</option>' +
-                '</select>' +
-                '<div id="form-' + item.id + '" class="form-tracker">' +
-                    '<div class="form-group"><label>Plataforma</label>' +
-                        '<select id="plat-' + item.id + '">' +
-                            '<option value="Netflix">Netflix</option><option value="Crunchyroll">Crunchyroll</option>' +
-                            '<option value="Disney+">Disney+</option><option value="Prime Video">Prime Video</option>' +
-                            '<option value="Max">Max</option><option value="Stremio">Stremio/Torrent</option>' +
-                        '</select>' +
-                    '</div>' +
-                    '<div class="form-row">' +
-                        '<div class="form-group" style="flex:1;"><label>Minha Nota TMDB</label>' +
-                            '<select id="rate-' + item.id + '">' +
-                                '<option value="10">⭐ (10) Obra-Prima</option><option value="9">⭐ (9) Excelente</option>' +
-                                '<option value="8">⭐ (8) Muito Bom</option><option value="7">⭐ (7) Bom</option>' +
-                                '<option value="6">⭐ (6) OK</option><option value="5">⭐ (5) Mediano</option>' +
-                                '<option value="4">⭐ (4) Ruim</option><option value="3">⭐ (3) Muito Ruim</option>' +
-                                '<option value="2">⭐ (2) Horrível</option><option value="1">⭐ (1) Tragédia</option>' +
-                            '</select>' +
-                        '</div>' +
-                        '<div class="form-group" style="width:75px;"><label>Episódios</label>' +
-                            '<input type="number" id="ep-' + item.id + '" value="0" min="0">' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="form-group form-row-check">' +
-                        '<input type="checkbox" id="rew-' + item.id + '"><label for="rew-' + item.id + '">Estou revendo</label>' +
-                    '</div>' +
-                    '<div class="form-row">' +
-                        '<div class="form-group"><label>Início</label><input type="date" id="start-' + item.id + '"></div>' +
-                        '<div class="form-group"><label>Fim</label><input type="date" id="end-' + item.id + '"></div>' +
-                    '</div>' +
-                    '<button class="btn-salvar" onclick="salvarItemCompleto(\'' + item.id + '\',\'' + tituloLimpo + '\',\'' + item.type + '\',\'' + capa + '\')">Confirmar</button>' +
-                '</div>';
+            const selectStatus = document.createElement('select');
+            selectStatus.id = `status-${item.id}`;
+            selectStatus.className = 'status-select form-select form-select-sm mb-2';
+            selectStatus.innerHTML = `
+                <option value="">-- Mudar Status --</option>
+                <option value="watching">Assistindo</option>
+                <option value="completed">Completado</option>
+                <option value="plan_to_watch">Planejado</option>
+                <option value="dropped">Abandonado</option>
+                <option value="on_hold">Em Espera</option>
+            `;
+
+            // O escutador dinâmico repassa o próprio container alvo como parâmetro
+            selectStatus.addEventListener('change', (e) => {
+                this.alternarFormulario(item.id, e.target.value, containerAcao, tituloLimpo, item.type, capa);
+            });
+
+            containerAcao.appendChild(selectStatus);
         } else {
-            areaAcaoHtml = '<p style="margin:5px 0 0 0; font-size:12px; color:#666;">📍 Plataforma: '+(item.platform || 'N/I')+'</p>';
+            containerAcao.innerHTML = `<p style="margin:5px 0 0 0; font-size:12px; color:#666;">📍 Plataforma: ${item.platform || 'N/I'}</p>`;
         }
 
-        card.innerHTML = 
-            '<img src="' + capa + '" alt="' + tituloLimpo + '">' +
-            '<div class="card-content-busca">' +
-                '<div>' +
-                    '<span class="badge badge-' + item.type.toLowerCase() + '">' + item.type + '</span>' +
-                    '<h3 class="title-busca">' + item.title + '</h3>' +
-                '</div>' +
-                '<div>' + areaAcaoHtml + '</div>' +
-            '</div>';
         return card;
     }
 
-    alternarFormulario(id, val) {
-        document.getElementById('form-' + id).style.display = val !== "" ? 'block' : 'none';
+    alternarFormulario(id, val, containerAlvo, titulo, tipo, capa) {
+        // Localiza e limpa qualquer tracker anterior que já esteja aberto neste card
+        const formAntigo = containerAlvo.querySelector(`.form-tracker-dinamico`);
+        if (formAntigo) {
+            formAntigo.remove();
+        }
+
+        // Se o usuário selecionou a opção vazia de volta, cancela a criação
+        if (val === "") return;
+
+        // Cria o fragmento que agrupa todos os novos campos do formulário
+        const divForm = document.createElement('div');
+        divForm.className = 'form-tracker-dinamico mt-2 border-top pt-2';
+
+        divForm.innerHTML = `
+            <div class="mb-2">
+                <label class="form-label small mb-1 fw-bold">Plataforma</label>
+                <select id="plat-${id}" class="form-select form-select-sm">
+                    <option value="Netflix">Netflix</option>
+                    <option value="Crunchyroll">Crunchyroll</option>
+                    <option value="Disney+">Disney+</option>
+                    <option value="Prime Video">Prime Video</option>
+                    <option value="Max">Max</option>
+                    <option value="Stremio">Stremio/Torrent</option>
+                </select>
+            </div>
+            <div class="row g-2 mb-2">
+                <div class="col-8">
+                    <label class="form-label small mb-1 fw-bold">Minha Nota</label>
+                    <select id="rate-${id}" class="form-select form-select-sm">
+                        <option value="10">⭐ (10) Obra-Prima</option>
+                        <option value="9">⭐ (9) Excelente</option>
+                        <option value="8">⭐ (8) Muito Bom</option>
+                        <option value="7">⭐ (7) Bom</option>
+                        <option value="6">⭐ (6) OK</option>
+                        <option value="5">⭐ (5) Mediano</option>
+                        <option value="4">⭐ (4) Ruim</option>
+                        <option value="3">⭐ (3) Muito Ruim</option>
+                        <option value="2">⭐ (2) Horrível</option>
+                        <option value="1">⭐ (1) Tragédia</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <label class="form-label small mb-1 fw-bold">Episódios</label>
+                    <input type="number" id="ep-${id}" class="form-control form-control-sm" value="0" min="0">
+                </div>
+            </div>
+            <div class="form-check mb-2">
+                <input type="checkbox" id="rew-${id}" class="form-check-input">
+                <label for="rew-${id}" class="form-check-label small">Estou revendo</label>
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-6">
+                    <label class="form-label small mb-1 fw-bold">Início</label>
+                    <input type="date" id="start-${id}" class="form-control form-control-sm">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small mb-1 fw-bold">Fim</label>
+                    <input type="date" id="end-${id}" class="form-control form-control-sm">
+                </div>
+            </div>
+        `;
+
+        // Instancia o botão de confirmação com escopo léxico puro
+        const btnSalvar = document.createElement('button');
+        btnSalvar.className = 'btn btn-success btn-sm w-100 btn-salvar-dinamico';
+        btnSalvar.textContent = 'Confirmar e Salvar';
+        
+        btnSalvar.addEventListener('click', async () => {
+            if (typeof window.salvarItemCompleto === 'function') {
+                await window.salvarItemCompleto(id, titulo, tipo, capa);
+            } else {
+                console.error("Erro: A função global 'salvarItemCompleto' não foi encontrada.");
+            }
+        });
+
+        divForm.appendChild(btnSalvar);
+        containerAlvo.appendChild(divForm);
     }
+
 
     async carregarListaPessoal() {
         const savedGrid = document.getElementById('saved-grid');
@@ -945,28 +1041,26 @@ export class CatalogoView {
             // Renderiza apenas os cards da página atual
             itensPaginados.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'card-colecao';
+                card.className = 'card';
 
                 const dataInicio = item.Inicio ? metodoData.formatarDataBR(item.Inicio) : 'Não iniciada';
                 const dataFim = item.Fim ? metodoData.formatarDataBR(item.Fim) : 'Não finalizada';
                 const textoNota = item.Score ? item.Score : 'Sem nota';
 
                 card.innerHTML = 
-                    '<img src="' + item.Capa + '" alt="' + item.Titulo + '">' +
-                    '<div class="card-content-colecao">' +
-                        '<div>' +
-                            '<span class="badge badge-' + item.Status.descricao + '">' + item.Status.descricao + '</span>' +
-                            '<h3 class="title-colecao" title="' + item.Titulo + '">' + item.Titulo + '</h3>' +
-                            '<p class="user-details">' +
-                                '<strong>Tipo:</strong> ' + item.Tipo.descricao + '<br>' +
-                                '<strong>Onde:</strong> ' + item.Plataforma.descricao + '<br>' +
-                                '<strong>Início:</strong> ' + dataInicio + '<br>' +
-                                '<strong>Fim:</strong> ' + dataFim + '' +
-                            '</p>' +
-                        '</div>' +
-                        '<div class="rating-indicator">' +
+                    '<img class="card-img-top" src="' + item.Capa + '" alt="' + item.Titulo + '">' +
+                    '<div class="card-body">' +
+                        '<h5 class="card-title">' + item.Titulo + '</h5>' +
+                        '<p class="card-text">' + item.Titulo + '</p>' +
+                        '<strong>Tipo:</strong> ' + item.Tipo.descricao + '<br>' +
+                        '<strong>Onde:</strong> ' + item.Plataforma.descricao + '<br>' +
+                        '<strong>Início:</strong> ' + dataInicio + '<br>' +
+                        '<strong>Fim:</strong> ' + dataFim + '' +
+                    '</div>' +
+                    '<div class="card-footer">' +
+                        '<small class="text-muted">' +
                             'Minha Nota: ' + textoNota +
-                        '</div>' +
+                        '</small>' +
                     '</div>';
 
                 savedGrid.appendChild(card);
@@ -974,58 +1068,11 @@ export class CatalogoView {
 
             // Adiciona a barra de paginação logo abaixo dos cards
             const totalPaginas = Math.ceil(listaOrdenada.length / this.itensPorPaginaColecao);
-            this.renderizarControlesPaginacao(savedGrid, totalPaginas);
-
+            //this.renderizarControlesPaginacao(savedGrid, totalPaginas);
+            renderizarControlesPaginacao(savedGrid, totalPaginas, this);
         } catch (error) {
             savedGrid.innerHTML = '<p>Erro ao carregar sua lista.</p>';
             console.error(error);
         }
-    }
-
-    // NOVO MÉTODO: Cria os botões visuais e adiciona os eventos de clique
-        renderizarControlesPaginacao(containerAlvo, totalPaginas) {
-        // 1. CORREÇÃO: Remove qualquer barra de paginação antiga de dentro do grid para não duplicar
-        const paginacaoAntiga = containerAlvo.querySelector('.paginacao-container');
-        if (paginacaoAntiga) {
-            paginacaoAntiga.remove();
-        }
-
-        if (totalPaginas <= 1) return; // Não desenha se tudo couber em uma única página
-
-        const barraPaginacao = document.createElement('div');
-        barraPaginacao.className = 'paginacao-container d-flex justify-content-center align-items-center gap-3 mt-4 w-100';
-
-        // Botão Voltar
-        const btnAnterior = document.createElement('button');
-        btnAnterior.className = 'btn btn-sm btn-outline-primary';
-        btnAnterior.textContent = '◀ Anterior';
-        btnAnterior.disabled = this.paginaAtualColecao === 1;
-        btnAnterior.addEventListener('click', () => {
-            this.paginaAtualColecao--;
-            this.carregarListaPessoal();
-        });
-
-        // Indicador numérico (Ex: Página 1 de 5)
-        const indicadorPagina = document.createElement('span');
-        indicadorPagina.className = 'fw-bold text-muted mx-2';
-        indicadorPagina.textContent = `Página ${this.paginaAtualColecao} de ${totalPaginas}`;
-
-        // Botão Avançar
-        const btnProximo = document.createElement('button');
-        btnProximo.className = 'btn btn-sm btn-outline-primary';
-        btnProximo.textContent = 'Próximo ▶';
-        btnProximo.disabled = this.paginaAtualColecao === totalPaginas;
-        btnProximo.addEventListener('click', () => {
-            this.paginaAtualColecao++;
-            this.carregarListaPessoal();
-        });
-
-        barraPaginacao.appendChild(btnAnterior);
-        barraPaginacao.appendChild(indicadorPagina);
-        barraPaginacao.appendChild(btnProximo);
-        
-        // 2. CORREÇÃO: Insere a barra diretamente no final do container de dados
-        containerAlvo.appendChild(barraPaginacao);
-    }
-
+    };
 }
