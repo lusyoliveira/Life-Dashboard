@@ -185,21 +185,6 @@
 }
 
 /* pesquisa tmdb */
-.badge { display: inline-block; padding: 2px 6px; font-size: 10px; border-radius: 10px; font-weight: bold; color: white; margin-bottom: 8px; text-transform: uppercase; }
-.badge-anime { background: #ff4757; }
-.badge-filme { background: #1e90ff; }
-.badge-série { background: #2ed573; }
-.form-tracker { background: #242222; padding: 10px; border-radius: 6px; border: 1px solid #e3e3e3; margin-top: 10px; display: none; }
-.form-group { display: flex; flex-direction: column; margin-bottom: 8px; }
-.form-row { display: flex; gap: 8px; }
-.form-group label { font-size: 10px; font-weight: bold; color: #555; margin-bottom: 3px; text-transform: uppercase; }
-.form-tracker select, .form-tracker input { padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background: white; width: 100%; box-sizing: border-box; }
-.form-row-check { flex-direction: row; align-items: center; gap: 5px; margin: 5px 0; }
-.form-row-check input { width: auto; }
-.btn-salvar { width: 100%; margin-top: 8px; padding: 8px; background: #2ed573; color: white; font-size: 13px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; }
-.status-select { font-weight: bold; color: #0082c9; width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
-.btn-nav-perfil { padding: 12px 20px; background: #2ed573; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-weight: bold; font-size: 14px; }
-
 
 .paginacao-container {
     grid-column: 1 / -1; /* Se for CSS Grid, força a ocupar todas as colunas de ponta a ponta */
