@@ -338,15 +338,33 @@ export class CatalogoView {
 
         if (!elementoDestino) return;
         elementoDestino.innerHTML = "";
+        
         recentes.forEach(titulo => {
             const divCard = document.createElement('div');
             divCard.classList.add('col','card', 'p-1', 'm-2');
 
             const imgCapa = document.createElement('img');
-            imgCapa.src = titulo.Capa;
+            
+            // 🌟 TRATAMENTO BLINDADO CONTRA ERROS DE TIPO (CORS, NULL E UNDEFINED)
+           let fonteImagem = titulo.Capa || "https://placeholder.com"; 
+
+            const stringPoster = titulo.Poster_Path ? String(titulo.Poster_Path).trim() : "";
+
+            // 🌟 PROTEÇÃO ADICIONADA: Ignora strings que gravaram o texto "[object Object]" por erro
+            if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
+                if (stringPoster.startsWith("data:image")) {
+                    fonteImagem = stringPoster;
+                } else if (stringPoster.startsWith("http://") || stringPoster.startsWith("https://")) {
+                    fonteImagem = stringPoster;
+                } else {
+                    fonteImagem = "data:image/jpeg;base64," + stringPoster;
+                }
+            }
+
+            imgCapa.src = fonteImagem;
             imgCapa.classList.add('card-img-top');
             imgCapa.width = 300;
-            imgCapa.height = 400;
+            imgCapa.height = 350;
 
             const divCardBody = document.createElement('div');
             divCardBody.classList.add('card-body');
@@ -397,7 +415,7 @@ export class CatalogoView {
             elementoDestino.appendChild(divCard);
 
         });
-    }
+    };
     
 
     renderCardStatus(status,elementoId) {
@@ -1075,4 +1093,48 @@ export class CatalogoView {
             console.error(error);
         }
     };
+
+    // Exemplo de método para incluir na sua CatalogoView
+    async dispararAtualizacaoGeralMídias() {
+    abrirModalAcao({
+        titulo: "Atualizar Catálogo via TMDB",
+        conteudoHTML: `
+        <p>Deseja sincronizar e atualizar as informações dos 200 títulos do seu banco de dados com o TMDB agora?</p>
+        <div id="status-sincronizacao-lote" class="text-muted small fw-bold"></div>
+        `,
+        textoConfirmar: "Iniciar Atualização",
+        classeBotao: "btn-primary",
+
+            onConfirmar: async () => {
+                const containerStatus = document.getElementById("status-sincronizacao-lote");
+                
+                try {
+                if (containerStatus) containerStatus.innerHTML = "⏳ Pesquisando títulos no TMDB e vinculando identificadores...";
+
+                const resultado = await this.vm.atualizarTodoCatalogoViaTMDB2((mensagem) => {
+                    if (containerStatus) containerStatus.innerHTML = `⏳ ${mensagem}`;
+                });
+
+                if (containerStatus) {
+                    containerStatus.innerHTML = `✅ Concluído! ${resultado.processados} itens vinculados e atualizados. Falhas: ${resultado.erros}`;
+                }
+                
+                // 🌟 CORREÇÃO: Atualiza a interface de forma segura verificando qual elemento existe no DOM
+                const possuiTabela = document.getElementById("tabelaCatalogo");
+                const possuiGridCards = document.getElementById("saved-grid");
+
+                if (possuiTabela) {
+                    await this.listarCatalogo();
+                } else if (possuiGridCards) {
+                    await this.carregarListaPessoal();
+                }
+                
+                } catch (erro) {
+                if (containerStatus) containerStatus.innerHTML = `❌ Ocorreu um erro crítico: ${erro.message}`;
+                return false;
+                }
+            }
+        });
+    };
+
 }
