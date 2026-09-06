@@ -39,7 +39,7 @@ export class CatalogoViewModel {
       titulo.score,
       titulo.vezes,
       titulo.adicao,
-      titulo.id_TMDB,
+      titulo.id_tmdb,
       titulo.original_name,
       titulo.overview,
       titulo.poster_path,
@@ -83,7 +83,7 @@ export class CatalogoViewModel {
       titulo.score,
       titulo.vezes,
       titulo.adicao,
-      titulo.id_TMDB,
+      titulo.id_tmdb,
       titulo.original_name,
       titulo.overview,
       titulo.poster_path,
@@ -119,7 +119,7 @@ export class CatalogoViewModel {
       adicao: titulo.Adicao,
       dias: titulo.Dias,
       progresso: titulo.Progresso,
-      id_TMDB: titulo.ID_TMDB,
+      id_tmdb: titulo.IdTMDB,
       original_name: titulo.Original_Name,
       overview: titulo.Overview,
       poster_path: imagemLiteralBase64, // 2. Passa a imagem convertida para o campo que vai para o banco
@@ -315,182 +315,12 @@ export class CatalogoViewModel {
         }
     };
   
-    async salvarItemCompleto(id, titulo, tipo, urlCapa) {
-      try {
-          // Exibe um aviso visual rápido enquanto converte a imagem
-          console.log("Baixando e convertendo imagem...");
-          
-          // 1. Transforma o link da imagem em dados literais (Base64)
-          const imagemLiteralBase64 = await converterUrlParaBase64(urlCapa);
-
-          const statusSelecionado = document.getElementById(`status-${id}`).value;
-          const plataformaSelecionada = document.getElementById(`plat-${id}`).value;
-          const notaSelecionada = document.getElementById(`rate-${id}`).value;
-          const episodiosDigitados = document.getElementById(`ep-${id}`).value;
-          const dataInicio = document.getElementById(`start-${id}`).value;
-          const dataFim = document.getElementById(`end-${id}`).value;
-
-          const novoTitulo = {
-              id: null,
-              Titulo: titulo,
-              // 2. Passa a imagem convertida para o campo que vai para o banco
-              Capa: imagemLiteralBase64, 
-              Tipo: tipo === 'Filme' ? '1' : '2',
-              Status: statusSelecionado,
-              Plataforma: plataformaSelecionada,
-              Inicio: dataInicio ? new Date(dataInicio).toISOString() : new Date().toISOString(),
-              Fim: dataFim ? new Date(dataFim).toISOString() : null,
-              Episodios: Number(episodiosDigitados),
-              Assistidos: Number(episodiosDigitados),
-              Temporadas: 1,
-              Score: Number(notaSelecionada),
-              Vezes: 1,
-              Adicao: new Date().toISOString()
-          };
-
-          await catalogoView.vm.salvarTitulo(novoTitulo);
-          alert('Mídia salva com a imagem direto no seu banco!');
-          await catalogoView.carregarListaPessoal();
-
-      } catch (error) {
-          console.error('Erro ao salvar mídia:', error);
-      }
-  };
-   // Substitua este método na sua CatalogoViewModel.js
-  async atualizarTodoCatalogoViaTMDB(progressoCallback = null) {
-    try {
-      // MODO TESTE: Busca apenas o ID 1.
-      //const dadosCatalogo = await this.obterTituloPorID(4);
-      const dadosCatalogo = await this.obterCatalogo();
-      const todosOsItens = dadosCatalogo ? (Array.isArray(dadosCatalogo) ? dadosCatalogo : [dadosCatalogo]) : [];
-
-      if (todosOsItens.length === 0) {
-        console.warn("Nenhum item encontrado no banco de dados para atualização.");
-        return { processados: 0, erros: 0 };
-      }
-
-      // Extração da configuração
-      const cfvm = new ConfiguracaoViewModel('configuracoes');
-      const configuracoesSalvas = await cfvm.obterConfiguracoes();
-      const dadosConfig = Array.isArray(configuracoesSalvas) ? configuracoesSalvas : configuracoesSalvas;
-      
-      const API_KEY = dadosConfig?.chaveTMDB || '724c80009be7e12d8e02b1b30abe29f6'; 
-
-      let processadosContador = 0;
-      let errosContador = 0;
-      
-      const tamanhoDoLote = 20;
-      const lotes = [];
-      for (let i = 0; i < todosOsItens.length; i += tamanhoDoLote) {
-        lotes.push(todosOsItens.slice(i, i + tamanhoDoLote));
-      }
-
-      console.log(`🎬 Iniciando varredura por Nome. Processando ${todosOsItens.length} títulos.`);
-
-      for (const [index, lote] of lotes.entries()) {
-        if (progressoCallback) {
-          progressoCallback(`Pesquisando bloco ${index + 1} de ${lotes.length}...`);
-        }
-
-        const promessasLote = lote.map(async (item) => {
-          if (!item.Titulo) return;
-
-          // 🌟 NOVO MAPEAMENTO BASEADO NA SUA IMAGEM:
-          // Se o tipo contiver a palavra "Filme" ou ID "6", vai para 'movie'. 
-          // Desenho, Anime, Serie, etc., vão todos para 'tv'.
-          const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
-          const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
-          
-          // 🌟 URL LITERAL FIXA: Sem variáveis concatenadas no início para forçar o navegador a limpar o cache!
-          const urlBuscaTexto = "https://api.themoviedb.org/3/search/" + deparTipo + "?api_key=" + API_KEY + "&query=" + encodeURIComponent(item.Titulo) + "&language=pt-BR";
-
-          try {
-            const respostaBusca = await fetch(urlBuscaTexto);
-            if (!respostaBusca.ok) throw new Error(`Erro na busca: HTTP ${respostaBusca.status}`);
-            
-            const resultadoBusca = await respostaBusca.json();
-            
-            if (!resultadoBusca.results || resultadoBusca.results.length === 0) {
-              console.warn(`⚠️ Nenhuma correspondência encontrada no TMDB para o título: "${item.Titulo}"`);
-              return;
-            }
-
-            // Captura o primeiro objeto da lista de resultados
-            const dadosTMDB = resultadoBusca.results[0];
-
-            // Montagem da URL da imagem
-            const urlPosterCorreta = dadosTMDB.poster_path 
-              ? `https://image.tmdb.org/t/p/w500${dadosTMDB.poster_path}` 
-              : item.Poster_Path;
-
-            item.ID_TMDB = dadosTMDB.id.toString();
-            item.Original_Name = dadosTMDB.original_title || dadosTMDB.original_name || item.Original_Name;
-            item.Overview = dadosTMDB.overview || item.Overview;
-            item.Poster_Path = urlPosterCorreta;
-            item.Popularity = dadosTMDB.popularity || item.Popularity;
-            item.First_Air_Date = dadosTMDB.release_date || dadosTMDB.first_air_date || item.First_Air_Date;
-            item.Vote_Average = dadosTMDB.vote_average || item.Vote_Average;
-            item.Media_Type = dadosTMDB.media_type || deparTipo;
-            item.Genres_Ids = dadosTMDB.genre_ids || item.Genres_Ids;
-            
-            if (dadosTMDB.release_date || dadosTMDB.first_air_date) {
-              item.Year = new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear();
-            }
-
-            // Remonta o objeto mapeando propriedades para o Sequelize
-            const payloadItem = new Catalogo(
-              item.id,
-              item.Titulo,
-              item.Capa,
-              item.Tipo?.id || item.Tipo,
-              item.Status?.id || item.Status,
-              item.Plataforma?.id || item.Plataforma,
-              item.Inicio,
-              item.Fim,
-              item.Episodios,
-              item.Assistidos,
-              item.Temporadas,
-              item.Score,
-              item.Vezes,
-              item.Adicao,
-              item.ID_TMDB,
-              item.Original_Name,
-              item.Overview,
-              item.Poster_Path,
-              item.Media_Type,
-              item.Genres_Ids,
-              item.Popularity,
-              item.First_Air_Date,
-              item.Year,
-              item.Vote_Average
-            );
-
-            await this.salvarTitulo(payloadItem);
-            processadosContador++;
-          } catch (erro) {
-            console.error(`❌ Falha ao tentar reconciliar o título "${item.Titulo}":`, erro.message);
-            errosContador++;
-          }
-        });
-
-        await Promise.all(promessasLote);
-        await new Promise(resolve => setTimeout(resolve, 400));
-      }
-
-      return { processados: processadosContador, erros: errosContador };
-
-    } catch (error) {
-      console.error("Erro geral durante o processamento em lote:", error);
-      throw error;
-    }
-  };
-
-    // Método dedicado para preencher metadados de itens pendentes por Nome
-    // Substitua este método na sua CatalogoViewModel.js
-  async atualizarTodoCatalogoViaTMDB2(progressoCallback = null) {
+  // Método dedicado para preencher metadados de itens pendentes por Nome
+  async atualizarTitulosNulos(progressoCallback = null) {
     try {
       // 1. Busca TODOS os itens cadastrados no seu sistema
-      const dadosCatalogo = await this.obterCatalogo();     
+      //const dadosCatalogo = await this.obterTituloPorID(1);   
+      const dadosCatalogo = await this.obterCatalogo(); // Obtém todos os títulos do catálogo     
       const todosOsItens = dadosCatalogo ? (Array.isArray(dadosCatalogo) ? dadosCatalogo : [dadosCatalogo]) : [];
 
       if (todosOsItens.length === 0) {
@@ -499,20 +329,17 @@ export class CatalogoViewModel {
       }
 
       // Filtra APENAS os itens onde o ID_TMDB é nulo, indefinido ou vazio
-      const itensPendentes = todosOsItens.filter(item => !item.ID_TMDB || item.ID_TMDB === "" || item.ID_TMDB === "null");
+      const itensPendentes = todosOsItens.filter(item => !item.IdTMDB || item.IdTMDB === "" || item.IdTMDB === "null");
 
       if (itensPendentes.length === 0) {
         if (progressoCallback) progressoCallback("✅ Todos os títulos já possuem ID do TMDB vinculado!");
-        console.log("Todos os títulos já possuem ID do TMDB vinculado.");
         return { processados: 0, erros: 0 };
       }
 
       // Extração da configuração da API
       const cfvm = new ConfiguracaoViewModel('configuracoes');
-      const configuracoesSalvas = await cfvm.obterConfiguracoes();
-      const dadosConfig = Array.isArray(configuracoesSalvas) ? configuracoesSalvas : configuracoesSalvas;
-      
-      const API_KEY = dadosConfig?.chaveTMDB || '724c80009be7e12d8e02b1b30abe29f6'; 
+      const dadosConfig = (await cfvm.obterConfiguracoes())[0] ;
+      const API_KEY = dadosConfig?.chaveTMDB; 
 
       let processadosContador = 0;
       let errosContador = 0;
@@ -541,14 +368,16 @@ export class CatalogoViewModel {
             .replace(/season\s*\d+/i, '')
             .replace(/s\d+/i, '')
             .replace(/\d+ª\s*temp/i, '')
+            .replace(/(Parte 3)\s*\d+/i, '')
+            .replace(/1ª á 4ª Temporada\s*\d+/i, '')
+            .replace(/1ª á 3ª Temporada\s*\d+/i, '')
+            .replace(/11ª e 12ª Temporada\s*\d+/i, '')
             .trim();
 
           if (!tituloLimpo) tituloLimpo = item.Titulo;
 
           const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
           const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
-          
-          // 🌟 CORREÇÃO CRÍTICA DA URL: Injetada a URL oficial com a rota v3/search/ expandida e sem variáveis ocultas
           const urlBuscaTexto = "https://api.themoviedb.org/3/search/" + deparTipo + "?api_key=" + API_KEY + "&query=" + encodeURIComponent(tituloLimpo) + "&language=pt-BR";
 
           try {
@@ -568,7 +397,7 @@ export class CatalogoViewModel {
               ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path
               : item.Poster_Path;
 
-            item.ID_TMDB = dadosTMDB.id.toString();
+            item.IdTMDB = dadosTMDB.id.toString();
             item.Original_Name = dadosTMDB.original_title || dadosTMDB.original_name || item.Original_Name;
             item.Overview = dadosTMDB.overview || item.Overview;
             item.Poster_Path = urlPosterCorreta;
@@ -595,7 +424,7 @@ export class CatalogoViewModel {
               item.Score,
               item.Vezes,
               item.Adicao,
-              item.ID_TMDB, 
+              item.IdTMDB, 
               item.Original_Name,
               item.Overview,
               item.Poster_Path,

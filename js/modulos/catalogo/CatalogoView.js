@@ -346,7 +346,7 @@ export class CatalogoView {
             const imgCapa = document.createElement('img');
             
             // 🌟 TRATAMENTO BLINDADO CONTRA ERROS DE TIPO (CORS, NULL E UNDEFINED)
-           let fonteImagem = titulo.Capa || "https://placeholder.com"; 
+           let fonteImagem = "https://placeholder.com"; 
 
             const stringPoster = titulo.Poster_Path ? String(titulo.Poster_Path).trim() : "";
 
@@ -1095,7 +1095,7 @@ export class CatalogoView {
     };
 
     // Exemplo de método para incluir na sua CatalogoView
-    async dispararAtualizacaoGeralMídias() {
+    async dispararAtualizacaoGeralMidias() {
     abrirModalAcao({
         titulo: "Atualizar Catálogo via TMDB",
         conteudoHTML: `
@@ -1111,7 +1111,7 @@ export class CatalogoView {
                 try {
                 if (containerStatus) containerStatus.innerHTML = "⏳ Pesquisando títulos no TMDB e vinculando identificadores...";
 
-                const resultado = await this.vm.atualizarTodoCatalogoViaTMDB2((mensagem) => {
+                const resultado = await this.vm.atualizarTitulosNulos((mensagem) => {
                     if (containerStatus) containerStatus.innerHTML = `⏳ ${mensagem}`;
                 });
 

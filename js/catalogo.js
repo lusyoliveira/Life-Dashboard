@@ -177,7 +177,7 @@ export async function inicializarCatalogo() {
         // Aguarda o DOM estar pronto caso o script carregue antes do elemento existir
     if (btnSincronizar) {
         btnSincronizar.addEventListener("click", async () => {
-            await catalogoView.dispararAtualizacaoGeralMídias();
+            await catalogoView.dispararAtualizacaoGeralMidias();
         });
     }
 };
