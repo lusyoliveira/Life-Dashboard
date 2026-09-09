@@ -116,7 +116,7 @@ export function renderizarControlesPaginacao(containerAlvo, totalPaginas, viewCo
     btnAnterior.disabled = viewContext.paginaAtualColecao === 1; // Acessa o contexto recebido
     btnAnterior.addEventListener('click', () => {
         viewContext.paginaAtualColecao--;
-        viewContext.carregarListaPessoal(); // Executa o método da View correspondente
+        viewContext.listarColecao(); // Executa o método da View correspondente
     });
 
     // Indicador numérico (Ex: Página 1 de 5)
@@ -131,7 +131,7 @@ export function renderizarControlesPaginacao(containerAlvo, totalPaginas, viewCo
     btnProximo.disabled = viewContext.paginaAtualColecao === totalPaginas;
     btnProximo.addEventListener('click', () => {
         viewContext.paginaAtualColecao++;
-        viewContext.carregarListaPessoal();
+        viewContext.listarColecao();
     });
 
     barraPaginacao.appendChild(btnAnterior);

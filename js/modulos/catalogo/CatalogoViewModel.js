@@ -300,7 +300,7 @@ export class CatalogoViewModel {
   };
 
   //pesquisa TMDB
-   async buscarMidias(nome, elementoId) {
+   async obterDadosTMDB(nome, elementoId) {
       const elementoDestino = document.getElementById(elementoId);
       
       elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
@@ -315,7 +315,7 @@ export class CatalogoViewModel {
         }
     };
   
-  // Método dedicado para preencher metadados de itens pendentes por Nome
+  // Método dedicado para preencher metadados de itens pendentes
   async atualizarTitulosNulos(progressoCallback = null) {
     try {
       // 1. Busca TODOS os itens cadastrados no seu sistema
@@ -391,7 +391,7 @@ export class CatalogoViewModel {
               return;
             }
 
-            // 🌟 CORREÇÃO CRÍTICA DO INDICE: Lendo o primeiro item da lista de resultados da pesquisa textual
+            // CORREÇÃO CRÍTICA DO INDICE: Lendo o primeiro item da lista de resultados da pesquisa textual
             const dadosTMDB = resultadoBusca.results[0];
             const urlPosterCorreta = dadosTMDB.poster_path 
               ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path

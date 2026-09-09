@@ -13,8 +13,7 @@ export class CatalogoView {
     constructor(vm) {
         this.vm = vm;
         this.registrarEventosTabela();
-        this.registrarEventosCardsColecao();
-        // Novas propriedades para controle da paginação da coleção
+        this.editarColecao();
         this.paginaAtualColecao = 1;
         this.itensPorPaginaColecao = 4; // Ajuste este número para quantos cards 
     }   
@@ -75,139 +74,98 @@ export class CatalogoView {
         await this.listarTipos("tipo-adicionar");
         await this.listarPlataforma("plataforma-adicionar");
         await this.listarStatus("status-adicionar");
-    };
+    };    
 
-    // async abrirModalEditarCatalogo(id) {
-    //     const titulo = await this.vm.obterTituloPorID(id);
+    async abrirModalEditarCatalogo(id) {
+        const titulo = await this.vm.obterTituloPorID(id);
 
-    //     abrirModalAcao({
-    //         titulo: "Editar título",
-    //         conteudoHTML: this.formHTML,
-    //         textoConfirmar: "Salvar alterações",
+        abrirModalAcao({
+            titulo: "Editar título",
+            conteudoHTML: this.formHTML,
+            textoConfirmar: "Salvar alterações",
 
-    //         onConfirmar: async () => {
-    //         const form = document.getElementById("formCatalogo");
+            onConfirmar: async () => {
+                const form = document.getElementById("formCatalogo");
 
-    //         if (!form.checkValidity()) {
-    //             form.reportValidity();
-    //             return false;
-    //         }
-
-    //         await this.salvarFormularioCatalogo(form);
-    //         await this.listarCatalogo();
-    //         }
-    //     });
-
-    //     await this.listarTipos("tipo-adicionar");
-    //     await this.listarPlataforma("plataforma-adicionar");
-    //     await this.listarStatus("status-adicionar");
-
-    //     document.getElementById("id-adicionar").value = titulo.id;
-    //     document.getElementById('titulo-adicionar').value = titulo.Titulo;
-    //     document.getElementById('capa-adicionar').value = titulo.Capa;
-    //     document.getElementById('data-inicio').value = new Date(titulo.Inicio).toISOString().slice(0, 16);
-    //     document.getElementById('data-fim').value = titulo.Fim === null ? null : new Date(titulo.Fim).toISOString().slice(0, 16);
-    //     document.getElementById('tipo-adicionar').value = titulo.Tipo.id;
-    //     document.getElementById('status-adicionar').value = titulo.Status.id;
-    //     document.getElementById('plataforma-adicionar').value = titulo.Plataforma.id;
-    //     document.getElementById('episodios-adicionar').value = titulo.Episodios;
-    //     document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
-    //     document.getElementById('temporada-adicionar').value = titulo.Temporadas;
-    //     document.getElementById('pontuacao-adicionar').value = titulo.Score;   
-    //     document.getElementById('vezes-adicionar').value = titulo.Vezes;  
-    // };
-
-        async abrirModalEditarCatalogo(id) {
-            const titulo = await this.vm.obterTituloPorID(id);
-
-            abrirModalAcao({
-                titulo: "Editar título",
-                conteudoHTML: this.formHTML,
-                textoConfirmar: "Salvar alterações",
-
-                onConfirmar: async () => {
-                    const form = document.getElementById("formCatalogo");
-
-                    if (!form.checkValidity()) {
-                        form.reportValidity();
-                        return false;
-                    }
-
-                    await this.salvarFormularioCatalogo(form);
-                    
-                    // Atualiza a tela de forma adaptável baseado no componente ativo no DOM
-                    const possuiTabela = document.getElementById("tabelaCatalogo");
-                    const possuiGridCards = document.getElementById("saved-grid");
-
-                    if (possuiTabela) {
-                        await this.listarCatalogo();
-                    } else if (possuiGridCards) {
-                        await this.carregarListaPessoal();
-                    }
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return false;
                 }
-            });
 
-            // Carrega as tabelas auxiliares nos selects da modal
-            await this.listarTipos("tipo-adicionar");
-            await this.listarPlataforma("plataforma-adicionar");
-            await this.listarStatus("status-adicionar");
+                await this.salvarFormularioCatalogo(form);
+                
+                // Atualiza a tela de forma adaptável baseado no componente ativo no DOM
+                const possuiTabela = document.getElementById("tabelaCatalogo");
+                const possuiGridCards = document.getElementById("saved-grid");
 
-            // Preenchimento da Aba 1 (Dados Gerais)
-            document.getElementById("id-adicionar").value = titulo.id;
-            document.getElementById('titulo-adicionar').value = titulo.Titulo;
-            document.getElementById('capa-adicionar').value = titulo.Capa;
-            document.getElementById('data-inicio').value = titulo.Inicio ? new Date(titulo.Inicio).toISOString().slice(0, 16) : '';
-            document.getElementById('data-fim').value = titulo.Fim ? new Date(titulo.Fim).toISOString().slice(0, 16) : '';
-            document.getElementById('tipo-adicionar').value = titulo.Tipo.id;
-            document.getElementById('status-adicionar').value = titulo.Status.id;
-            document.getElementById('plataforma-adicionar').value = titulo.Plataforma.id;
-            document.getElementById('episodios-adicionar').value = titulo.Episodios;
-            document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
-            document.getElementById('temporada-adicionar').value = titulo.Temporadas;
-            document.getElementById('pontuacao-adicionar').value = titulo.Score;   
-            document.getElementById('vezes-adicionar').value = titulo.Vezes;  
-
-            // Preenchimento dos metadados ocultos de controle
-            if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = titulo.IdTMDB || '';
-            if(document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
-            if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = titulo.Media_Type || '';
-            if(document.getElementById('genres-ids-adicionar')) document.getElementById('genres-ids-adicionar').value = titulo.Genres_Ids || '';
-            if(document.getElementById('popularity-adicionar')) document.getElementById('popularity-adicionar').value = titulo.Popularity || '';
-            if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = titulo.First_Air_Date || '';
-            if(document.getElementById('year-adicionar')) document.getElementById('year-adicionar').value = titulo.Year || '';
-            if(document.getElementById('vote-average-adicionar')) document.getElementById('vote-average-adicionar').value = titulo.Vote_Average || '';
-
-            // Preenchimento da Aba 2 (Metadados TMDB) e Elementos de Preview
-            if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = titulo.Overview || '';
-            
-            // Só atribui o valor se o campo realmente existir no HTML
-            const txtAreaPoster = document.getElementById('poster-path-adicionar');
-            if (txtAreaPoster) {
-                txtAreaPoster.value = titulo.Poster_Path || '';
-            }
-            
-            // Trata os labels informativos da interface do TMDB
-            if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
-            if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
-            if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
-
-            // Renderiza o pôster no preview gráfico
-            const previewImg = document.getElementById('tmdb-preview-poster');
-            if (previewImg && titulo.Poster_Path) {
-                const stringPoster = String(titulo.Poster_Path).trim();
-                if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
-                    previewImg.src = stringPoster.startsWith("data:image") || stringPoster.startsWith("http")
-                        ? stringPoster
-                        : "data:image/jpeg;base64," + stringPoster;
-                } else {
-                    previewImg.src = "https://placeholder.com";
+                if (possuiTabela) {
+                    await this.listarCatalogo();
+                } else if (possuiGridCards) {
+                    await this.listarColecao();
                 }
             }
+        });
 
-            // Ativação do botão de busca manual
-            this.registrarEventoBuscaManualTMDB();
+        // Carrega as tabelas auxiliares nos selects da modal
+        await this.listarTipos("tipo-adicionar");
+        await this.listarPlataforma("plataforma-adicionar");
+        await this.listarStatus("status-adicionar");
+
+        // Preenchimento da Aba 1 (Dados Gerais)
+        document.getElementById("id-adicionar").value = titulo.id;
+        document.getElementById('titulo-adicionar').value = titulo.Titulo;
+        document.getElementById('capa-adicionar').value = titulo.Capa;
+        document.getElementById('data-inicio').value = titulo.Inicio ? new Date(titulo.Inicio).toISOString().slice(0, 16) : '';
+        document.getElementById('data-fim').value = titulo.Fim ? new Date(titulo.Fim).toISOString().slice(0, 16) : '';
+        document.getElementById('tipo-adicionar').value = titulo.Tipo.id;
+        document.getElementById('status-adicionar').value = titulo.Status.id;
+        document.getElementById('plataforma-adicionar').value = titulo.Plataforma.id;
+        document.getElementById('episodios-adicionar').value = titulo.Episodios;
+        document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
+        document.getElementById('temporada-adicionar').value = titulo.Temporadas;
+        document.getElementById('pontuacao-adicionar').value = titulo.Score;   
+        document.getElementById('vezes-adicionar').value = titulo.Vezes;  
+
+        // Preenchimento dos metadados ocultos de controle
+        if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = titulo.IdTMDB || '';
+        if(document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
+        if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = titulo.Media_Type || '';
+        if(document.getElementById('genres-ids-adicionar')) document.getElementById('genres-ids-adicionar').value = titulo.Genres_Ids || '';
+        if(document.getElementById('popularity-adicionar')) document.getElementById('popularity-adicionar').value = titulo.Popularity || '';
+        if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = titulo.First_Air_Date || '';
+        if(document.getElementById('year-adicionar')) document.getElementById('year-adicionar').value = titulo.Year || '';
+        if(document.getElementById('vote-average-adicionar')) document.getElementById('vote-average-adicionar').value = titulo.Vote_Average || '';
+
+        // Preenchimento da Aba 2 (Metadados TMDB) e Elementos de Preview
+        if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = titulo.Overview || '';
+        
+        // Só atribui o valor se o campo realmente existir no HTML
+        const txtAreaPoster = document.getElementById('poster-path-adicionar');
+        if (txtAreaPoster) {
+            txtAreaPoster.value = titulo.Poster_Path || '';
+        }
+        
+        // Trata os labels informativos da interface do TMDB
+        if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
+        if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
+        if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
+
+        // Renderiza o pôster no preview gráfico
+        const previewImg = document.getElementById('tmdb-preview-poster');
+        if (previewImg && titulo.Poster_Path) {
+            const stringPoster = String(titulo.Poster_Path).trim();
+            if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
+                previewImg.src = stringPoster.startsWith("data:image") || stringPoster.startsWith("http")
+                    ? stringPoster
+                    : "data:image/jpeg;base64," + stringPoster;
+            } else {
+                previewImg.src = "https://placeholder.com";
+            }
+        }
+
+        // Ativação do botão de busca manual
+        this.registrarEventoBuscaManualTMDB();
     };
-
 
     async salvarFormularioCatalogo(form) {
         const idInput = form.querySelector('#id-adicionar')?.value || null;
@@ -274,6 +232,7 @@ export class CatalogoView {
         await this.vm.salvarTitulo(titulo);
     };
 
+    // Método para listar o catálogo e renderizar na tabela
     async listarCatalogo() {
         const dados = await this.vm.obterCatalogo();
         const listaOrdenada = dados.sort(
@@ -317,7 +276,7 @@ export class CatalogoView {
         });
     };
 
-    // ESTATÍSTICA
+    // Renderiza o painel de estatistica na página de catálogo, com base no tipo de mídia (Filme, Serie, Desenho)
     renderEstatistica(tipo, elementoId) {
         const stats = this.vm.estatisticasPorTipo(tipo);
         const elementoDestino = document.getElementById(elementoId);
@@ -404,6 +363,7 @@ export class CatalogoView {
         }        
     }
 
+    // Renderiza os gráficos de barra para Tipo, Status e Plataforma
     renderGraficos() {
         graficoBarra(
             "graficoTipo",
@@ -422,9 +382,9 @@ export class CatalogoView {
             this.vm.dadosGraficoPlataforma(),
             "Títulos por Plataforma"
         );
-    }
-   
- // RECENTES
+    };
+
+    // Renderiza os títulos adicionados recentemente na página de catálogo
     renderRecentes(elementoId)  {
         const recentes = this.vm.recentes(5);       
         const elementoDestino = document.getElementById(elementoId);
@@ -524,7 +484,7 @@ export class CatalogoView {
         });
     };
     
-
+    // Renderiza os títulos recentes por status na página de catálogo
     renderCardStatus(status,elementoId) {
         const catalogoStatus = this.vm.recentesPorStatus(status,4);
         const elementoDestino = document.getElementById(elementoId);    
@@ -532,58 +492,59 @@ export class CatalogoView {
         if (elementoDestino) {
                 elementoDestino.innerHTML = "";
                 catalogoStatus.forEach(titulo => {
-                    const li = document.createElement('li');
-                    li.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
-        
-                    const imgCapa = document.createElement('img');
-                    imgCapa.src = titulo.Capa
-                    imgCapa.alt = titulo.Titulo;
-                    imgCapa.width = 60;
-                    imgCapa.height = 80;
-                    imgCapa.classList.add('flex-shrink-0');
-        
-                    const divInfo = document.createElement('div');
-                    divInfo.classList.add('d-flex', 'gap-2', 'w-100', 'justify-content-between', 'align-items-center');
-        
-                    const divTitulo = document.createElement('div');
-                    divTitulo.classList.add('d-flex', 'flex-column', 'gap-1');
-        
-                    const h6Titulo = document.createElement('h6');
-                    h6Titulo.classList.add('mb-0');
-                    h6Titulo.textContent = titulo.Titulo;
-        
-                    const divProgresso = document.createElement('div');
-                    divProgresso.classList.add('progress');
-                    divProgresso.setAttribute('role', 'progressbar');
-                    divProgresso.setAttribute('aria-label', 'Progresso');
-                    divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
-                    divProgresso.setAttribute('aria-valuemin', '0');
-                    divProgresso.setAttribute('aria-valuemax', '100');
-        
-                    const divBarraProgresso = document.createElement('div');
-                    divBarraProgresso.classList.add('progress-bar');
-                    divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-                    divBarraProgresso.textContent =  `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-        
-                    const smallDataAdicao = document.createElement('small');
-                    smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
-                    const dataUTC = new Date(titulo.Adicao);                
-                    const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
-                    smallDataAdicao.textContent = metodoData.calculaTempoData(dataLocal);
-        
-                    divTitulo.appendChild(h6Titulo);
-                    divProgresso.appendChild(divBarraProgresso);
-                    divInfo.appendChild(divTitulo);
-                    divTitulo.appendChild(divProgresso);
-                    li.appendChild(imgCapa);
-                    li.appendChild(divInfo);
-                    li.appendChild(smallDataAdicao);
-                    elementoDestino.appendChild(li);
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
+    
+                const imgCapa = document.createElement('img');
+                imgCapa.src = titulo.Capa
+                imgCapa.alt = titulo.Titulo;
+                imgCapa.width = 60;
+                imgCapa.height = 80;
+                imgCapa.classList.add('flex-shrink-0');
+    
+                const divInfo = document.createElement('div');
+                divInfo.classList.add('d-flex', 'gap-2', 'w-100', 'justify-content-between', 'align-items-center');
+    
+                const divTitulo = document.createElement('div');
+                divTitulo.classList.add('d-flex', 'flex-column', 'gap-1');
+    
+                const h6Titulo = document.createElement('h6');
+                h6Titulo.classList.add('mb-0');
+                h6Titulo.textContent = titulo.Titulo;
+    
+                const divProgresso = document.createElement('div');
+                divProgresso.classList.add('progress');
+                divProgresso.setAttribute('role', 'progressbar');
+                divProgresso.setAttribute('aria-label', 'Progresso');
+                divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
+                divProgresso.setAttribute('aria-valuemin', '0');
+                divProgresso.setAttribute('aria-valuemax', '100');
+    
+                const divBarraProgresso = document.createElement('div');
+                divBarraProgresso.classList.add('progress-bar');
+                divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+                divBarraProgresso.textContent =  `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+    
+                const smallDataAdicao = document.createElement('small');
+                smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
+                const dataUTC = new Date(titulo.Adicao);                
+                const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
+                smallDataAdicao.textContent = metodoData.calculaTempoData(dataLocal);
+    
+                divTitulo.appendChild(h6Titulo);
+                divProgresso.appendChild(divBarraProgresso);
+                divInfo.appendChild(divTitulo);
+                divTitulo.appendChild(divProgresso);
+                li.appendChild(imgCapa);
+                li.appendChild(divInfo);
+                li.appendChild(smallDataAdicao);
+                elementoDestino.appendChild(li);
                     
-                });
-            }
+            });
         }
-
+    };
+    
+    // Renderiza os títulos recentes por tipo na página de catálogo
     renderCardTipo(tipo,elementoId) {
         const catalogoTipo = this.vm.topPorScore(tipo,4);
         const elementoDestino = document.getElementById(elementoId);
@@ -623,6 +584,7 @@ export class CatalogoView {
         }
     };
 
+    // Renderiza os títulos recentes de forma geral na página de catálogo
     renderCardGeral(elementoId) {
         const catalogoTipo = this.vm.topGeral(4);
         const elementoDestino = document.getElementById(elementoId);
@@ -660,8 +622,9 @@ export class CatalogoView {
                 
             });
         }
-    }   
-    
+    };
+
+    // Renderiza a contagem geral de títulos, episódios, assistidos, dias, horas e pontuação média na página de catálogo
     renderContagemGeral(elementoId, tipoContagem,resumo) {
         const catalogo = resumo || this.vm.resumoGeral();
         const elementoDestino = document.getElementById(elementoId);
@@ -819,8 +782,9 @@ export class CatalogoView {
             h6Card.textContent = contagem;
             elementoDestino.appendChild(h6Card);
         }            
-    }
+    };
 
+    // Renderiza os títulos assistindo na página home
     async  renderAssistindo(statusFiltro, elementoDestinoId) {
         const catalogoStatus = this.vm.assistindo(statusFiltro,4);
         const elementoDestino = document.getElementById(elementoDestinoId);     
@@ -895,6 +859,7 @@ export class CatalogoView {
         }
     };
 
+    // Renderiza os títulos mais frequentes na página do catalogo
     renderCardFrequentes(tipo,elementoId) {
         const catalogoTipo = this.vm.fequentes(tipo,4);
         const elementoDestino = document.getElementById(elementoId);      
@@ -932,6 +897,8 @@ export class CatalogoView {
             });
         }
     };
+
+    //Lista os status disponíveis no select da página de catálogo
     async listarStatus(elementoId) { 
         const statusVM = new StatusViewModel();  
         const status =  await statusVM.obterStatus('Catalogo')
@@ -939,6 +906,7 @@ export class CatalogoView {
         popularSelect(status,elementoId)
     };
 
+    //Lista os tipos disponíveis no select da página de catálogo
     async listarTipos(elementoId) {    
         const tiposVM = new TipoViewModel();
         const tipos =  await tiposVM.obterTipos('Catalogo')
@@ -946,6 +914,7 @@ export class CatalogoView {
         popularSelect(tipos,elementoId)
     };
 
+    //Lista as plataformas disponíveis no select da página de catálogo
     async listarPlataforma(elementoId) {
         const plataformaVM = new PlataformaViewModel();
         const plataforma = await plataformaVM.obterPlataforma('Catalogo');
@@ -965,7 +934,7 @@ export class CatalogoView {
         elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
 
         try {
-            const items = await this.vm.buscarMidias(termobusca, elementoId);
+            const items = await this.vm.obterDadosTMDB(termobusca, elementoId);
             
             // Limpa o estado de carregamento
             elementoDestino.innerHTML = '';
@@ -975,30 +944,62 @@ export class CatalogoView {
                 return;
             }
             
-            // CRUCIAL: Cria uma div com a classe row do Bootstrap para gerenciar a grade de cards
+            // Cria a div com as classes de grid do Bootstrap
             const divLinha = document.createElement('div');
             divLinha.className = 'row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4';
-            // ^ Explicando as classes acima:
-            // row-cols-1: 1 card por linha em telas muito pequenas (celular)
-            // row-cols-sm-2: 2 cards por linha em telas pequenas
-            // row-cols-md-3: 3 cards por linha em telas médias
-            // row-cols-lg-4: 4 cards por linha em telas grandes (computador)
-            // g-4: Adiciona um espaçamento (gap) agradável entre as linhas e colunas
-
+            
             items.forEach(item => { 
-                // 1. Cria a coluna que vai limitar o tamanho do card
+                // 1. Cria a coluna do grid
                 const divColuna = document.createElement('div');
                 divColuna.className = 'col';
 
-                // 2. Cria o card usando o método que você já reestruturou com Bootstrap
-                const elementoCard = this.criarCardMidia(item, false);
+                // 2. Cria a estrutura do card
+                const elementoCard = document.createElement('div');
+                elementoCard.className = 'card h-100';
+                
+                const capa = item.image ? item.image : "https://placeholder.com";
+                const tituloLimpo = item.title.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+                
+                elementoCard.innerHTML = `
+                    <img class="card-img-top" src="${capa}" alt="${tituloLimpo}">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-end mb-2">
+                                <span class="badge bg-secondary text-capitalize">${item.type}</span>
+                                <strong class="text-warning">⭐ ${item.score || 'N/A'}</strong>
+                            </div>
+                            <h5 class="card-title">${item.title}</h5>
+                            <p class="card-text small text-muted text-truncate-3">${item.synopsis || 'Sem sinopse disponível.'}</p>
+                        </div>
+                        
+                        <!-- Div âncora criada para gerenciar os elementos dinâmicos de ação -->
+                        <div class="action-container-${item.id} mt-3"></div>
+                    </div>
+                `;
 
-                // 3. Coloca o card dentro da coluna, e a coluna dentro da linha
+                // 3. Adiciona os elementos de ação dinâmicos do select (antigo bloco !isEstatico)
+                const containerAcao = elementoCard.querySelector(`.action-container-${item.id}`);
+                
+                const selectStatus = document.createElement('select');
+                selectStatus.id = "status-adicionar";
+                selectStatus.className = 'status-select form-select form-select-sm mb-2';
+                selectStatus.required = true;
+                
+                this.listarStatus("status-adicionar");
+
+                // Escutador do select que invoca o método alternarFormulario da classe
+                selectStatus.addEventListener('change', (e) => {
+                    this.alternarFormulario(item.id, e.target.value, containerAcao, tituloLimpo, item.type, capa);
+                });
+
+                containerAcao.appendChild(selectStatus);
+
+                // 4. Aninha os elementos: card dentro da coluna, coluna dentro da linha
                 divColuna.appendChild(elementoCard);
                 divLinha.appendChild(divColuna);
             });
 
-            // 4. Injeta a linha completa preenchida de colunas na tela
+            // 5. Injeta a linha completa preenchida no container de destino
             elementoDestino.appendChild(divLinha);
 
         } catch (error) {
@@ -1007,63 +1008,12 @@ export class CatalogoView {
         }
     };
 
-        criarCardMidia(item, isEstatico) {
-        const card = document.createElement('div');
-        card.className = 'card h-100';
-        const capa = item.image ? item.image : "https://placeholder.com";
-        const tituloLimpo = item.title.replace(/"/g, '&quot;').replace(/'/g, "\\'");
-        
-        card.innerHTML = `
-            <img class="card-img-top" src="${capa}" alt="${tituloLimpo}">
-            <div class="card-body d-flex flex-column justify-content-between">
-                <div>
-                    <div class="d-flex justify-content-between align-items-end mb-2">
-                        <span class="badge bg-secondary text-capitalize">${item.type}</span>
-                        <strong class="text-warning">⭐ ${item.score || 'N/A'}</strong>
-                    </div>
-                    <h5 class="card-title">${item.title}</h5>
-                    <p class="card-text small text-muted text-truncate-3">${item.synopsis || 'Sem sinopse disponível.'}</p>
-                </div>
-                
-                <!-- Div âncora criada para gerenciar os elementos dinâmicos de ação -->
-                <div class="action-container-${item.id} mt-3"></div>
-            </div>
-        `;
-
-        const containerAcao = card.querySelector(`.action-container-${item.id}`);
-
-        if (!isEstatico) {
-            const selectStatus = document.createElement('select');
-            selectStatus.id = `status-${item.id}`;
-            selectStatus.className = 'status-select form-select form-select-sm mb-2';
-            selectStatus.innerHTML = `
-                <option value="">-- Mudar Status --</option>
-                <option value="watching">Assistindo</option>
-                <option value="completed">Completado</option>
-                <option value="plan_to_watch">Planejado</option>
-                <option value="dropped">Abandonado</option>
-                <option value="on_hold">Em Espera</option>
-            `;
-
-            // O escutador dinâmico repassa o próprio container alvo como parâmetro
-            selectStatus.addEventListener('change', (e) => {
-                this.alternarFormulario(item.id, e.target.value, containerAcao, tituloLimpo, item.type, capa);
-            });
-
-            containerAcao.appendChild(selectStatus);
-        } else {
-            containerAcao.innerHTML = `<p style="margin:5px 0 0 0; font-size:12px; color:#666;">📍 Plataforma: ${item.platform || 'N/I'}</p>`;
-        }
-
-        return card;
-    }
-
     alternarFormulario(id, val, containerAlvo, titulo, tipo, capa) {
         // Localiza e limpa qualquer tracker anterior que já esteja aberto neste card
         const formAntigo = containerAlvo.querySelector(`.form-tracker-dinamico`);
         if (formAntigo) {
             formAntigo.remove();
-        }
+        }    
 
         // Se o usuário selecionou a opção vazia de volta, cancela a criação
         if (val === "") return;
@@ -1072,17 +1022,11 @@ export class CatalogoView {
         const divForm = document.createElement('div');
         divForm.className = 'form-tracker-dinamico mt-2 border-top pt-2';
 
+
         divForm.innerHTML = `
             <div class="mb-2">
-                <label class="form-label small mb-1 fw-bold">Plataforma</label>
-                <select id="plat-${id}" class="form-select form-select-sm">
-                    <option value="Netflix">Netflix</option>
-                    <option value="Crunchyroll">Crunchyroll</option>
-                    <option value="Disney+">Disney+</option>
-                    <option value="Prime Video">Prime Video</option>
-                    <option value="Max">Max</option>
-                    <option value="Stremio">Stremio/Torrent</option>
-                </select>
+                <label for="plataforma-adicionar" class="form-label small mb-1 fw-bold">Plataforma</label>
+                <select class="form-select" id="plataforma-adicionar" required></select>
             </div>
             <div class="row g-2 mb-2">
                 <div class="col-8">
@@ -1101,14 +1045,21 @@ export class CatalogoView {
                     </select>
                 </div>
                 <div class="col-4">
+                    <label for="tipo-adicionar" class="form-label small fw-bold">Tipo</label>
+                    <select class="form-select form-select-sm" id="tipo-adicionar" required></select>
+                </div>
+            </div>
+            <div class="row g-2 mb-2">                
+                <div class="col-4">
                     <label class="form-label small mb-1 fw-bold">Episódios</label>
                     <input type="number" id="ep-${id}" class="form-control form-control-sm" value="0" min="0">
                 </div>
+                <div class="form-check mb-2">
+                    <input type="checkbox" id="rew-${id}" class="form-check-input">
+                    <label for="rew-${id}" class="form-check-label small">Estou revendo</label>
+                </div>
             </div>
-            <div class="form-check mb-2">
-                <input type="checkbox" id="rew-${id}" class="form-check-input">
-                <label for="rew-${id}" class="form-check-label small">Estou revendo</label>
-            </div>
+
             <div class="row g-2 mb-3">
                 <div class="col-6">
                     <label class="form-label small mb-1 fw-bold">Início</label>
@@ -1120,6 +1071,9 @@ export class CatalogoView {
                 </div>
             </div>
         `;
+
+        this.listarTipos("tipo-adicionar");
+        this.listarPlataforma("plataforma-adicionar");
 
         // Instancia o botão de confirmação com escopo léxico puro
         const btnSalvar = document.createElement('button');
@@ -1138,7 +1092,7 @@ export class CatalogoView {
         containerAlvo.appendChild(divForm);
     }
 
-    async carregarListaPessoal() {
+    async listarColecao() {
         const savedGrid = document.getElementById('saved-grid');
         if (!savedGrid) return;
         
@@ -1223,7 +1177,7 @@ export class CatalogoView {
         abrirModalAcao({
         titulo: "Atualizar Catálogo via TMDB",
         conteudoHTML: `
-        <p>Deseja sincronizar e atualizar as informações dos 200 títulos do seu banco de dados com o TMDB agora?</p>
+        <p>Deseja sincronizar e atualizar as informações os títulos do seu banco de dados com o TMDB agora?</p>
         <div id="status-sincronizacao-lote" class="text-muted small fw-bold"></div>
         `,
         textoConfirmar: "Iniciar Atualização",
@@ -1250,7 +1204,7 @@ export class CatalogoView {
                 if (possuiTabela) {
                     await this.listarCatalogo();
                 } else if (possuiGridCards) {
-                    await this.carregarListaPessoal();
+                    await this.listarColecao();
                 }
                 
                 } catch (erro) {
@@ -1260,7 +1214,7 @@ export class CatalogoView {
             }
         });
     };
-    // Adicione este novo método dentro da classe CatalogoView no seu arquivo CatalogoView.js
+
     //Revisar metodo
     registrarEventoBuscaManualTMDB() {
         const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
@@ -1356,8 +1310,9 @@ export class CatalogoView {
             }
         });
     };
-     //Captura o clique em qualquer lugar do card e abre a modal de edição
-    registrarEventosCardsColecao() {
+
+    //Captura o clique em qualquer lugar do card e abre a modal de edição
+    editarColecao() {
         const gridSalvo = document.getElementById("saved-grid");
         if (!gridSalvo) return;
 

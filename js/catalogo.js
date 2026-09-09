@@ -32,7 +32,7 @@ export async function inicializarCatalogo() {
     await statusView.renderCardStatus('lista-status', 'Catalogo');
     await tipoView.renderCardTipos('lista-tipo', 'Catalogo');
     //await catalogoView.listarCatalogo();
-    await catalogoView.carregarListaPessoal();
+    await catalogoView.listarColecao();
     
     //Contagem
     const resumo = vm.resumoGeral();

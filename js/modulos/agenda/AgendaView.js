@@ -7,8 +7,7 @@ import { graficoPizza } from "../../componentes/graficos/GraficosFactory.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
 import { abrirModalAcao } from "../../Utils/modal.js";
-import Agenda from "./agendaModel.js";
-import { LogarithmicScale } from "chart.js";
+
 
 export class AgendaView {
   constructor(vm) {
@@ -21,71 +20,71 @@ export class AgendaView {
     if (!tabela) return;
 
     tabela.addEventListener("click", async (e) => {
-        const btnEditar = e.target.closest(".btn-editar");
-        const btnExcluir = e.target.closest(".btn-excluir");
+      const btnEditar = e.target.closest(".btn-editar");
+      const btnExcluir = e.target.closest(".btn-excluir");
 
-        if (btnEditar) {
+      if (btnEditar) {
         await this.abrirModalEditarAgenda(btnEditar.dataset.id);
-        }
+      }
 
-        if (btnExcluir) {
+      if (btnExcluir) {
         await this.abrirModalExcluirAgenda(btnExcluir.dataset.id);
-        }
+      }
     });
   };
 
   async abrirModalExcluirAgenda(id) {
-      abrirModalAcao({
-          titulo: "Excluir agendamento",
-          conteudoHTML: `<p>Deseja realmente excluir este agedamento?</p>`,
-          textoConfirmar: "Excluir",
-          classeBotao: "btn-danger",
+    abrirModalAcao({
+      titulo: "Excluir agendamento",
+      conteudoHTML: `<p>Deseja realmente excluir este agedamento?</p>`,
+      textoConfirmar: "Excluir",
+      classeBotao: "btn-danger",
 
-          onConfirmar: async () => {
-          await this.vm.excluirAgenda(id);
-          await this.listarAgenda();
-          }
-      });
+      onConfirmar: async () => {
+        await this.vm.excluirAgenda(id);
+        await this.listarAgenda();
+      }
+    });
   };
 
   async abrirModalCriarAgenda() {
-      abrirModalAcao({
-          titulo: "Adicionar agendamento",
-          conteudoHTML: this.formHTML,
-          textoConfirmar: "Salvar",
+    abrirModalAcao({
+      titulo: "Adicionar agendamento",
+      conteudoHTML: this.formHTML,
+      textoConfirmar: "Salvar",
 
-          onConfirmar: async () => {
-          const form = document.getElementById("formAgenda");
+      onConfirmar: async () => {
+        const form = document.getElementById("formAgenda");
 
-          if (!form.checkValidity()) {
-              form.reportValidity();
-              return false;
-          }
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return false;
+        }
 
-          await this.salvarFormularioAgenda(form);
-          await this.listarAgenda();
-          }
-      });
+        await this.salvarFormularioAgenda(form);
+        await this.listarAgenda();
+      }
+    });
 
-       //ativa recorrencia
+    //ativa recorrencia
     const checkboxRecorrente = document.getElementById('recorrente-adicionar');
     const divrecorrrencia = document.getElementById('periodicidade');
 
     checkboxRecorrente.addEventListener('change', () => {
-        if (checkboxRecorrente.checked) {
-            divrecorrrencia.classList.remove('d-none');
-            divrecorrrencia.classList.add('d-block');
-        } else {
-            divrecorrrencia.classList.remove('d-block');
-            divrecorrrencia.classList.add('d-none');
-        }
+      if (checkboxRecorrente.checked) {
+        divrecorrrencia.classList.remove('d-none');
+        divrecorrrencia.classList.add('d-block');
+      } else {
+        divrecorrrencia.classList.remove('d-block');
+        divrecorrrencia.classList.add('d-none');
+      }
     });
 
-      limparFormulario();
+    limparFormulario();
 
-      await this.listarTipos('tipo-adicionar');
-      await this.listarCategoria('categoria-adicionar');
-      await this.listarStatus('status-adicionar');
+    await this.listarTipos('tipo-adicionar');
+    await this.listarCategoria('categoria-adicionar');
+    await this.listarStatus('status-adicionar');
 
   };
 
@@ -93,22 +92,22 @@ export class AgendaView {
     const agenda = await this.vm.obterAgendaPorID(id);
 
     abrirModalAcao({
-        titulo: "Editar agendamento",
-        conteudoHTML: this.formHTML,
-        textoConfirmar: "Salvar alterações",
+      titulo: "Editar agendamento",
+      conteudoHTML: this.formHTML,
+      textoConfirmar: "Salvar alterações",
 
-        onConfirmar: async () => {
+      onConfirmar: async () => {
         const form = document.getElementById("formAgenda");
 
         if (!form.checkValidity()) {
-            form.reportValidity();
-            return false;
+          form.reportValidity();
+          return false;
         }
 
         await this.salvarFormularioAgenda(form);
         await this.listarAgenda();
-        }
-    });    
+      }
+    });
 
     await this.listarTipos('tipo-adicionar');
     await this.listarCategoria('categoria-adicionar');
@@ -116,10 +115,10 @@ export class AgendaView {
 
     document.getElementById('id-adicionar').value = agenda.id;
     document.getElementById('titulo-adicionar').value = agenda.Titulo;
-    document.getElementById('data-adicionar').value = new Date(agenda.Data).toISOString().slice(0,16);
+    document.getElementById('data-adicionar').value = new Date(agenda.Data).toISOString().slice(0, 16);
     document.getElementById('categoria-adicionar').value = agenda.Categoria.id;
     document.getElementById('tipo-adicionar').value = agenda.Tipo.id;
-    document.getElementById('status-adicionar').value = agenda.Status.id; 
+    document.getElementById('status-adicionar').value = agenda.Status.id;
     document.getElementById('recorrente-adicionar').checked = agenda.Recorrente;
     document.getElementById('periodicidade-adicionar').value = agenda.Periodicidade;
   };
@@ -152,42 +151,42 @@ export class AgendaView {
   }
 
   async listarAgenda() {
-      const dados = await this.vm.obterAgenda();
-      const listaOrdenada = dados.sort(
-          (a, b) => new Date(a.Data).getTime() - new Date(b.Data).getTime()
-      );    
+    const dados = await this.vm.obterAgenda();
+    const listaOrdenada = dados.sort(
+      (a, b) => new Date(a.Data).getTime() - new Date(b.Data).getTime()
+    );
 
-      //await this.vm.gerarRecorrencias();
-      
-      criarDataTable({
+    //await this.vm.gerarRecorrencias();
+
+    criarDataTable({
       tabelaId: "tabelaAgenda",
       dados: listaOrdenada,
       colunas: [
-          { title: "Título", data: "Titulo" },
-          {
-            title: "Categoria",
-            data: "Categoria",
-            render: (data) => data.descricao
-          },
-          {
-            title: "Status",
-            data: "Status",
-            render: (data) => data.descricao
-          },
-          {
-            title: "Tipo",
-            data: "Tipo",
-            render: (data) => data.descricao
-          },
-          {
-              title: "Data",
-              data: "Data",
-              render: (Data) => metodoData.formatarDataBR(Data)
-          },
-          colunaAcoes({ campoId: "id" })
+        { title: "Título", data: "Titulo" },
+        {
+          title: "Categoria",
+          data: "Categoria",
+          render: (data) => data.descricao
+        },
+        {
+          title: "Status",
+          data: "Status",
+          render: (data) => data.descricao
+        },
+        {
+          title: "Tipo",
+          data: "Tipo",
+          render: (data) => data.descricao
+        },
+        {
+          title: "Data",
+          data: "Data",
+          render: (Data) => metodoData.formatarDataBR(Data)
+        },
+        colunaAcoes({ campoId: "id" })
 
-          ]
-      });
+      ]
+    });
   };
 
   async renderProximosCompromissos(elementoDestinoId, qtd) {
@@ -197,7 +196,7 @@ export class AgendaView {
     if (elementoDestino) {
       elementoDestino.innerHTML = "";
       agendaFiltrada.forEach((compromisso) => {
-   
+
         const dataUTC = new Date(compromisso.Data);
         const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
         elementoDestino.innerHTML += `            
@@ -206,9 +205,8 @@ export class AgendaView {
                         <h5 class="mb-1">${compromisso.Titulo}</h5>
                         <small>${metodoData.calculaTempoData(dataLocal)}</small>
                         </div>
-                        <small class="badge text-bg-info">${
-                          compromisso.Categoria.descricao
-                        }</small>
+                        <small class="badge text-bg-info">${compromisso.Categoria.descricao
+          }</small>
                     </a>
                 `;
       });
@@ -390,7 +388,7 @@ export class AgendaView {
     btnAdicionar.classList.add("btn");
     btnAdicionar.title = "Adicionar Evento";
     btnAdicionar.id = "adicionar-evento";
-    btnAdicionar.onclick = async () => {  
+    btnAdicionar.onclick = async () => {
       await this.abrirModalCriarAgenda();
     };
 
@@ -444,18 +442,18 @@ export class AgendaView {
     this.preencherCalendario(mes, ano, elementoId);
   }
 
-  async listarTipos(elementoId) {    
+  async listarTipos(elementoId) {
     const tipoVM = new TipoViewModel();
-    const tipos =  await tipoVM.obterTipos('Agenda');
-    
-    popularSelect(tipos,elementoId)
+    const tipos = await tipoVM.obterTipos('Agenda');
+
+    popularSelect(tipos, elementoId)
   };
 
-  async listarStatus(elementoId) {    
+  async listarStatus(elementoId) {
     const statusVM = new StatusViewModel();
-    const status =  await statusVM.obterStatus('Geral');
-    
-    popularSelect(status,elementoId)
+    const status = await statusVM.obterStatus('Geral');
+
+    popularSelect(status, elementoId)
   };
 
   async listarCategoria(elementoId) {
@@ -466,13 +464,13 @@ export class AgendaView {
   };
 
   async renderGraficos() {
-      const dados = await this.vm.compromissosporCategoria();
+    const dados = await this.vm.compromissosporCategoria();
 
-      graficoPizza(
-          "graficoCategoria",
-          dados,
-          "Compromissos por Categoria"
-      );
+    graficoPizza(
+      "graficoCategoria",
+      dados,
+      "Compromissos por Categoria"
+    );
   };
 
 }
