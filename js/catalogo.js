@@ -31,7 +31,6 @@ export async function inicializarCatalogo() {
     await plataformaView.renderCardPlataformas('lista-plataforma', 'Catalogo');
     await statusView.renderCardStatus('lista-status', 'Catalogo');
     await tipoView.renderCardTipos('lista-tipo', 'Catalogo');
-    //await catalogoView.listarCatalogo();
     await catalogoView.listarColecao();
     
     //Contagem
@@ -159,9 +158,8 @@ export async function inicializarCatalogo() {
       document.getElementById('input-id-tipo').value = ''
     });
 
-    //Pesquisa TMDB
-    
-     searchButton.addEventListener('click', () => {
+    //Pesquisa no TMDB
+    searchButton.addEventListener('click', () => {
         const query = searchInput.value.trim();
         if (query) catalogoView.renderizarCardsBusca(query,'results-grid');
     });
@@ -173,8 +171,7 @@ export async function inicializarCatalogo() {
         }
     });
 
-
-        // Aguarda o DOM estar pronto caso o script carregue antes do elemento existir
+    // Aguarda o DOM estar pronto caso o script carregue antes do elemento existir
     if (btnSincronizar) {
         btnSincronizar.addEventListener("click", async () => {
             await catalogoView.dispararAtualizacaoGeralMidias();

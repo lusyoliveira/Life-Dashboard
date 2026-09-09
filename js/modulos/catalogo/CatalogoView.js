@@ -163,10 +163,11 @@ export class CatalogoView {
             }
         }
 
-        // Ativação do botão de busca manual
-        this.registrarEventoBuscaManualTMDB();
+        // Atualiza o título da modal com base no ID do TMDB, se disponível
+        this.atualizarTituloPorIDTMDB();
     };
 
+    // Método para salvar o formulário de criação/edição de título
     async salvarFormularioCatalogo(form) {
         const idInput = form.querySelector('#id-adicionar')?.value || null;
         const descricao = form.querySelector('#titulo-adicionar').value;
@@ -182,7 +183,7 @@ export class CatalogoView {
         const pontuacao = form.querySelector('#pontuacao-adicionar').value;
         const vezes = form.querySelector('#vezes-adicionar').value;
         const idtmdb = form.querySelector('#id-tmdb-adicionar').value;
-        const originalName = form.querySelector('#original-name-adicionar').value;
+        const originalName = form.querySelector('#titulo-adicionar').value;
         const overview = form.querySelector('#overview-adicionar').value;
         const posterPath = form.querySelector('#poster-path-adicionar').value;
         const mediaType = form.querySelector('#media-type-adicionar').value;
@@ -230,6 +231,88 @@ export class CatalogoView {
         );
         
         await this.vm.salvarTitulo(titulo);
+    };
+
+    // Método para listar a coleção de títulos e renderizar em cards
+    async listarColecao() {
+        const savedGrid = document.getElementById('saved-grid');
+        if (!savedGrid) return;
+        
+        savedGrid.innerHTML = '<p>Carregando sua lista...</p>';
+
+        try {
+            const dados = await this.vm.obterCatalogo();
+            const listaOrdenada = dados.sort(
+                (b,a) => new Date(a.Adicao).getTime() - new Date(b.Adicao).getTime()
+            ); 
+
+            if (!listaOrdenada || listaOrdenada.length === 0) {
+                savedGrid.innerHTML = '<p>Sua lista está vazia. Volte para a busca e adicione mídias!</p>';
+                return;
+            }
+
+            savedGrid.innerHTML = '';
+            
+            const indiceInicio = (this.paginaAtualColecao - 1) * this.itensPorPaginaColecao;
+            const indiceFim = indiceInicio + this.itensPorPaginaColecao;
+            const itensPaginados = listaOrdenada.slice(indiceInicio, indiceFim);
+
+            itensPaginados.forEach(item => {
+                const card = document.createElement('div');
+                // Adicionado 'user-select-none' e estilo de cursor para indicar que o card é clicável
+                card.className = 'card h-100 shadow-sm';
+                card.style.cursor = 'pointer';
+                // INJEÇÃO CRÍTICA: Vincula o ID do banco de dados ao card
+                card.setAttribute('data-id', item.id);
+
+                const dataInicio = item.Inicio ? metodoData.formatarDataBR(item.Inicio) : 'Não iniciada';
+                const dataFim = item.Fim ? metodoData.formatarDataBR(item.Fim) : 'Não finalizada';
+                const textoNota = item.Score ? item.Score : 'Sem nota';
+
+                // Tratamento dinâmico para renderizar a Capa Base64 ou URL da web
+                let fonteImagem = item.Capa || "https://placeholder.com";
+                const stringPoster = item.Poster_Path ? String(item.Poster_Path).trim() : "";
+
+                if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
+                    if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
+                        fonteImagem = stringPoster;
+                    } else {
+                        fonteImagem = "data:image/jpeg;base64," + stringPoster;
+                    }
+                }
+
+                card.innerHTML = 
+                    '<img class="card-img-top" src="' + fonteImagem + '" alt="' + item.Titulo + '" style="height: 320px;">' +
+                    '<div class="card-body d-flex flex-column justify-content-between">' +
+                        '<div>' +
+                            '<h5 class="card-title text-truncate">' + item.Titulo + '</h5>' +
+                            '<p class="card-text small text-muted mb-2">' +
+                                '<strong>Tipo:</strong> ' + (item.Tipo?.descricao || 'Não informado') + '<br>' +
+                                '<strong>Onde:</strong> ' + (item.Plataforma?.descricao || 'Não informado') +
+                            '</p>' +
+                        '</div>' +
+                        '<div class="border-top pt-2 mt-2 small text-muted">' +
+                            '📅 ' + dataInicio + ' até ' + dataFim +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="card-footer bg-transparent border-top-0">' +
+                        '<span class="badge bg-primary w-100 py-2">⭐ Nota: ' + textoNota + '</span>' +
+                    '</div>';
+
+                // Encapsula o card em uma coluna estruturada do Bootstrap Grid
+                const coluna = document.createElement('div');
+                coluna.className = 'col-md-3 col-sm-6 mb-4';
+                coluna.appendChild(card);
+
+                savedGrid.appendChild(coluna);
+            });
+
+            const totalPaginas = Math.ceil(listaOrdenada.length / this.itensPorPaginaColecao);
+            renderizarControlesPaginacao(savedGrid, totalPaginas, this);
+        } catch (error) {
+            savedGrid.innerHTML = '<p>Erro ao carregar sua lista.</p>';
+            console.error(error);
+        }
     };
 
     // Método para listar o catálogo e renderizar na tabela
@@ -987,9 +1070,27 @@ export class CatalogoView {
                 
                 this.listarStatus("status-adicionar");
 
+
                 // Escutador do select que invoca o método alternarFormulario da classe
                 selectStatus.addEventListener('change', (e) => {
-                    this.alternarFormulario(item.id, e.target.value, containerAcao, tituloLimpo, item.type, capa);
+
+                    const payload = {
+                        statusId: document.getElementById('status-adicionar').value,
+                        episodios: item.episodes || 0,
+                        temporada: item.season || 0,
+                        idtmdb: item.id,
+                        originalName: item.originalName,
+                        overview: item.overview,
+                        posterPath: item.posterPath,
+                        mediaType: item.mediaType,
+                        genresIds: item.genresIds,
+                        popularity: item.popularity,
+                        firstAirDate: item.firstAirDate,
+                        year: new Date(item.releaseDate || item.firstAirDate).getFullYear(),
+                        voteAverage: item.voteAverage || 0
+                    }
+
+                    this.alternarFormulario(e.target.value, containerAcao, payload);
                 });
 
                 containerAcao.appendChild(selectStatus);
@@ -1008,7 +1109,7 @@ export class CatalogoView {
         }
     };
 
-    alternarFormulario(id, val, containerAlvo, titulo, tipo, capa) {
+    alternarFormulario( val, containerAlvo, payload) {
         // Localiza e limpa qualquer tracker anterior que já esteja aberto neste card
         const formAntigo = containerAlvo.querySelector(`.form-tracker-dinamico`);
         if (formAntigo) {
@@ -1031,7 +1132,7 @@ export class CatalogoView {
             <div class="row g-2 mb-2">
                 <div class="col-8">
                     <label class="form-label small mb-1 fw-bold">Minha Nota</label>
-                    <select id="rate-${id}" class="form-select form-select-sm">
+                    <select id="pontuacao-adicionar" class="form-select form-select-sm">
                         <option value="10">⭐ (10) Obra-Prima</option>
                         <option value="9">⭐ (9) Excelente</option>
                         <option value="8">⭐ (8) Muito Bom</option>
@@ -1051,24 +1152,34 @@ export class CatalogoView {
             </div>
             <div class="row g-2 mb-2">                
                 <div class="col-4">
-                    <label class="form-label small mb-1 fw-bold">Episódios</label>
-                    <input type="number" id="ep-${id}" class="form-control form-control-sm" value="0" min="0">
-                </div>
-                <div class="form-check mb-2">
-                    <input type="checkbox" id="rew-${id}" class="form-check-input">
-                    <label for="rew-${id}" class="form-check-label small">Estou revendo</label>
+                    <label class="form-label small mb-1 fw-bold">Episódios Assistidos</label>
+                    <input type="number" id="assistidos-adicionar" class="form-control form-control-sm" value="0" min="0" required>
                 </div>
             </div>
 
             <div class="row g-2 mb-3">
                 <div class="col-6">
                     <label class="form-label small mb-1 fw-bold">Início</label>
-                    <input type="date" id="start-${id}" class="form-control form-control-sm">
+                    <input type="date" id="data-inicio" class="form-control form-control-sm">
                 </div>
                 <div class="col-6">
                     <label class="form-label small mb-1 fw-bold">Fim</label>
-                    <input type="date" id="end-${id}" class="form-control form-control-sm">
+                    <input type="date" id="data-fim" class="form-control form-control-sm">
                 </div>
+            </div>
+            <div class="mb-2">
+                <input type="hidden" id="status-adicionar" value="${payload.statusId}">
+                <input type="hidden" id="temporada-adicionar" value="${payload.temporada}">
+                <input type="hidden" id="episodios-adicionar" value="${payload.episodios}">
+                <input type="hidden" id="idtmdb-adicionar" value="${payload.idtmdb}">
+                <input type="hidden" id="originalName-adicionar" value="${payload.originalName}">
+                <input type="hidden" id="overview-adicionar" value="${payload.overview}">
+                <input type="hidden" id="posterPath-adicionar" value="${payload.posterPath}">
+                <input type="hidden" id="mediaType-adicionar" value="${payload.mediaType}">
+                <input type="hidden" id="genresIds-adicionar" value="${payload.genresIds}">
+                <input type="hidden" id="popularity-adicionar" value="${payload.popularity}">
+                <input type="hidden" id="firstAirDate-adicionar" value="${payload.firstAirDate}">
+                <input type="hidden" id="year-adicionar" value="${payload.year}">                
             </div>
         `;
 
@@ -1081,97 +1192,12 @@ export class CatalogoView {
         btnSalvar.textContent = 'Confirmar e Salvar';
         
         btnSalvar.addEventListener('click', async () => {
-            if (typeof window.salvarItemCompleto === 'function') {
-                await window.salvarItemCompleto(id, titulo, tipo, capa);
-            } else {
-                console.error("Erro: A função global 'salvarItemCompleto' não foi encontrada.");
-            }
+             await this.salvarFormularioCatalogo(formAntigo);
         });
 
         divForm.appendChild(btnSalvar);
         containerAlvo.appendChild(divForm);
     }
-
-    async listarColecao() {
-        const savedGrid = document.getElementById('saved-grid');
-        if (!savedGrid) return;
-        
-        savedGrid.innerHTML = '<p>Carregando sua lista...</p>';
-
-        try {
-            const dados = await this.vm.obterCatalogo();
-            const listaOrdenada = dados.sort(
-                (b,a) => new Date(a.Adicao).getTime() - new Date(b.Adicao).getTime()
-            ); 
-
-            if (!listaOrdenada || listaOrdenada.length === 0) {
-                savedGrid.innerHTML = '<p>Sua lista está vazia. Volte para a busca e adicione mídias!</p>';
-                return;
-            }
-
-            savedGrid.innerHTML = '';
-            
-            const indiceInicio = (this.paginaAtualColecao - 1) * this.itensPorPaginaColecao;
-            const indiceFim = indiceInicio + this.itensPorPaginaColecao;
-            const itensPaginados = listaOrdenada.slice(indiceInicio, indiceFim);
-
-            itensPaginados.forEach(item => {
-                const card = document.createElement('div');
-                // Adicionado 'user-select-none' e estilo de cursor para indicar que o card é clicável
-                card.className = 'card h-100 shadow-sm';
-                card.style.cursor = 'pointer';
-                // INJEÇÃO CRÍTICA: Vincula o ID do banco de dados ao card
-                card.setAttribute('data-id', item.id);
-
-                const dataInicio = item.Inicio ? metodoData.formatarDataBR(item.Inicio) : 'Não iniciada';
-                const dataFim = item.Fim ? metodoData.formatarDataBR(item.Fim) : 'Não finalizada';
-                const textoNota = item.Score ? item.Score : 'Sem nota';
-
-                // Tratamento dinâmico para renderizar a Capa Base64 ou URL da web
-                let fonteImagem = item.Capa || "https://placeholder.com";
-                const stringPoster = item.Poster_Path ? String(item.Poster_Path).trim() : "";
-
-                if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
-                    if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
-                        fonteImagem = stringPoster;
-                    } else {
-                        fonteImagem = "data:image/jpeg;base64," + stringPoster;
-                    }
-                }
-
-                card.innerHTML = 
-                    '<img class="card-img-top" src="' + fonteImagem + '" alt="' + item.Titulo + '" style="height: 320px; object-fit: cover;">' +
-                    '<div class="card-body d-flex flex-column justify-content-between">' +
-                        '<div>' +
-                            '<h5 class="card-title text-truncate">' + item.Titulo + '</h5>' +
-                            '<p class="card-text small text-muted mb-2">' +
-                                '<strong>Tipo:</strong> ' + (item.Tipo?.descricao || 'Não informado') + '<br>' +
-                                '<strong>Onde:</strong> ' + (item.Plataforma?.descricao || 'Não informado') +
-                            '</p>' +
-                        '</div>' +
-                        '<div class="border-top pt-2 mt-2 small text-muted">' +
-                            '📅 ' + dataInicio + ' até ' + dataFim +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="card-footer bg-transparent border-top-0">' +
-                        '<span class="badge bg-primary w-100 py-2">⭐ Nota: ' + textoNota + '</span>' +
-                    '</div>';
-
-                // Encapsula o card em uma coluna estruturada do Bootstrap Grid
-                const coluna = document.createElement('div');
-                coluna.className = 'col-md-3 col-sm-6 mb-4';
-                coluna.appendChild(card);
-
-                savedGrid.appendChild(coluna);
-            });
-
-            const totalPaginas = Math.ceil(listaOrdenada.length / this.itensPorPaginaColecao);
-            renderizarControlesPaginacao(savedGrid, totalPaginas, this);
-        } catch (error) {
-            savedGrid.innerHTML = '<p>Erro ao carregar sua lista.</p>';
-            console.error(error);
-        }
-    };
     // Exemplo de método para incluir na sua CatalogoView
     async dispararAtualizacaoGeralMidias() {
         abrirModalAcao({
@@ -1189,7 +1215,7 @@ export class CatalogoView {
                 try {
                 if (containerStatus) containerStatus.innerHTML = "⏳ Pesquisando títulos no TMDB e vinculando identificadores...";
 
-                const resultado = await this.vm.atualizarTitulosNulos((mensagem) => {
+                const resultado = await this.vm.atualizarCatalogoTMDB((mensagem) => {
                     if (containerStatus) containerStatus.innerHTML = `⏳ ${mensagem}`;
                 });
 
@@ -1215,96 +1241,32 @@ export class CatalogoView {
         });
     };
 
-    //Revisar metodo
-    registrarEventoBuscaManualTMDB() {
+    //Método simplificado que reutiliza nativamente a lógica unificada da ViewModel
+    atualizarTituloPorIDTMDB(idTitulo) {
         const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
         if (!btnBuscar) return;
 
         btnBuscar.addEventListener("click", async () => {
-            const idDigitado = document.getElementById("tmdb-id-busca-manual").value.trim();
-            const tipoSelecionadoId = document.getElementById("tipo-adicionar").value;
-            
-            // Descobre se é filme ou série com base no select da primeira aba
-            // Como sua tabela mapeia Desenho, Anime e Série para TV, e Filme (ID 6 ou string) para Movie:
-            const selectTipo = document.getElementById("tipo-adicionar");
-            const textoTipo = selectTipo.options[selectTipo.selectedIndex]?.text || '';
-            const deparTipo = (textoTipo === 'Filme' || tipoSelecionadoId === '6') ? 'movie' : 'tv';
+            const idManualDigitado = document.getElementById("tmdb-id-busca-manual").value.trim();
 
-            if (!idDigitado) {
-                alert("Por favor, digite um ID numérico válido do TMDB.");
+            if (!idManualDigitado) {
+                alert("Por favor, digite um ID numérico válido do TMDB para vincular.");
                 return;
             }
 
-            // Altera o estado do botão para carregamento
             btnBuscar.disabled = true;
-            btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...`;
+            btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Vinculando...`;
 
             try {
-                // Recupera as configurações e chave salvas no seu sistema
-                const configuracoesSalvas = await this.vm.obterConfiguracoes?.() || [];
-                // Fallback para buscar direto da ViewModel se o método acima não existir no escopo direto da View:
-                const cfvm = new window.ConfiguracaoViewModel ? new window.ConfiguracaoViewModel('configuracoes') : null;
-                const dadosConfig = cfvm ? (await cfvm.obterConfiguracoes())[0] : null;
+                // Invocamos a rotina unificada passando o idTitulo do banco de dados local
+                await this.vm.atualizarCatalogoTMDB(null, idTitulo);
+                alert(`✅ Título sincronizado com sucesso! Os metadados foram atualizados.`);
                 
-                const API_KEY = dadosConfig?.chaveTMDB || '724c80009be7e12d8e02b1b30abe29f6';
-                const url = `https://themoviedb.org{deparTipo}/${idDigitado}?api_key=${API_KEY}&language=pt-BR`;
-
-                const resposta = await fetch(url);
-                if (!resposta.ok) throw new Error(`Mídia não encontrada. Código HTTP: ${resposta.status}`);
-                
-                const dadosTMDB = await resposta.json();
-
-                // 1. Atualiza os campos ocultos de controle da Modal
-                document.getElementById('id-tmdb-adicionar').value = dadosTMDB.id.toString();
-                document.getElementById('original-name-adicionar').value = dadosTMDB.original_title || dadosTMDB.original_name || '';
-                document.getElementById('media-type-adicionar').value = dadosTMDB.media_type || deparTipo;
-                document.getElementById('genres-ids-adicionar').value = dadosTMDB.genres ? JSON.stringify(dadosTMDB.genres.map(g => g.id)) : '';
-                document.getElementById('popularity-adicionar').value = dadosTMDB.popularity || '';
-                document.getElementById('first-air-date-adicionar').value = dadosTMDB.release_date || dadosTMDB.first_air_date || '';
-                document.getElementById('vote-average-adicionar').value = dadosTMDB.vote_average || '';
-
-                const lancamento = dadosTMDB.release_date || dadosTMDB.first_air_date;
-                if (lancamento) {
-                    document.getElementById('year-adicionar').value = new Date(lancamento).getFullYear();
-                    document.getElementById('tmdb-lbl-year').textContent = new Date(lancamento).getFullYear();
-                }
-
-                // 2. Atualiza a sinopse e os badges informativos visíveis na tela
-                document.getElementById('overview-adicionar').value = dadosTMDB.overview || 'Sem sinopse disponível em português.';
-                document.getElementById('tmdb-lbl-vote').textContent = dadosTMDB.vote_average ? Number(dadosTMDB.vote_average).toFixed(1) : 'N/A';
-                document.getElementById('tmdb-lbl-pop').textContent = dadosTMDB.popularity ? Number(dadosTMDB.popularity).toFixed(1) : 'N/A';
-
-                // 3. Renderiza o pôster em alta definição do link temporariamente no Preview e converte em Base64 para o textarea
-                const urlPosterOficial = dadosTMDB.poster_path ? `https://tmdb.org{dadosTMDB.poster_path}` : '';
-                const previewImg = document.getElementById('tmdb-preview-poster');
-                
-                if (urlPosterOficial) {
-                    if (previewImg) previewImg.src = urlPosterOficial;
-                    
-                    // Mostra um aviso discreto que o processamento da imagem iniciou no textarea
-                    const txtAreaPoster = document.getElementById('poster-path-adicionar');
-                    if (txtAreaPoster) txtAreaPoster.value = "⏳ Baixando e convertendo pôster em Base64...";
-
-                    // Usa o utilitário Canvas do seu sistema para converter a URL em Base64 síncrono e injetar no campo
-                    if (typeof window.converterUrlParaBase64 === 'function' || typeof converterUrlParaBase64 === 'function') {
-                        const fnConversora = typeof window.converterUrlParaBase64 === 'function' ? window.converterUrlParaBase64 : converterUrlParaBase64;
-                        const stringBase64 = await fnConversora(urlPosterOficial);
-                        if (txtAreaPoster) txtAreaPoster.value = stringBase64 || '';
-                    } else {
-                        if (txtAreaPoster) txtAreaPoster.value = urlPosterOficial; // Fallback para URL caso falte a função
-                    }
-                } else {
-                    if (previewImg) previewImg.src = "https://placeholder.com";
-                    document.getElementById('poster-path-adicionar').value = '';
-                }
-
-                alert(`✅ Mídia vinculada com sucesso!\n"${dadosTMDB.title || dadosTMDB.name}" identificada no TMDB.`);
-
+                // Limpa o input após a operação concluída
+                document.getElementById("tmdb-id-busca-manual").value = "";
             } catch (erro) {
-                console.error("Erro na busca manual do TMDB:", erro);
-                alert(`❌ Falha ao buscar ID no TMDB: ${erro.message}\nVerifique se o ID inserido pertence à categoria correta (Filme ou Série/Desenho).`);
+                alert(`❌ Falha ao vincular mídias: ${erro.message}`);
             } finally {
-                // Restaura o estado original do botão
                 btnBuscar.disabled = false;
                 btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
             }
