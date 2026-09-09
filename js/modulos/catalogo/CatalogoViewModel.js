@@ -42,7 +42,7 @@ export class CatalogoViewModel {
       titulo.id_tmdb,
       titulo.original_name,
       titulo.overview,
-      titulo.poster_path,
+      titulo.poster_path ? (typeof titulo.poster_path === 'string' ? titulo.poster_path : titulo.poster_path.toString('utf-8')) : null,
       titulo.media_type,
       titulo.genres_ids,
       titulo.popularity,
@@ -86,7 +86,7 @@ export class CatalogoViewModel {
       titulo.id_tmdb,
       titulo.original_name,
       titulo.overview,
-      titulo.poster_path,
+      titulo.poster_path ? (typeof titulo.poster_path === 'string' ? titulo.poster_path : titulo.poster_path.toString('utf-8')) : null,
       titulo.media_type,
       titulo.genres_ids,
       titulo.popularity,
@@ -404,6 +404,8 @@ export class CatalogoViewModel {
             item.Popularity = dadosTMDB.popularity || item.Popularity;
             item.First_Air_Date = dadosTMDB.release_date || dadosTMDB.first_air_date || item.First_Air_Date;
             item.Vote_Average = dadosTMDB.vote_average || item.Vote_Average;
+            item.Media_Type = dadosTMDB.media_type || item.Media_Type;
+            item.Genres_Ids = dadosTMDB.genre_ids || item.Genres_Ids;
             
             if (dadosTMDB.release_date || dadosTMDB.first_air_date) {
               item.Year = new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear();

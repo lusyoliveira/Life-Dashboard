@@ -1,59 +1,129 @@
-<form class="row gy-2 gx-3 align-items-center" id="formCatalogo" title="Adicionar Titulo">
-    <div class="row">
-        <div class="col">
-            <input type="hidden" id="id-adicionar" />
-            <label for="titulo-adicionar" class="col-form-label">Titulo:</label>
-            <input type="text" class="form-control" id="titulo-adicionar" title="Título" placeholder="Informe o título" required>
+<form id="formCatalogo" class="needs-validation" novalidate>
+    <!-- Campos de Controle Ocultos -->
+    <input type="hidden" id="id-adicionar">
+    <input type="hidden" id="id-tmdb-adicionar">
+    <input type="hidden" id="original-name-adicionar">
+    <input type="hidden" id="media-type-adicionar">
+    <input type="hidden" id="genres-ids-adicionar">
+    <input type="hidden" id="popularity-adicionar">
+    <input type="hidden" id="first-air-date-adicionar">
+    <input type="hidden" id="year-adicionar">
+    <input type="hidden" id="vote-average-adicionar">
+
+    <!-- Navegação por Abas do Bootstrap -->
+    <ul class="nav nav-tabs mb-3" id="cadastroTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="dados-tab" data-bs-toggle="tab" data-bs-target="#dados-pane" type="button" role="tab" aria-controls="dados-pane" aria-selected="true">
+                <i class="bi bi-card-text"></i> Dados Gerais
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tmdb-tab" data-bs-toggle="tab" data-bs-target="#tmdb-pane" type="button" role="tab" aria-controls="tmdb-pane" aria-selected="false">
+                <i class="bi bi-film"></i> Episódios
+            </button>
+        </li>
+    </ul>
+
+    <!-- Conteúdo das Abas -->
+    <div class="tab-content" id="cadastroTabsContent">
+        <!-- Aba 1: Dados Gerais -->
+        <div class="tab-pane fade show active" id="dados-pane" role="tabpanel" aria-labelledby="dados-tab" tabindex="0">
+            <!-- Novo Bloco de Busca Manual por ID -->
+            <div class="row g-2 mb-3 align-items-end border-bottom pb-3">
+                <div class="col-sm-8">
+                    <label for="tmdb-id-busca-manual" class="form-label small fw-bold text-primary">Vincular ID Manual do TMDB</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="number" class="form-control" id="tmdb-id-busca-manual" placeholder="Ex: 1399 (ID da Série ou Filme no TMDB)">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <button type="button" id="btn-buscar-tmdb-manual" class="btn btn-primary btn-sm w-100 d-inline-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-arrow-clockwise"></i> Buscar e Vincular
+                    </button>
+                </div>
+            </div>
+
+            <!-- Restante da Aba 2 (Preview e Sinopse) -->
+            <div class="row g-3">
+                <div class="col-md-4 text-center">
+                    <div class="border rounded bg-light p-2 d-flex align-items-center justify-content-center" style="height: 240px; width: 100%;">
+                        <img id="tmdb-preview-poster" id="poster-path-adicionar" src="https://placeholder.com" alt="Preview" class="img-fluid rounded shadow-sm" style="max-height: 100%;">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-primary">Indicadores de Relevância</label>
+                        <div class="p-2 border rounded bg-dark d-flex justify-content-around align-items-center">
+                            <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> Média TMDB: <span id="tmdb-lbl-vote">N/A</span></span>
+                            <span class="badge bg-info text-dark"><i class="bi bi-graph-up"></i> Popularidade: <span id="tmdb-lbl-pop">N/A</span></span>
+                            <span class="badge bg-secondary"><i class="bi bi-calendar-event"></i> Ano: <span id="tmdb-lbl-year">N/A</span></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="overview-adicionar" class="form-label small fw-bold">Sinopse</label>
+                        <textarea class="form-control" id="overview-adicionar" rows="6" disabled placeholder="Nenhuma sinopse importada do TMDB para este título."></textarea>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="titulo-adicionar" class="form-label small fw-bold">Título</label>
+                            <input type="text" class="form-control" id="titulo-adicionar" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="tipo-adicionar" class="form-label small fw-bold">Tipo</label>
+                            <select class="form-select" id="tipo-adicionar" required></select>
+                        </div>
+                        <div class="col-12">
+                            <label for="capa-adicionar" class="form-label small fw-bold">URL da Capa Manual</label>
+                            <input type="text" class="form-control" id="capa-adicionar">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="status-adicionar" class="form-label small fw-bold">Status</label>
+                            <select class="form-select" id="status-adicionar" required></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="plataforma-adicionar" class="form-label small fw-bold">Plataforma</label>
+                            <select class="form-select" id="plataforma-adicionar" required></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="pontuacao-adicionar" class="form-label small fw-bold">Minha Nota (Score)</label>
+                            <input type="number" class="form-control" id="pontuacao-adicionar" min="0" max="10" step="0.5" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="temporada-adicionar" class="form-label small fw-bold">Temporadas</label>
+                            <input type="number" class="form-control" id="temporada-adicionar" min="1" value="1">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="episodios-adicionar" class="form-label small fw-bold">Episódios</label>
+                            <input type="number" class="form-control" id="episodios-adicionar" min="0" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="assistidos-adicionar" class="form-label small fw-bold">Assistidos</label>
+                            <input type="number" class="form-control" id="assistidos-adicionar" min="0" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="vezes-adicionar" class="form-label small fw-bold">Vezes Revisto</label>
+                            <input type="number" class="form-control" id="vezes-adicionar" min="0" value="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data-inicio" class="form-label small fw-bold">Data de Início</label>
+                            <input type="datetime-local" class="form-control" id="data-inicio" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data-fim" class="form-label small fw-bold">Data de Término</label>
+                            <input type="datetime-local" class="form-control" id="data-fim">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col">
-            <label for="capa-adicionar" class="col-form-label">Capa:</label>
-            <input type="text" class="form-control" id="capa-adicionar" title="Capa" placeholder="Informa a url da capa" required>
+
+        <!-- Aba 2: Metadados TMDB -->
+        <div class="tab-pane fade" id="tmdb-pane" role="tabpanel" aria-labelledby="dados-tab" tabindex="0">
+            
         </div>
+
     </div>
-    <div class="row">
-        <div class="col-4">
-            <label for="tipo-adicionar" class="col-form-label">Tipo:</label>
-            <select type="text" class="form-select" id="tipo-adicionar" title="Tipo" required></select>
-        </div>
-        <div class="col-4">
-            <label for="status-adicionar" class="col-form-label">Status:</label>
-            <select type="text" class="form-select" id="status-adicionar" title="Status" required></select>
-        </div>
-        <div class="col-4">
-            <label for="plataforma-adicionar" class="col-form-label">Plataforma:</label>
-            <select type="text" class="form-select" id="plataforma-adicionar" title="Plataforma" required></select>
-        </div>       
-    </div>  
-    <div class="row">
-        <div class="col-5">
-            <label for="data-inicio" class="col-form-label">Data Inicio:</label>
-            <input type="datetime-local" class="form-control" id="data-inicio" title="Inicio" required>
-        </div>
-        <div class="col-5">
-            <label for="data-fim" class="col-form-label">Data Fim:</label>
-            <input type="datetime-local" class="form-control" id="data-fim" title="Fim">
-        </div> 
-    </div>
-    <div class="row">
-        <div class="col-2">
-            <label for="episodios-adicionar" class="col-form-label">Episódios:</label>
-            <input type="text" class="form-control" id="episodios-adicionar" title="Episódios" placeholder="0" required>
-        </div>
-        <div class="col-2">
-            <label for="assistidos-adicionar" class="col-form-label">Assistidos:</label>
-            <input type="text" class="form-control" id="assistidos-adicionar" title="Assistidos" placeholder="0" required>
-        </div>
-        <div class="col-2">
-            <label for="temporada-adicionar" class="col-form-label">Temporadas:</label>
-            <input type="text" class="form-control" id="temporada-adicionar" title="Temporada" placeholder="0" required>
-        </div>
-        <div class="col-2">
-            <label for="pontuacao-adicionar" class="col-form-label">Pontuação:</label>
-            <input type="text" class="form-control" id="pontuacao-adicionar" title="pontuação" vale="0" placeholder="0" required>
-        </div>
-        <div class="col-3">
-            <label for="vezes-adicionar" class="col-form-label">Vezes Assistidos:</label>
-            <input type="text" class="form-control" id="vezes-adicionar" title="vezes" vale="0" placeholder="0" required>
-        </div>
-    </div>                 
-</form>    
+</form>

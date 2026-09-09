@@ -13,6 +13,7 @@ export class CatalogoView {
     constructor(vm) {
         this.vm = vm;
         this.registrarEventosTabela();
+        this.registrarEventosCardsColecao();
         // Novas propriedades para controle da paginação da coleção
         this.paginaAtualColecao = 1;
         this.itensPorPaginaColecao = 4; // Ajuste este número para quantos cards 
@@ -76,45 +77,137 @@ export class CatalogoView {
         await this.listarStatus("status-adicionar");
     };
 
-    async abrirModalEditarCatalogo(id) {
-        const titulo = await this.vm.obterTituloPorID(id);
+    // async abrirModalEditarCatalogo(id) {
+    //     const titulo = await this.vm.obterTituloPorID(id);
 
-        abrirModalAcao({
-            titulo: "Editar título",
-            conteudoHTML: this.formHTML,
-            textoConfirmar: "Salvar alterações",
+    //     abrirModalAcao({
+    //         titulo: "Editar título",
+    //         conteudoHTML: this.formHTML,
+    //         textoConfirmar: "Salvar alterações",
 
-            onConfirmar: async () => {
-            const form = document.getElementById("formCatalogo");
+    //         onConfirmar: async () => {
+    //         const form = document.getElementById("formCatalogo");
 
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return false;
+    //         if (!form.checkValidity()) {
+    //             form.reportValidity();
+    //             return false;
+    //         }
+
+    //         await this.salvarFormularioCatalogo(form);
+    //         await this.listarCatalogo();
+    //         }
+    //     });
+
+    //     await this.listarTipos("tipo-adicionar");
+    //     await this.listarPlataforma("plataforma-adicionar");
+    //     await this.listarStatus("status-adicionar");
+
+    //     document.getElementById("id-adicionar").value = titulo.id;
+    //     document.getElementById('titulo-adicionar').value = titulo.Titulo;
+    //     document.getElementById('capa-adicionar').value = titulo.Capa;
+    //     document.getElementById('data-inicio').value = new Date(titulo.Inicio).toISOString().slice(0, 16);
+    //     document.getElementById('data-fim').value = titulo.Fim === null ? null : new Date(titulo.Fim).toISOString().slice(0, 16);
+    //     document.getElementById('tipo-adicionar').value = titulo.Tipo.id;
+    //     document.getElementById('status-adicionar').value = titulo.Status.id;
+    //     document.getElementById('plataforma-adicionar').value = titulo.Plataforma.id;
+    //     document.getElementById('episodios-adicionar').value = titulo.Episodios;
+    //     document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
+    //     document.getElementById('temporada-adicionar').value = titulo.Temporadas;
+    //     document.getElementById('pontuacao-adicionar').value = titulo.Score;   
+    //     document.getElementById('vezes-adicionar').value = titulo.Vezes;  
+    // };
+
+        async abrirModalEditarCatalogo(id) {
+            const titulo = await this.vm.obterTituloPorID(id);
+
+            abrirModalAcao({
+                titulo: "Editar título",
+                conteudoHTML: this.formHTML,
+                textoConfirmar: "Salvar alterações",
+
+                onConfirmar: async () => {
+                    const form = document.getElementById("formCatalogo");
+
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return false;
+                    }
+
+                    await this.salvarFormularioCatalogo(form);
+                    
+                    // Atualiza a tela de forma adaptável baseado no componente ativo no DOM
+                    const possuiTabela = document.getElementById("tabelaCatalogo");
+                    const possuiGridCards = document.getElementById("saved-grid");
+
+                    if (possuiTabela) {
+                        await this.listarCatalogo();
+                    } else if (possuiGridCards) {
+                        await this.carregarListaPessoal();
+                    }
+                }
+            });
+
+            // Carrega as tabelas auxiliares nos selects da modal
+            await this.listarTipos("tipo-adicionar");
+            await this.listarPlataforma("plataforma-adicionar");
+            await this.listarStatus("status-adicionar");
+
+            // Preenchimento da Aba 1 (Dados Gerais)
+            document.getElementById("id-adicionar").value = titulo.id;
+            document.getElementById('titulo-adicionar').value = titulo.Titulo;
+            document.getElementById('capa-adicionar').value = titulo.Capa;
+            document.getElementById('data-inicio').value = titulo.Inicio ? new Date(titulo.Inicio).toISOString().slice(0, 16) : '';
+            document.getElementById('data-fim').value = titulo.Fim ? new Date(titulo.Fim).toISOString().slice(0, 16) : '';
+            document.getElementById('tipo-adicionar').value = titulo.Tipo.id;
+            document.getElementById('status-adicionar').value = titulo.Status.id;
+            document.getElementById('plataforma-adicionar').value = titulo.Plataforma.id;
+            document.getElementById('episodios-adicionar').value = titulo.Episodios;
+            document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
+            document.getElementById('temporada-adicionar').value = titulo.Temporadas;
+            document.getElementById('pontuacao-adicionar').value = titulo.Score;   
+            document.getElementById('vezes-adicionar').value = titulo.Vezes;  
+
+            // Preenchimento dos metadados ocultos de controle
+            if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = titulo.IdTMDB || '';
+            if(document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
+            if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = titulo.Media_Type || '';
+            if(document.getElementById('genres-ids-adicionar')) document.getElementById('genres-ids-adicionar').value = titulo.Genres_Ids || '';
+            if(document.getElementById('popularity-adicionar')) document.getElementById('popularity-adicionar').value = titulo.Popularity || '';
+            if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = titulo.First_Air_Date || '';
+            if(document.getElementById('year-adicionar')) document.getElementById('year-adicionar').value = titulo.Year || '';
+            if(document.getElementById('vote-average-adicionar')) document.getElementById('vote-average-adicionar').value = titulo.Vote_Average || '';
+
+            // Preenchimento da Aba 2 (Metadados TMDB) e Elementos de Preview
+            if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = titulo.Overview || '';
+            
+            // Só atribui o valor se o campo realmente existir no HTML
+            const txtAreaPoster = document.getElementById('poster-path-adicionar');
+            if (txtAreaPoster) {
+                txtAreaPoster.value = titulo.Poster_Path || '';
+            }
+            
+            // Trata os labels informativos da interface do TMDB
+            if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
+            if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
+            if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
+
+            // Renderiza o pôster no preview gráfico
+            const previewImg = document.getElementById('tmdb-preview-poster');
+            if (previewImg && titulo.Poster_Path) {
+                const stringPoster = String(titulo.Poster_Path).trim();
+                if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
+                    previewImg.src = stringPoster.startsWith("data:image") || stringPoster.startsWith("http")
+                        ? stringPoster
+                        : "data:image/jpeg;base64," + stringPoster;
+                } else {
+                    previewImg.src = "https://placeholder.com";
+                }
             }
 
-            await this.salvarFormularioCatalogo(form);
-            await this.listarCatalogo();
-            }
-        });
-
-        await this.listarTipos("tipo-adicionar");
-        await this.listarPlataforma("plataforma-adicionar");
-        await this.listarStatus("status-adicionar");
-
-        document.getElementById("id-adicionar").value = titulo.id;
-        document.getElementById('titulo-adicionar').value = titulo.Titulo;
-        document.getElementById('capa-adicionar').value = titulo.Capa;
-        document.getElementById('data-inicio').value = new Date(titulo.Inicio).toISOString().slice(0, 16);
-        document.getElementById('data-fim').value = titulo.Fim === null ? null : new Date(titulo.Fim).toISOString().slice(0, 16);
-        document.getElementById('tipo-adicionar').value = titulo.Tipo.id;
-        document.getElementById('status-adicionar').value = titulo.Status.id;
-        document.getElementById('plataforma-adicionar').value = titulo.Plataforma.id;
-        document.getElementById('episodios-adicionar').value = titulo.Episodios;
-        document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
-        document.getElementById('temporada-adicionar').value = titulo.Temporadas;
-        document.getElementById('pontuacao-adicionar').value = titulo.Score;   
-        document.getElementById('vezes-adicionar').value = titulo.Vezes;  
+            // Ativação do botão de busca manual
+            this.registrarEventoBuscaManualTMDB();
     };
+
 
     async salvarFormularioCatalogo(form) {
         const idInput = form.querySelector('#id-adicionar')?.value || null;
@@ -345,18 +438,32 @@ export class CatalogoView {
 
             const imgCapa = document.createElement('img');
             
-            // 🌟 TRATAMENTO BLINDADO CONTRA ERROS DE TIPO (CORS, NULL E UNDEFINED)
-           let fonteImagem = "https://placeholder.com"; 
+            let fonteImagem = titulo.Capa; 
+            let stringPoster = "";
 
-            const stringPoster = titulo.Poster_Path ? String(titulo.Poster_Path).trim() : "";
+            // TRATAMENTO CRÍTICO PARA PARSE DE BLOB/BUFFER DO SEQUELIZE
+            if (titulo.Poster_Path) {
+                // Cenário A: Se o Sequelize devolveu um objeto contendo a Array de dados ({type: 'Buffer', data: [...]})
+                if (typeof titulo.Poster_Path === 'object' && titulo.Poster_Path.data) {
+                    const numeros = titulo.Poster_Path.data;
+                    stringPoster = String.fromCharCode.apply(null, new Uint8Array(numeros));
+                } 
+                // Cenário B: Se ele veio como uma instância direta de Uint8Array
+                else if (titulo.Poster_Path instanceof Uint8Array || titulo.Poster_Path.constructor?.name === "Uint8Array") {
+                    stringPoster = String.fromCharCode.apply(null, new Uint8Array(titulo.Poster_Path));
+                }
+                // Cenário C: Se já for uma String comum de texto
+                else if (typeof titulo.Poster_Path === 'string') {
+                    stringPoster = titulo.Poster_Path.trim();
+                }
+            }
 
-            // 🌟 PROTEÇÃO ADICIONADA: Ignora strings que gravaram o texto "[object Object]" por erro
+            // Agora que garantimos que 'stringPoster' é um texto puro, fazemos a montagem da imagem
             if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
-                if (stringPoster.startsWith("data:image")) {
-                    fonteImagem = stringPoster;
-                } else if (stringPoster.startsWith("http://") || stringPoster.startsWith("https://")) {
+                if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
                     fonteImagem = stringPoster;
                 } else {
+                    // Se for o texto Base64 cru (como o seu /9j/4AAQ...), adiciona o prefixo
                     fonteImagem = "data:image/jpeg;base64," + stringPoster;
                 }
             }
@@ -1031,7 +1138,6 @@ export class CatalogoView {
         containerAlvo.appendChild(divForm);
     }
 
-
     async carregarListaPessoal() {
         const savedGrid = document.getElementById('saved-grid');
         if (!savedGrid) return;
@@ -1051,52 +1157,70 @@ export class CatalogoView {
 
             savedGrid.innerHTML = '';
             
-            // LÓGICA DE PAGINAÇÃO: Calcula quais itens pertencem à página ativa
             const indiceInicio = (this.paginaAtualColecao - 1) * this.itensPorPaginaColecao;
             const indiceFim = indiceInicio + this.itensPorPaginaColecao;
             const itensPaginados = listaOrdenada.slice(indiceInicio, indiceFim);
 
-            // Renderiza apenas os cards da página atual
             itensPaginados.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'card';
+                // Adicionado 'user-select-none' e estilo de cursor para indicar que o card é clicável
+                card.className = 'card h-100 shadow-sm';
+                card.style.cursor = 'pointer';
+                // INJEÇÃO CRÍTICA: Vincula o ID do banco de dados ao card
+                card.setAttribute('data-id', item.id);
 
                 const dataInicio = item.Inicio ? metodoData.formatarDataBR(item.Inicio) : 'Não iniciada';
                 const dataFim = item.Fim ? metodoData.formatarDataBR(item.Fim) : 'Não finalizada';
                 const textoNota = item.Score ? item.Score : 'Sem nota';
 
+                // Tratamento dinâmico para renderizar a Capa Base64 ou URL da web
+                let fonteImagem = item.Capa || "https://placeholder.com";
+                const stringPoster = item.Poster_Path ? String(item.Poster_Path).trim() : "";
+
+                if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
+                    if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
+                        fonteImagem = stringPoster;
+                    } else {
+                        fonteImagem = "data:image/jpeg;base64," + stringPoster;
+                    }
+                }
+
                 card.innerHTML = 
-                    '<img class="card-img-top" src="' + item.Capa + '" alt="' + item.Titulo + '">' +
-                    '<div class="card-body">' +
-                        '<h5 class="card-title">' + item.Titulo + '</h5>' +
-                        '<p class="card-text">' + item.Titulo + '</p>' +
-                        '<strong>Tipo:</strong> ' + item.Tipo.descricao + '<br>' +
-                        '<strong>Onde:</strong> ' + item.Plataforma.descricao + '<br>' +
-                        '<strong>Início:</strong> ' + dataInicio + '<br>' +
-                        '<strong>Fim:</strong> ' + dataFim + '' +
+                    '<img class="card-img-top" src="' + fonteImagem + '" alt="' + item.Titulo + '" style="height: 320px; object-fit: cover;">' +
+                    '<div class="card-body d-flex flex-column justify-content-between">' +
+                        '<div>' +
+                            '<h5 class="card-title text-truncate">' + item.Titulo + '</h5>' +
+                            '<p class="card-text small text-muted mb-2">' +
+                                '<strong>Tipo:</strong> ' + (item.Tipo?.descricao || 'Não informado') + '<br>' +
+                                '<strong>Onde:</strong> ' + (item.Plataforma?.descricao || 'Não informado') +
+                            '</p>' +
+                        '</div>' +
+                        '<div class="border-top pt-2 mt-2 small text-muted">' +
+                            '📅 ' + dataInicio + ' até ' + dataFim +
+                        '</div>' +
                     '</div>' +
-                    '<div class="card-footer">' +
-                        '<small class="text-muted">' +
-                            'Minha Nota: ' + textoNota +
-                        '</small>' +
+                    '<div class="card-footer bg-transparent border-top-0">' +
+                        '<span class="badge bg-primary w-100 py-2">⭐ Nota: ' + textoNota + '</span>' +
                     '</div>';
 
-                savedGrid.appendChild(card);
+                // Encapsula o card em uma coluna estruturada do Bootstrap Grid
+                const coluna = document.createElement('div');
+                coluna.className = 'col-md-3 col-sm-6 mb-4';
+                coluna.appendChild(card);
+
+                savedGrid.appendChild(coluna);
             });
 
-            // Adiciona a barra de paginação logo abaixo dos cards
             const totalPaginas = Math.ceil(listaOrdenada.length / this.itensPorPaginaColecao);
-            //this.renderizarControlesPaginacao(savedGrid, totalPaginas);
             renderizarControlesPaginacao(savedGrid, totalPaginas, this);
         } catch (error) {
             savedGrid.innerHTML = '<p>Erro ao carregar sua lista.</p>';
             console.error(error);
         }
     };
-
     // Exemplo de método para incluir na sua CatalogoView
     async dispararAtualizacaoGeralMidias() {
-    abrirModalAcao({
+        abrirModalAcao({
         titulo: "Atualizar Catálogo via TMDB",
         conteudoHTML: `
         <p>Deseja sincronizar e atualizar as informações dos 200 títulos do seu banco de dados com o TMDB agora?</p>
@@ -1119,7 +1243,7 @@ export class CatalogoView {
                     containerStatus.innerHTML = `✅ Concluído! ${resultado.processados} itens vinculados e atualizados. Falhas: ${resultado.erros}`;
                 }
                 
-                // 🌟 CORREÇÃO: Atualiza a interface de forma segura verificando qual elemento existe no DOM
+                // Atualiza a interface de forma segura verificando qual elemento existe no DOM
                 const possuiTabela = document.getElementById("tabelaCatalogo");
                 const possuiGridCards = document.getElementById("saved-grid");
 
@@ -1136,5 +1260,115 @@ export class CatalogoView {
             }
         });
     };
+    // Adicione este novo método dentro da classe CatalogoView no seu arquivo CatalogoView.js
+    //Revisar metodo
+    registrarEventoBuscaManualTMDB() {
+        const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
+        if (!btnBuscar) return;
 
+        btnBuscar.addEventListener("click", async () => {
+            const idDigitado = document.getElementById("tmdb-id-busca-manual").value.trim();
+            const tipoSelecionadoId = document.getElementById("tipo-adicionar").value;
+            
+            // Descobre se é filme ou série com base no select da primeira aba
+            // Como sua tabela mapeia Desenho, Anime e Série para TV, e Filme (ID 6 ou string) para Movie:
+            const selectTipo = document.getElementById("tipo-adicionar");
+            const textoTipo = selectTipo.options[selectTipo.selectedIndex]?.text || '';
+            const deparTipo = (textoTipo === 'Filme' || tipoSelecionadoId === '6') ? 'movie' : 'tv';
+
+            if (!idDigitado) {
+                alert("Por favor, digite um ID numérico válido do TMDB.");
+                return;
+            }
+
+            // Altera o estado do botão para carregamento
+            btnBuscar.disabled = true;
+            btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...`;
+
+            try {
+                // Recupera as configurações e chave salvas no seu sistema
+                const configuracoesSalvas = await this.vm.obterConfiguracoes?.() || [];
+                // Fallback para buscar direto da ViewModel se o método acima não existir no escopo direto da View:
+                const cfvm = new window.ConfiguracaoViewModel ? new window.ConfiguracaoViewModel('configuracoes') : null;
+                const dadosConfig = cfvm ? (await cfvm.obterConfiguracoes())[0] : null;
+                
+                const API_KEY = dadosConfig?.chaveTMDB || '724c80009be7e12d8e02b1b30abe29f6';
+                const url = `https://themoviedb.org{deparTipo}/${idDigitado}?api_key=${API_KEY}&language=pt-BR`;
+
+                const resposta = await fetch(url);
+                if (!resposta.ok) throw new Error(`Mídia não encontrada. Código HTTP: ${resposta.status}`);
+                
+                const dadosTMDB = await resposta.json();
+
+                // 1. Atualiza os campos ocultos de controle da Modal
+                document.getElementById('id-tmdb-adicionar').value = dadosTMDB.id.toString();
+                document.getElementById('original-name-adicionar').value = dadosTMDB.original_title || dadosTMDB.original_name || '';
+                document.getElementById('media-type-adicionar').value = dadosTMDB.media_type || deparTipo;
+                document.getElementById('genres-ids-adicionar').value = dadosTMDB.genres ? JSON.stringify(dadosTMDB.genres.map(g => g.id)) : '';
+                document.getElementById('popularity-adicionar').value = dadosTMDB.popularity || '';
+                document.getElementById('first-air-date-adicionar').value = dadosTMDB.release_date || dadosTMDB.first_air_date || '';
+                document.getElementById('vote-average-adicionar').value = dadosTMDB.vote_average || '';
+
+                const lancamento = dadosTMDB.release_date || dadosTMDB.first_air_date;
+                if (lancamento) {
+                    document.getElementById('year-adicionar').value = new Date(lancamento).getFullYear();
+                    document.getElementById('tmdb-lbl-year').textContent = new Date(lancamento).getFullYear();
+                }
+
+                // 2. Atualiza a sinopse e os badges informativos visíveis na tela
+                document.getElementById('overview-adicionar').value = dadosTMDB.overview || 'Sem sinopse disponível em português.';
+                document.getElementById('tmdb-lbl-vote').textContent = dadosTMDB.vote_average ? Number(dadosTMDB.vote_average).toFixed(1) : 'N/A';
+                document.getElementById('tmdb-lbl-pop').textContent = dadosTMDB.popularity ? Number(dadosTMDB.popularity).toFixed(1) : 'N/A';
+
+                // 3. Renderiza o pôster em alta definição do link temporariamente no Preview e converte em Base64 para o textarea
+                const urlPosterOficial = dadosTMDB.poster_path ? `https://tmdb.org{dadosTMDB.poster_path}` : '';
+                const previewImg = document.getElementById('tmdb-preview-poster');
+                
+                if (urlPosterOficial) {
+                    if (previewImg) previewImg.src = urlPosterOficial;
+                    
+                    // Mostra um aviso discreto que o processamento da imagem iniciou no textarea
+                    const txtAreaPoster = document.getElementById('poster-path-adicionar');
+                    if (txtAreaPoster) txtAreaPoster.value = "⏳ Baixando e convertendo pôster em Base64...";
+
+                    // Usa o utilitário Canvas do seu sistema para converter a URL em Base64 síncrono e injetar no campo
+                    if (typeof window.converterUrlParaBase64 === 'function' || typeof converterUrlParaBase64 === 'function') {
+                        const fnConversora = typeof window.converterUrlParaBase64 === 'function' ? window.converterUrlParaBase64 : converterUrlParaBase64;
+                        const stringBase64 = await fnConversora(urlPosterOficial);
+                        if (txtAreaPoster) txtAreaPoster.value = stringBase64 || '';
+                    } else {
+                        if (txtAreaPoster) txtAreaPoster.value = urlPosterOficial; // Fallback para URL caso falte a função
+                    }
+                } else {
+                    if (previewImg) previewImg.src = "https://placeholder.com";
+                    document.getElementById('poster-path-adicionar').value = '';
+                }
+
+                alert(`✅ Mídia vinculada com sucesso!\n"${dadosTMDB.title || dadosTMDB.name}" identificada no TMDB.`);
+
+            } catch (erro) {
+                console.error("Erro na busca manual do TMDB:", erro);
+                alert(`❌ Falha ao buscar ID no TMDB: ${erro.message}\nVerifique se o ID inserido pertence à categoria correta (Filme ou Série/Desenho).`);
+            } finally {
+                // Restaura o estado original do botão
+                btnBuscar.disabled = false;
+                btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
+            }
+        });
+    };
+     //Captura o clique em qualquer lugar do card e abre a modal de edição
+    registrarEventosCardsColecao() {
+        const gridSalvo = document.getElementById("saved-grid");
+        if (!gridSalvo) return;
+
+        gridSalvo.addEventListener("click", async (e) => {
+            // Procura se o clique aconteceu dentro de um elemento que possui o atributo 'data-id'
+            const cardAlvo = e.target.closest("[data-id]");
+            if (!cardAlvo) return;
+
+            const idTitulo = cardAlvo.dataset.id;           
+            // Dispara o mesmo método de edição que a tabela usa
+            await this.abrirModalEditarCatalogo(idTitulo);
+        });
+    }
 }
