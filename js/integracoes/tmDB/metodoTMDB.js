@@ -1,5 +1,5 @@
-const urlBase = 'https://api.themoviedb.org/3/search/multi';
-
+const urlBase = 'https://api.themoviedb.org/3/search';
+//const urlBase = 'https://api.themoviedb.org/3/search/multi';
 const apiTMDB = { 
 
     async obterPrograma(termoBusca,configuracoes) {
@@ -10,7 +10,7 @@ const apiTMDB = {
         // }
 
         const apiKey = configuracoes.chaveTMDB;
-        const urlProgramas = `${urlBase}?api_key=${apiKey}&query=${encodeURIComponent(termoBusca)}&language=pt-BR`;   
+        const urlProgramas = `${urlBase}?{multi}?api_key=${apiKey}&query=${encodeURIComponent(termoBusca)}&language=pt-BR`;   
 
         try {
             const response = await fetch(urlProgramas);
@@ -46,6 +46,48 @@ const apiTMDB = {
                     });
             }
         } catch (error) {
+            alert('Erro ao buscar programas na API!');
+            throw error;
+        }
+    },
+
+    async obterDetalhesPrograma(id, configuracoes) {
+        if (!configuracoes || !configuracoes.chaveTMDB) {
+            alert('A integração com o TMDB não está configurada corretamente.');
+            return null;
+        }
+        const apiKey = configuracoes.chaveTMDB;
+        const [mediaType, mediaId] = id.split('-');
+        const urlDetalhes = `${urlBase}${mediaType}/${mediaId}?api_key=${apiKey}&language=pt-BR`;    
+    },
+
+    async obterProgramaPorDescricao(titulo){
+        const apiKey = configuracoes.chaveTMDB;
+        const url = `${urlBase}?{deparTipo}?api_key=${apiKey}&query=${encodeURIComponent(titulo)}&language=pt-BR`;
+
+            try {
+            const respostaBusca = await fetch(url);
+            if (!respostaBusca.ok) throw new Error(`HTTP ${respostaBusca.status}`);
+            
+            const resultado = await respostaBusca.json();
+            
+            // Trata se o retorno vem da busca por texto (Array .results) ou busca por ID direto (Objeto direto)
+            const dadosTMDB = resultado.results ? resultado.results[0] : resultado;
+
+                return {
+                    id_tmdb: dadosTMDB.id,
+                    title: dadosTMDB.title || dadosTMDB.name,
+                    Original_Name: dadosTMDB.original_title || dadosTMDB.original_name,
+                    Media_Type: dadosTMDB.media_type === 'movie' ? 'Filme' : (dadosTMDB.media_type === 'tv' ? 'Série' : 'Anime'),
+                    Overview: dadosTMDB.overview,
+                    Poster_Path: dadosTMDB.poster_path ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path : null,
+                    Year: (dadosTMDB.release_date || dadosTMDB.first_air_date) ? 
+                        new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear() : 'N/A',
+                    First_Air_Date: dadosTMDB.first_air_date || 'N/A',
+                    Vote_Average: dadosTMDB.vote_average ? dadosTMDB.vote_average.toFixed(1) : 'N/A'
+                    
+                }
+            } catch (error) {
             alert('Erro ao buscar programas na API!');
             throw error;
         }

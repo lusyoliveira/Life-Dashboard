@@ -65,7 +65,14 @@ export class CatalogoView {
             }
 
             await this.salvarFormularioCatalogo(form);
-            await this.listarCatalogo();
+            
+            const possuiTabela = document.getElementById("tabelaCatalogo");
+            const possuiGridCards = document.getElementById("saved-grid");
+            if (possuiTabela) {
+                await this.listarCatalogo();
+            } else if (possuiGridCards) {
+                await this.listarColecao();
+            }
             }
         });
 
@@ -74,6 +81,15 @@ export class CatalogoView {
         await this.listarTipos("tipo-adicionar");
         await this.listarPlataforma("plataforma-adicionar");
         await this.listarStatus("status-adicionar");
+
+        // Atualiza o título da modal com base no ID do TMDB, se disponível
+        this.atualizarTituloPorIDTMDB();
+
+        if(idTitulo) {
+            this.atualizarTituloPorIDTMDB(idTitulo);
+        } else {
+            this.vem.obterDadosTMDB
+        }
     };    
 
     async abrirModalEditarCatalogo(id) {

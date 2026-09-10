@@ -47,9 +47,14 @@
             <!-- Restante da Aba 2 (Preview e Sinopse) -->
             <div class="row g-3">
                 <div class="col-md-4 text-center">
-                    <div class="border rounded bg-light p-2 d-flex align-items-center justify-content-center" style="height: 240px; width: 100%;">
+                    <div class="border rounded bg-light p-2 d-flex align-items-center justify-content-center" style="height: 340px; width: 100%;">
                         <img id="tmdb-preview-poster" id="poster-path-adicionar" src="https://placeholder.com" alt="Preview" class="img-fluid rounded shadow-sm" style="max-height: 100%;">
                     </div>
+                    <div class="col my-2">
+                        <button type="button" id="btn-buscar-tmdb-manual" class="btn btn-primary btn-sm">
+                            <i class="bi bi-arrow-clockwise"></i> Buscar e Vincular
+                        </button>
+                </div>
                 </div>
                 <div class="col-md-8">
                     <div class="mb-3">
@@ -88,7 +93,7 @@
                             <select class="form-select" id="plataforma-adicionar" required></select>
                         </div>
                         <div class="col-md-4">
-                            <label for="pontuacao-adicionar" class="form-label small fw-bold">Minha Nota (Score)</label>
+                            <label for="pontuacao-adicionar" class="form-label small fw-bold">Minha Nota</label>
                             <input type="number" class="form-control" id="pontuacao-adicionar" min="0" max="10" step="0.5" value="0">
                         </div>
                         <div class="col-md-3">
@@ -104,7 +109,7 @@
                             <input type="number" class="form-control" id="assistidos-adicionar" min="0" value="0">
                         </div>
                         <div class="col-md-3">
-                            <label for="vezes-adicionar" class="form-label small fw-bold">Vezes Revisto</label>
+                            <label for="vezes-adicionar" class="form-label small fw-bold">Vezes Assistidos</label>
                             <input type="number" class="form-control" id="vezes-adicionar" min="0" value="0">
                         </div>
                         <div class="col-md-6">

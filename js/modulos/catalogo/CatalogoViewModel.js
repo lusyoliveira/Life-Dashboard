@@ -459,7 +459,7 @@ export class CatalogoViewModel {
   // };
 
   //Método adaptado para atualizar em lote (sem passar ID) OU individualmente (passando idTitulo)
-  async atualizarCatalogoTMDB(progressoCallback = null, idTitulo = null) {
+  async atualizarCatalogoTMDB(progressoCallback = null, idTitulo = null, descTitulo = null) {
     try {
       let todosOsItens = [];
 
@@ -467,6 +467,9 @@ export class CatalogoViewModel {
         //MODO INDIVIDUAL: Busca e isola apenas o título selecionado
         const itemUnico = await this.obterTituloPorID(idTitulo);
         if (itemUnico) todosOsItens = [itemUnico];
+      } else if (descTitulo) {
+        //MODO INDIVIDUAL: Busca e isola apenas o título selecionado por descrição
+        todosOsItens = [descTitulo];
       } else {
         //MODO LOTE: Busca o catálogo inteiro
         const dadosCatalogo = await this.obterCatalogo();
@@ -506,7 +509,7 @@ export class CatalogoViewModel {
       progressoCallback(`Iniciando sincronização do TMDB. Alvos: ${itensFiltrados.length} mídias.`);
 
       for (const [index, lote] of lotes.entries()) {
-        if (progressoCallback && !idTitulo) {
+        if (progressoCallback && !idTitulo && !descTitulo) {
           progressoCallback(`Analisando bloco de pendentes ${index + 1} de ${lotes.length}...`);
         }
 
@@ -531,27 +534,11 @@ export class CatalogoViewModel {
           const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
           const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
           
-          //ROTA DA REQUISIÇÃO: Se houver um ID manual digitado na tela (passado temporariamente no atributo), usa a busca direta, senão pesquisa por texto
-          const usaBuscaDiretaPorId = idTitulo && document.getElementById("tmdb-id-busca-manual")?.value.trim();
-          const idManual = usaBuscaDiretaPorId ? document.getElementById("tmdb-id-busca-manual").value.trim() : null;
-
-          const url = idManual 
-            ? `https://api.themoviedb.org/3/search/{deparTipo}/${idManual}?api_key=${API_KEY}&language=pt-BR`
-            : `https://api.themoviedb.org/3/search/{deparTipo}?api_key=${API_KEY}&query=${encodeURIComponent(tituloLimpo)}&language=pt-BR`;
-
-          try {
-            const respostaBusca = await fetch(url);
-            if (!respostaBusca.ok) throw new Error(`HTTP ${respostaBusca.status}`);
-            
-            const resultado = await respostaBusca.json();
-            
-            // Trata se o retorno vem da busca por texto (Array .results) ou busca por ID direto (Objeto direto)
-            const dadosTMDB = resultado.results ? resultado.results[0] : resultado;
-            
-            if (!dadosTMDB) {
-              progressoCallback(`⚠️ Nenhuma correspondência encontrada no TMDB para: "${item.Titulo}"`);
-              return;
-            }
+          const dadosTMDB = await apiTMDB.obterProgramaPorDescricao(tituloLimpo);
+          if (!dadosTMDB) {
+            progressoCallback(`⚠️ Nenhuma correspondência encontrada no TMDB para: "${item.Titulo}"`);
+            return;
+          }
 
             const urlPosterCorreta = dadosTMDB.poster_path 
               ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path
@@ -559,7 +546,6 @@ export class CatalogoViewModel {
 
             // Alinha as duas propriedades para que o payload mapeie corretamente para o Sequelize
             const idString = dadosTMDB.id.toString();
-            item.IdTMDB = idString;
             item.id_tmdb = idString; 
 
             item.Original_Name = dadosTMDB.original_title || dadosTMDB.original_name || item.Original_Name;
@@ -590,7 +576,7 @@ export class CatalogoViewModel {
               item.Score,
               item.Vezes,
               item.Adicao,
-              item.IdTMDB, // Gravado em conformidade com o Sequelize
+              item.id_tmdb, // Gravado em conformidade com o Sequelize
               item.Original_Name,
               item.Overview,
               item.Poster_Path,
@@ -606,11 +592,6 @@ export class CatalogoViewModel {
             await this.salvarTitulo(payloadItem);
             processadosContador++;
 
-          } catch (erro) {
-            progressoCallback(`❌ Falha ao tentar sincronizar o título "${item.Titulo}": ${erro.message}`);
-            errosContador++;
-            if (idTitulo) throw erro; // Propaga o erro para alertar a interface individual
-          }
         });
 
         await Promise.all(promessasLote);
