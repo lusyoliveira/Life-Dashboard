@@ -469,7 +469,8 @@ export class CatalogoViewModel {
         if (itemUnico) todosOsItens = [itemUnico];
       } else if (descTitulo) {
         //MODO INDIVIDUAL: Busca e isola apenas o título selecionado por descrição
-        todosOsItens = [descTitulo];
+        const titulo = await apiTMDB.obterProgramaPorDescricao(descTitulo, tipo);
+        todosOsItens = [titulo];
       } else {
         //MODO LOTE: Busca o catálogo inteiro
         const dadosCatalogo = await this.obterCatalogo();
@@ -490,11 +491,6 @@ export class CatalogoViewModel {
         if (progressoCallback) progressoCallback("✅ Todos os títulos já possuem ID do TMDB vinculado!");
         return { processados: 0, erros: 0 };
       }
-
-      // Extração da configuração da API
-      const cfvm = new ConfiguracaoViewModel('configuracoes');
-      const dadosConfig = (await cfvm.obterConfiguracoes())[0];
-      const API_KEY = dadosConfig?.chaveTMDB; 
 
       let processadosContador = 0;
       let errosContador = 0;
@@ -534,31 +530,31 @@ export class CatalogoViewModel {
           const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
           const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
           
-          const dadosTMDB = await apiTMDB.obterProgramaPorDescricao(tituloLimpo);
+          const dadosTMDB = await apiTMDB.obterProgramaPorDescricao(tituloLimpo, deparTipo);
           if (!dadosTMDB) {
             progressoCallback(`⚠️ Nenhuma correspondência encontrada no TMDB para: "${item.Titulo}"`);
             return;
           }
 
-            const urlPosterCorreta = dadosTMDB.poster_path 
-              ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path
+            const urlPosterCorreta = dadosTMDB.Poster_Path 
+              ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.Poster_Path
               : item.Poster_Path;
 
             // Alinha as duas propriedades para que o payload mapeie corretamente para o Sequelize
             const idString = dadosTMDB.id.toString();
             item.id_tmdb = idString; 
 
-            item.Original_Name = dadosTMDB.original_title || dadosTMDB.original_name || item.Original_Name;
-            item.Overview = dadosTMDB.overview || item.Overview;
+            item.Original_Name = dadosTMDB.Original_Name || dadosTMDB.Original_Name || item.Original_Name;
+            item.Overview = dadosTMDB.Overview || item.Overview;
             item.Poster_Path = urlPosterCorreta;
-            item.Popularity = dadosTMDB.popularity || item.Popularity;
-            item.First_Air_Date = dadosTMDB.release_date || dadosTMDB.first_air_date || item.First_Air_Date;
-            item.Vote_Average = dadosTMDB.vote_average || item.Vote_Average;
-            item.Media_Type = dadosTMDB.media_type || deparTipo;
-            item.Genres_Ids = dadosTMDB.genre_ids || item.Genres_Ids;
-            
-            if (dadosTMDB.release_date || dadosTMDB.first_air_date) {
-              item.Year = new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear();
+            item.Popularity = dadosTMDB.Popularity || item.Popularity;
+            item.First_Air_Date = dadosTMDB.First_Air_Date || dadosTMDB.First_Air_Date || item.First_Air_Date;
+            item.Vote_Average = dadosTMDB.Vote_Average || item.Vote_Average;
+            item.Media_Type = dadosTMDB.Media_Type || deparTipo;
+            item.Genres_Ids = dadosTMDB.Genres_Ids || item.Genres_Ids;
+
+            if (dadosTMDB.release_date || dadosTMDB.First_Air_Date) {
+              item.Year = new Date(dadosTMDB.Release_date || dadosTMDB.First_Air_Date).getFullYear();
             }
 
             const payloadItem = new Catalogo(
@@ -601,7 +597,7 @@ export class CatalogoViewModel {
       return { processados: processadosContador, erros: errosContador };
 
     } catch (error) {
-      progressoCallback(`❌ Erro geral durante o processamento: ${error.message}`);
+        progressoCallback(`❌ Erro geral durante o processamento: ${error.message}`);
       throw error;
     }
   }

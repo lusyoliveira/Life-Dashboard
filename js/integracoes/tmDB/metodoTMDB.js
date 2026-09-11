@@ -1,5 +1,14 @@
 const urlBase = 'https://api.themoviedb.org/3/search';
 //const urlBase = 'https://api.themoviedb.org/3/search/multi';
+
+// // Extração da configuração da API
+// const cfvm = new ConfiguracaoViewModel('configuracoes');
+// const dadosConfig = (await cfvm.obterConfiguracoes())[0];
+
+//if (dadosConfig.ativaTMDB) {
+// const apiKey = dadosConfig?.chaveTMDB; 
+//}
+
 const apiTMDB = { 
 
     async obterPrograma(termoBusca,configuracoes) {
@@ -58,14 +67,15 @@ const apiTMDB = {
         }
         const apiKey = configuracoes.chaveTMDB;
         const [mediaType, mediaId] = id.split('-');
-        const urlDetalhes = `${urlBase}${mediaType}/${mediaId}?api_key=${apiKey}&language=pt-BR`;    
+        const url = `${urlBase}${mediaType}/${mediaId}?api_key=${apiKey}&language=pt-BR`;    
     },
 
-    async obterProgramaPorDescricao(titulo){
+    async obterProgramaPorDescricao(titulo,tipo){
         const apiKey = configuracoes.chaveTMDB;
-        const url = `${urlBase}?{deparTipo}?api_key=${apiKey}&query=${encodeURIComponent(titulo)}&language=pt-BR`;
+        const deparTipo = (tipo === 'Filme' || tipo === '6' || tipo === 'movie') ? 'movie' : 'tv';
+        const url = `${urlBase}?${deparTipo}?api_key=${apiKey}&query=${encodeURIComponent(titulo)}&language=pt-BR`;
 
-            try {
+        try {
             const respostaBusca = await fetch(url);
             if (!respostaBusca.ok) throw new Error(`HTTP ${respostaBusca.status}`);
             
@@ -87,9 +97,9 @@ const apiTMDB = {
                     Vote_Average: dadosTMDB.vote_average ? dadosTMDB.vote_average.toFixed(1) : 'N/A'
                     
                 }
-            } catch (error) {
-            alert('Erro ao buscar programas na API!');
-            throw error;
+        } catch (error) {
+        alert('Erro ao buscar programas na API!');
+        throw error;
         }
     }
 };

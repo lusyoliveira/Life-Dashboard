@@ -28,28 +28,13 @@
     <div class="tab-content" id="cadastroTabsContent">
         <!-- Aba 1: Dados Gerais -->
         <div class="tab-pane fade show active" id="dados-pane" role="tabpanel" aria-labelledby="dados-tab" tabindex="0">
-            <!-- Novo Bloco de Busca Manual por ID -->
-            <div class="row g-2 mb-3 align-items-end border-bottom pb-3">
-                <div class="col-sm-8">
-                    <label for="tmdb-id-busca-manual" class="form-label small fw-bold text-primary">Vincular ID Manual do TMDB</label>
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="number" class="form-control" id="tmdb-id-busca-manual" placeholder="Ex: 1399 (ID da Série ou Filme no TMDB)">
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <button type="button" id="btn-buscar-tmdb-manual" class="btn btn-primary btn-sm w-100 d-inline-flex align-items-center justify-content-center gap-2">
-                        <i class="bi bi-arrow-clockwise"></i> Buscar e Vincular
-                    </button>
-                </div>
-            </div>
-
             <!-- Restante da Aba 2 (Preview e Sinopse) -->
             <div class="row g-3">
                 <div class="col-md-4 text-center">
                     <div class="border rounded bg-light p-2 d-flex align-items-center justify-content-center" style="height: 340px; width: 100%;">
                         <img id="tmdb-preview-poster" id="poster-path-adicionar" src="https://placeholder.com" alt="Preview" class="img-fluid rounded shadow-sm" style="max-height: 100%;">
                     </div>
+                    <!-- Novo Bloco de Busca Manual por ID -->
                     <div class="col my-2">
                         <button type="button" id="btn-buscar-tmdb-manual" class="btn btn-primary btn-sm">
                             <i class="bi bi-arrow-clockwise"></i> Buscar e Vincular
@@ -127,8 +112,47 @@
 
         <!-- Aba 2: Metadados TMDB -->
         <div class="tab-pane fade" id="tmdb-pane" role="tabpanel" aria-labelledby="dados-tab" tabindex="0">
-            
-        </div>
+            <div class="row">
+                <div class="col-4">
+                    <nav id="navbar-example3" class="h-100 flex-column align-items-stretch pe-4 border-end">
+                    <nav class="nav nav-pills flex-column">
+                        <a class="nav-link" href="#item-1">Item 1</a>
+                        <a class="nav-link" href="#item-2">Item 2</a>
+                        <a class="nav-link" href="#item-3">Item 3</a>
+                    </nav>
+                    </nav>
+                </div>
 
+                <div class="col-8">
+                    <div data-bs-spy="scroll" data-bs-target="#navbar-example3" data-bs-smooth-scroll="true" class="scrollspy-example-2" tabindex="0">
+                    <div id="item-1">
+                        <h4>Item 1</h4>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
+                                <label class="form-check-label" for="firstCheckbox">First checkbox</label>
+                            </li>
+                            <li class="list-group-item">
+                                <input class="form-check-input me-1" type="checkbox" value="" id="secondCheckbox">
+                                <label class="form-check-label" for="secondCheckbox">Second checkbox</label>
+                            </li>
+                            <li class="list-group-item">
+                                <input class="form-check-input me-1" type="checkbox" value="" id="thirdCheckbox">
+                                <label class="form-check-label" for="thirdCheckbox">Third checkbox</label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="item-2">
+                        <h4>Item 2</h4>
+                        <p>...</p>
+                    </div>
+                    <div id="item-3">
+                        <h4>Item 3</h4>
+                        <p>...</p>
+                    </div>  
+                    </div>
+                </div>
+            </div>            
+        </div>
     </div>
 </form>

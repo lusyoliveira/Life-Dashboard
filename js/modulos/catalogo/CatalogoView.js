@@ -180,7 +180,8 @@ export class CatalogoView {
         }
 
         // Atualiza o título da modal com base no ID do TMDB, se disponível
-        this.atualizarTituloPorIDTMDB();
+        const descTitulo =  document.getElementById('titulo-adicionar').value
+        this.atualizarTituloPorIDTMDB(descTitulo);
     };
 
     // Método para salvar o formulário de criação/edição de título
