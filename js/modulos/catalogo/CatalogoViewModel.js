@@ -464,15 +464,23 @@ export class CatalogoViewModel {
       let todosOsItens = [];
 
       if (idTitulo) {
-        //MODO INDIVIDUAL: Busca e isola apenas o título selecionado
+        // Cenário A: Atualização Manual na tela de Edição
         const itemUnico = await this.obterTituloPorID(idTitulo);
         if (itemUnico) todosOsItens = [itemUnico];
       } else if (descTitulo) {
-        //MODO INDIVIDUAL: Busca e isola apenas o título selecionado por descrição
-        const titulo = await apiTMDB.obterProgramaPorDescricao(descTitulo, tipo);
-        todosOsItens = [titulo];
+        // Cenário B: Novo registro - Reconcilia pelo texto digitado no Input
+        const dadosTMDB = await apiTMDB.obterProgramaPorDescricao(descTitulo, tipoMidia);
+        if (!dadosTMDB) {
+          if (progressoCallback) progressoCallback(`⚠️ Nenhuma correspondência para Novo Registro: "${descTitulo}"`);
+          return { processados: 0, erros: 0 };
+        }
+        // Simula uma estrutura compatível temporária para reaproveitar a rotina de injeção
+        todosOsItens = [{
+          id: null, Titulo: descTitulo, Tipo: tipoMidia, Capa: '', Status: '1', Plataforma: '1',
+          Inicio: new Date(), Fim: null, Episodios: 0, Assistidos: 0, Temporadas: 1, Score: 0, Vezes: 0, Adicao: new Date()
+        }];
       } else {
-        //MODO LOTE: Busca o catálogo inteiro
+        // Cenário C: Varredura incremental em Lote total
         const dadosCatalogo = await this.obterCatalogo();
         todosOsItens = dadosCatalogo ? (Array.isArray(dadosCatalogo) ? dadosCatalogo : [dadosCatalogo]) : [];
       }
@@ -483,7 +491,7 @@ export class CatalogoViewModel {
       }
 
       // Filtra os itens. Se for individual, ignora a checagem de nulo para forçar a atualização
-      const itensFiltrados = idTitulo 
+      const itensFiltrados = (idTitulo || descTitulo) 
         ? todosOsItens 
         : todosOsItens.filter(item => !item.IdTMDB || item.IdTMDB === "" || item.IdTMDB === "null");
 
@@ -502,18 +510,17 @@ export class CatalogoViewModel {
         lotes.push(itensFiltrados.slice(i, i + tamanhoDoLote));
       }
 
-      progressoCallback(`Iniciando sincronização do TMDB. Alvos: ${itensFiltrados.length} mídias.`);
+      if (progressoCallback && typeof progressoCallback === 'function') {
+          progressoCallback(`Iniciando sincronização do TMDB. Alvos: ${itensFiltrados.length} mídias.`);
+      }
 
-      for (const [index, lote] of lotes.entries()) {
-        if (progressoCallback && !idTitulo && !descTitulo) {
-          progressoCallback(`Analisando bloco de pendentes ${index + 1} de ${lotes.length}...`);
-        }
-
+       for (const [index, lote] of lotes.entries()) {
         const promessasLote = lote.map(async (item) => {
-          if (!item.Titulo) return;
+          // Determina o texto de pesquisa
+          const buscaNome = descTitulo || item.Titulo;
+          if (!buscaNome) return;
 
-          // Limpa termos de temporada para a busca textual
-          let tituloLimpo = item.Titulo
+          let tituloLimpo = buscaNome
             .replace(/\d+ª\s*temporada/i, '')
             .replace(/temporada\s*\d+/i, '')
             .replace(/season\s*\d+/i, '')
@@ -525,14 +532,15 @@ export class CatalogoViewModel {
             .replace(/11ª e 12ª Temporada\s*\d+/i, '')
             .trim();
 
-          if (!tituloLimpo) tituloLimpo = item.Titulo;
+          if (!tituloLimpo) tituloLimpo = buscaNome;
 
           const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
-          const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
+          const deparTipo = tipoMidia || ((stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv');     
           
           const dadosTMDB = await apiTMDB.obterProgramaPorDescricao(tituloLimpo, deparTipo);
+          
           if (!dadosTMDB) {
-            progressoCallback(`⚠️ Nenhuma correspondência encontrada no TMDB para: "${item.Titulo}"`);
+            console.warn(`⚠️ Nenhuma correspondência encontrada no TMDB para: "${buscaNome}"`);
             return;
           }
 
@@ -541,21 +549,17 @@ export class CatalogoViewModel {
               : item.Poster_Path;
 
             // Alinha as duas propriedades para que o payload mapeie corretamente para o Sequelize
-            const idString = dadosTMDB.id.toString();
-            item.id_tmdb = idString; 
-
-            item.Original_Name = dadosTMDB.Original_Name || dadosTMDB.Original_Name || item.Original_Name;
+            item.IdTMDB = dadosTMDB.id_tmdb.toString();
+            item.Original_Name = dadosTMDB.Original_Name || item.Original_Name;
             item.Overview = dadosTMDB.Overview || item.Overview;
             item.Poster_Path = urlPosterCorreta;
             item.Popularity = dadosTMDB.Popularity || item.Popularity;
-            item.First_Air_Date = dadosTMDB.First_Air_Date || dadosTMDB.First_Air_Date || item.First_Air_Date;
+            item.First_Air_Date = dadosTMDB.First_Air_Date || item.First_Air_Date;
             item.Vote_Average = dadosTMDB.Vote_Average || item.Vote_Average;
-            item.Media_Type = dadosTMDB.Media_Type || deparTipo;
+            item.Media_Type = deparTipo;
             item.Genres_Ids = dadosTMDB.Genres_Ids || item.Genres_Ids;
+            item.Year = dadosTMDB.Year !== 'N/A' ? dadosTMDB.Year : item.Year;
 
-            if (dadosTMDB.release_date || dadosTMDB.First_Air_Date) {
-              item.Year = new Date(dadosTMDB.Release_date || dadosTMDB.First_Air_Date).getFullYear();
-            }
 
             const payloadItem = new Catalogo(
               item.id,
@@ -597,7 +601,9 @@ export class CatalogoViewModel {
       return { processados: processadosContador, erros: errosContador };
 
     } catch (error) {
-        progressoCallback(`❌ Erro geral durante o processamento: ${error.message}`);
+        if (progressoCallback && typeof progressoCallback === 'function') {
+          progressoCallback(`❌ Erro geral durante o processamento: ${error.message}`);
+      }
       throw error;
     }
   }

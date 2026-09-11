@@ -70,38 +70,41 @@ const apiTMDB = {
         const url = `${urlBase}${mediaType}/${mediaId}?api_key=${apiKey}&language=pt-BR`;    
     },
 
-    async obterProgramaPorDescricao(titulo,tipo){
-        const apiKey = configuracoes.chaveTMDB;
-        const deparTipo = (tipo === 'Filme' || tipo === '6' || tipo === 'movie') ? 'movie' : 'tv';
-        const url = `${urlBase}?${deparTipo}?api_key=${apiKey}&query=${encodeURIComponent(titulo)}&language=pt-BR`;
-
+        async obterProgramaPorDescricao(titulo, tipo) {
         try {
+            const apiKey = dadosConfig?.chaveTMDB;
+            const deparTipo = (tipo === 'Filme' || tipo === '6' || tipo === 'movie') ? 'movie' : 'tv';           
+            const url = `${urlBase}&${deparTipo}?api_key=${apiKey}&query=${encodeURIComponent(titulo)}&language=pt-BR`;
+
             const respostaBusca = await fetch(url);
             if (!respostaBusca.ok) throw new Error(`HTTP ${respostaBusca.status}`);
             
             const resultado = await respostaBusca.json();
             
-            // Trata se o retorno vem da busca por texto (Array .results) ou busca por ID direto (Objeto direto)
-            const dadosTMDB = resultado.results ? resultado.results[0] : resultado;
+            if (!resultado.results || resultado.results.length === 0) return null;
+            const dadosTMDB = resultado.results[0];
 
-                return {
-                    id_tmdb: dadosTMDB.id,
-                    title: dadosTMDB.title || dadosTMDB.name,
-                    Original_Name: dadosTMDB.original_title || dadosTMDB.original_name,
-                    Media_Type: dadosTMDB.media_type === 'movie' ? 'Filme' : (dadosTMDB.media_type === 'tv' ? 'Série' : 'Anime'),
-                    Overview: dadosTMDB.overview,
-                    Poster_Path: dadosTMDB.poster_path ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path : null,
-                    Year: (dadosTMDB.release_date || dadosTMDB.first_air_date) ? 
-                        new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear() : 'N/A',
-                    First_Air_Date: dadosTMDB.first_air_date || 'N/A',
-                    Vote_Average: dadosTMDB.vote_average ? dadosTMDB.vote_average.toFixed(1) : 'N/A'
-                    
-                }
+            // Retorna as propriedades normais mapeadas para o seu construtor
+            return {
+                id_tmdb: dadosTMDB.id,
+                title: dadosTMDB.title || dadosTMDB.name,
+                Original_Name: dadosTMDB.original_title || dadosTMDB.original_name,
+                Media_Type: deparTipo,
+                Overview: dadosTMDB.overview,
+                Poster_Path: dadosTMDB.poster_path ? "https://tmdb.org" + dadosTMDB.poster_path : null,
+                Year: (dadosTMDB.release_date || dadosTMDB.first_air_date) ? 
+                    new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear() : 'N/A',
+                First_Air_Date: dadosTMDB.release_date || dadosTMDB.first_air_date || 'N/A',
+                Vote_Average: dadosTMDB.vote_average ? dadosTMDB.vote_average : 0,
+                Popularity: dadosTMDB.popularity || 0,
+                Genres_Ids: dadosTMDB.genre_ids ? JSON.stringify(dadosTMDB.genre_ids) : '[]'
+            };
         } catch (error) {
-        alert('Erro ao buscar programas na API!');
-        throw error;
+            console.error('Erro ao buscar programa por descrição na API:', error);
+            throw error;
         }
     }
+
 };
 
 export default apiTMDB;

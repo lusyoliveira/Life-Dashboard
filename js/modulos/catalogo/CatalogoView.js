@@ -1264,10 +1264,26 @@ export class CatalogoView {
         if (!btnBuscar) return;
 
         btnBuscar.addEventListener("click", async () => {
-            const idManualDigitado = document.getElementById("tmdb-id-busca-manual").value.trim();
+            const idManualDigitado = document.getElementById("id-tmdb-adicionar")?.value.trim();
 
-            if (!idManualDigitado) {
-                alert("Por favor, digite um ID numérico válido do TMDB para vincular.");
+            if (!idManualDigitado && idTitulo) {
+                // Se o campo de ID manual estiver vazio na modal de edição, captura o título do form para tentar por nome
+                const nomeInput = document.getElementById('titulo-adicionar').value;
+                const selectTipo = document.getElementById("tipo-adicionar");
+                const textoTipo = selectTipo.options[selectTipo.selectedIndex]?.text || '';
+                
+                btnBuscar.disabled = true;
+                btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Vinculando...`;
+                
+                try {
+                    await this.vm.atualizarCatalogoTMDB(null, idTitulo, nomeInput, textoTipo);
+                    alert(`✅ Metadados sincronizados por texto com sucesso!`);
+                } catch(e) {
+                    alert(`❌ Erro ao sincronizar: ${e.message}`);
+                } finally {
+                    btnBuscar.disabled = false;
+                    btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
+                }
                 return;
             }
 
@@ -1275,12 +1291,10 @@ export class CatalogoView {
             btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Vinculando...`;
 
             try {
-                // Invocamos a rotina unificada passando o idTitulo do banco de dados local
+                // Dispara o barramento da ViewModel passando o id do banco
                 await this.vm.atualizarCatalogoTMDB(null, idTitulo);
-                alert(`✅ Título sincronizado com sucesso! Os metadados foram atualizados.`);
-                
-                // Limpa o input após a operação concluída
-                document.getElementById("tmdb-id-busca-manual").value = "";
+                alert(`✅ Título sincronizado com sucesso baseado no ID fornecido!`);
+                if(document.getElementById("id-tmdb-adicionar")) document.getElementById("id-tmdb-adicionar").value = "";
             } catch (erro) {
                 alert(`❌ Falha ao vincular mídias: ${erro.message}`);
             } finally {
