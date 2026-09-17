@@ -23,10 +23,11 @@ export async function inicializarCatalogo() {
     const botaoStatus = document.getElementById('adiciona-status'); 
     const botaoTipo = document.getElementById('adiciona-tipo'); 
     const formCatalogoHTML = await carregarFormulario("/pages/partials/formCatalogo.html");
-    //Pesquisa TMDB
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
     const btnSincronizar = document.getElementById("btnSincronizarTMDB");
+    const btnBuscarCatalogo = document.getElementById("buscar-catalogo-button");
+    const searchInputCatalogo = document.getElementById("buscar-catalogo-input");
 
     await plataformaView.renderCardPlataformas('lista-plataforma', 'Catalogo');
     await statusView.renderCardStatus('lista-status', 'Catalogo');
@@ -168,6 +169,29 @@ export async function inicializarCatalogo() {
         if (e.key === 'Enter') {
             const query = searchInput.value.trim();
             if (query) catalogoView.renderizarCardsBusca(query,'results-grid');
+        }
+    });
+
+    // Clique no botão de buscar na coleção local
+    btnBuscarCatalogo.addEventListener('click', () => {
+        const query = searchInputCatalogo.value.trim();
+        if (query) {
+            catalogoView.listarColecaoPorDescricao(query);
+        } else {
+            // Se o usuário limpar o campo e clicar em buscar, recarrega a coleção completa
+            catalogoView.listarColecao();
+        }
+    });
+
+    // Apertar "Enter" no input de busca local
+    searchInputCatalogo.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInputCatalogo.value.trim();
+            if (query) {
+                catalogoView.listarColecaoPorDescricao(query);
+            } else {
+                catalogoView.listarColecao();
+            }
         }
     });
 

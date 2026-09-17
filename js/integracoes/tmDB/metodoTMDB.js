@@ -70,10 +70,10 @@ const apiTMDB = {
         const url = `${urlBase}${mediaType}/${mediaId}?api_key=${apiKey}&language=pt-BR`;    
     },
 
-        async obterProgramaPorDescricao(titulo, tipo) {
+    async obterProgramaPorDescricao(titulo, tipo) {
         try {
             const apiKey = dadosConfig?.chaveTMDB;
-            const deparTipo = (tipo === 'Filme' || tipo === '6' || tipo === 'movie') ? 'movie' : 'tv';           
+            const deparTipo = (tipo === 'Filme' || tipo === '6') ? 'movie' : 'tv';           
             const url = `${urlBase}&${deparTipo}?api_key=${apiKey}&query=${encodeURIComponent(titulo)}&language=pt-BR`;
 
             const respostaBusca = await fetch(url);

@@ -16,53 +16,53 @@ export class CatalogoViewModel {
 
     this.catalogo = catalogoData.map((titulo) => {
       const titulos = new Catalogo(
-      titulo.id,
-      titulo.titulo,
-      titulo.capa,      
-      {
-        id: titulo.tipoId,
-        descricao: titulo.Tipo.descricao
-      },
-      {
-        id: titulo.statusId,
-        descricao: titulo.Status.descricao
-      },
-      {
-        id: titulo.plataformaId,
-        descricao: titulo.Plataforma.descricao
-      },
-      titulo.inicio,
-      titulo.fim,
-      titulo.episodios,
-      titulo.assistidos,
-      titulo.temporadas,
-      titulo.score,
-      titulo.vezes,
-      titulo.adicao,
-      titulo.id_tmdb,
-      titulo.original_name,
-      titulo.overview,
-      titulo.poster_path ? (typeof titulo.poster_path === 'string' ? titulo.poster_path : titulo.poster_path.toString('utf-8')) : null,
-      titulo.media_type,
-      titulo.genres_ids,
-      titulo.popularity,
-      titulo.first_air_date,
-      titulo.year,
-      titulo.vote_average
-    );
-    return titulos;
-  });  
-  return this.catalogo;
-};
+        titulo.id,
+        titulo.titulo,
+        titulo.capa,
+        {
+          id: titulo.tipoId,
+          descricao: titulo.Tipo.descricao
+        },
+        {
+          id: titulo.statusId,
+          descricao: titulo.Status.descricao
+        },
+        {
+          id: titulo.plataformaId,
+          descricao: titulo.Plataforma.descricao
+        },
+        titulo.inicio,
+        titulo.fim,
+        titulo.episodios,
+        titulo.assistidos,
+        titulo.temporadas,
+        titulo.score,
+        titulo.vezes,
+        titulo.adicao,
+        titulo.id_tmdb,
+        titulo.original_name,
+        titulo.overview,
+        titulo.poster_path ? (typeof titulo.poster_path === 'string' ? titulo.poster_path : titulo.poster_path.toString('utf-8')) : null,
+        titulo.media_type,
+        titulo.genres_ids,
+        titulo.popularity,
+        titulo.first_air_date,
+        titulo.year,
+        titulo.vote_average
+      );
+      return titulos;
+    });
+    return this.catalogo;
+  };
 
   async obterTituloPorID(idTitulo) {
     const titulo = await api.buscarDadosPorId(idTitulo, this.endpoint);
-    if (!titulo) return null;  
+    if (!titulo) return null;
 
     const catalogo = new Catalogo(
       titulo.id,
       titulo.titulo,
-      titulo.capa,      
+      titulo.capa,
       {
         id: titulo.tipoId,
         descricao: titulo.Tipo.descricao
@@ -96,10 +96,53 @@ export class CatalogoViewModel {
     );
 
     return catalogo;
-  }
+  };
+
+  async obterCatalogoPorDescricao(descricao, limite = 4, pagina = 1) {
+    const resposta = await api.buscarDadosPorDescricao(descricao, this.endpoint, limite, pagina);
+    
+    // Extrai os registros envelopados ou assume um array vazio
+    const listaDados = resposta?.dados || [];
+
+    const titulosMapeados = listaDados.map((titulo) => {
+      return new Catalogo(
+        titulo.id,
+        titulo.titulo,
+        titulo.capa,      
+        { id: titulo.tipoId, descricao: titulo.Tipo?.descricao || '' },
+        { id: titulo.statusId, descricao: titulo.Status?.descricao || '' },
+        { id: titulo.plataformaId, descricao: titulo.Plataforma?.descricao || '' },
+        titulo.inicio,
+        titulo.fim,
+        titulo.episodios,
+        titulo.assistidos,
+        titulo.temporadas,
+        titulo.score,
+        titulo.vezes,
+        titulo.adicao,
+        titulo.id_tmdb,
+        titulo.original_name,
+        titulo.overview,
+        titulo.poster_path ? (typeof titulo.poster_path === 'string' ? titulo.poster_path : titulo.poster_path.toString('utf-8')) : null,
+        titulo.media_type,
+        titulo.genres_ids,
+        titulo.popularity,
+        titulo.first_air_date,
+        titulo.year,
+        titulo.vote_average
+      );
+    });
+
+    // Retorna os dados envelopados junto com as informações de paginação vindas do Back
+    return {
+      dados: titulosMapeados,
+      totalPaginas: resposta?.totalPaginas || 1,
+      paginaAtual: resposta?.paginaAtual || 1
+    };
+  };
 
   async salvarTitulo(titulo) {
-     // 1. Transforma o link da imagem em dados literais (Base64)
+    // 1. Transforma o link da imagem em dados literais (Base64)
     const imagemLiteralBase64 = await converterUrlParaBase64(titulo.Poster_Path);
 
     const payload = {
@@ -130,7 +173,7 @@ export class CatalogoViewModel {
       year: titulo.Year,
       vote_average: titulo.Vote_Average
     };
-       
+
     if (titulo.id) {
       //payload.Adicao = new Date(titulo.Adicao);
       await api.atualizarDados(payload, this.endpoint);
@@ -147,7 +190,7 @@ export class CatalogoViewModel {
     return this.obterCatalogo();
   };
 
-   filtrarPorStatus(status) {
+  filtrarPorStatus(status) {
     return this.catalogo.filter((t) => t.Status.descricao === status);
   };
 
@@ -170,13 +213,13 @@ export class CatalogoViewModel {
     return this.catalogo
       .filter((t) => t.Status.descricao === status)
       .sort((a, b) => {
-      const ta = a?.Adicao instanceof Date && !isNaN(a.Adicao) ? a.Adicao.getTime() : 0;
-      const tb = b?.Adicao instanceof Date && !isNaN(b.Adicao) ? b.Adicao.getTime() : 0;
-      return tb - ta;
-    })
+        const ta = a?.Adicao instanceof Date && !isNaN(a.Adicao) ? a.Adicao.getTime() : 0;
+        const tb = b?.Adicao instanceof Date && !isNaN(b.Adicao) ? b.Adicao.getTime() : 0;
+        return tb - ta;
+      })
       .slice(0, qtd);
   };
-  
+
   assistindo(status, qtd = 4) {
     return this.catalogo
       .filter(titulo => status.includes(titulo.Status.descricao))
@@ -186,16 +229,16 @@ export class CatalogoViewModel {
   recentes(qtd = 4) {
     return [...this.catalogo]
       .sort((a, b) => {
-      const ta = a?.Adicao instanceof Date && !isNaN(a.Adicao) ? a.Adicao.getTime() : 0;
-      const tb = b?.Adicao instanceof Date && !isNaN(b.Adicao) ? b.Adicao.getTime() : 0;
-      return tb - ta;
-    })
-    .slice(0, qtd);    
+        const ta = a?.Adicao instanceof Date && !isNaN(a.Adicao) ? a.Adicao.getTime() : 0;
+        const tb = b?.Adicao instanceof Date && !isNaN(b.Adicao) ? b.Adicao.getTime() : 0;
+        return tb - ta;
+      })
+      .slice(0, qtd);
   };
 
   estatisticasPorTipo(tipo) {
     const lista = this.filtrarPorTipo(tipo);
-          
+
     return {
       total: lista.length,
       dias: lista.reduce((acc, t) => acc + (t.Dias || 0), 0),
@@ -208,8 +251,8 @@ export class CatalogoViewModel {
       emEspera: lista.filter((t) => t.Status.descricao === "Em Espera").length,
       mediaPontuacao: lista.length
         ? (
-            lista.reduce((acc, t) => acc + (t.Score || 0), 0) / lista.length
-          ).toFixed(1)
+          lista.reduce((acc, t) => acc + (t.Score || 0), 0) / lista.length
+        ).toFixed(1)
         : 0,
     };
   };
@@ -300,21 +343,21 @@ export class CatalogoViewModel {
   };
 
   //pesquisa TMDB
-   async obterDadosTMDB(nome, elementoId) {
-      const elementoDestino = document.getElementById(elementoId);
-      
-      elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
-      try {          
-              const cfvm = new ConfiguracaoViewModel('configuracoes');
-              const dadosConfig = (await cfvm.obterConfiguracoes())[0];
-              const catalogoTMDB = await apiTMDB.obterPrograma(nome, dadosConfig);
-    
-              return catalogoTMDB
-          } catch (error) {
-              elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
-        }
-    };
-  
+  async obterDadosTMDB(nome, elementoId) {
+    const elementoDestino = document.getElementById(elementoId);
+
+    elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
+    try {
+      const cfvm = new ConfiguracaoViewModel('configuracoes');
+      const dadosConfig = (await cfvm.obterConfiguracoes())[0];
+      const catalogoTMDB = await apiTMDB.obterPrograma(nome, dadosConfig);
+
+      return catalogoTMDB
+    } catch (error) {
+      elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
+    }
+  };
+
   // Método dedicado para preencher metadados de itens pendentes
   // async atualizarCatalogoTMDB(progressoCallback = null) {
   //   try {
@@ -343,7 +386,7 @@ export class CatalogoViewModel {
 
   //     let processadosContador = 0;
   //     let errosContador = 0;
-      
+
   //     // Divide a lista filtrada em lotes paralelos de 20 em 20 itens
   //     const tamanhoDoLote = 20;
   //     const lotes = [];
@@ -383,9 +426,9 @@ export class CatalogoViewModel {
   //         try {
   //           const respostaBusca = await fetch(urlBuscaTexto);
   //           if (!respostaBusca.ok) throw new Error(`Erro na busca: HTTP ${respostaBusca.status}`);
-            
+
   //           const resultadoBusca = await respostaBusca.json();
-            
+
   //           if (!resultadoBusca.results || resultadoBusca.results.length === 0) {
   //             console.warn(`⚠️ Nenhuma correspondência encontrada no TMDB para o título: "${item.Titulo}" (Buscado como: "${tituloLimpo}")`);
   //             return;
@@ -406,7 +449,7 @@ export class CatalogoViewModel {
   //           item.Vote_Average = dadosTMDB.vote_average || item.Vote_Average;
   //           item.Media_Type = dadosTMDB.media_type || item.Media_Type;
   //           item.Genres_Ids = dadosTMDB.genre_ids || item.Genres_Ids;
-            
+
   //           if (dadosTMDB.release_date || dadosTMDB.first_air_date) {
   //             item.Year = new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear();
   //           }
@@ -491,8 +534,8 @@ export class CatalogoViewModel {
       }
 
       // Filtra os itens. Se for individual, ignora a checagem de nulo para forçar a atualização
-      const itensFiltrados = (idTitulo || descTitulo) 
-        ? todosOsItens 
+      const itensFiltrados = (idTitulo || descTitulo)
+        ? todosOsItens
         : todosOsItens.filter(item => !item.IdTMDB || item.IdTMDB === "" || item.IdTMDB === "null");
 
       if (itensFiltrados.length === 0) {
@@ -502,7 +545,7 @@ export class CatalogoViewModel {
 
       let processadosContador = 0;
       let errosContador = 0;
-      
+
       // Divide a lista em lotes de 20
       const tamanhoDoLote = 20;
       const lotes = [];
@@ -511,10 +554,10 @@ export class CatalogoViewModel {
       }
 
       if (progressoCallback && typeof progressoCallback === 'function') {
-          progressoCallback(`Iniciando sincronização do TMDB. Alvos: ${itensFiltrados.length} mídias.`);
+        progressoCallback(`Iniciando sincronização do TMDB. Alvos: ${itensFiltrados.length} mídias.`);
       }
 
-       for (const [index, lote] of lotes.entries()) {
+      for (const [index, lote] of lotes.entries()) {
         const promessasLote = lote.map(async (item) => {
           // Determina o texto de pesquisa
           const buscaNome = descTitulo || item.Titulo;
@@ -535,62 +578,62 @@ export class CatalogoViewModel {
           if (!tituloLimpo) tituloLimpo = buscaNome;
 
           const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
-          const deparTipo = tipoMidia || ((stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv');     
-          
+          const deparTipo = tipoMidia || ((stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv');
+
           const dadosTMDB = await apiTMDB.obterProgramaPorDescricao(tituloLimpo, deparTipo);
-          
+
           if (!dadosTMDB) {
             console.warn(`⚠️ Nenhuma correspondência encontrada no TMDB para: "${buscaNome}"`);
             return;
           }
 
-            const urlPosterCorreta = dadosTMDB.Poster_Path 
-              ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.Poster_Path
-              : item.Poster_Path;
+          const urlPosterCorreta = dadosTMDB.Poster_Path
+            ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.Poster_Path
+            : item.Poster_Path;
 
-            // Alinha as duas propriedades para que o payload mapeie corretamente para o Sequelize
-            item.IdTMDB = dadosTMDB.id_tmdb.toString();
-            item.Original_Name = dadosTMDB.Original_Name || item.Original_Name;
-            item.Overview = dadosTMDB.Overview || item.Overview;
-            item.Poster_Path = urlPosterCorreta;
-            item.Popularity = dadosTMDB.Popularity || item.Popularity;
-            item.First_Air_Date = dadosTMDB.First_Air_Date || item.First_Air_Date;
-            item.Vote_Average = dadosTMDB.Vote_Average || item.Vote_Average;
-            item.Media_Type = deparTipo;
-            item.Genres_Ids = dadosTMDB.Genres_Ids || item.Genres_Ids;
-            item.Year = dadosTMDB.Year !== 'N/A' ? dadosTMDB.Year : item.Year;
+          // Alinha as duas propriedades para que o payload mapeie corretamente para o Sequelize
+          item.IdTMDB = dadosTMDB.id_tmdb.toString();
+          item.Original_Name = dadosTMDB.Original_Name || item.Original_Name;
+          item.Overview = dadosTMDB.Overview || item.Overview;
+          item.Poster_Path = urlPosterCorreta;
+          item.Popularity = dadosTMDB.Popularity || item.Popularity;
+          item.First_Air_Date = dadosTMDB.First_Air_Date || item.First_Air_Date;
+          item.Vote_Average = dadosTMDB.Vote_Average || item.Vote_Average;
+          item.Media_Type = deparTipo;
+          item.Genres_Ids = dadosTMDB.Genres_Ids || item.Genres_Ids;
+          item.Year = dadosTMDB.Year !== 'N/A' ? dadosTMDB.Year : item.Year;
 
 
-            const payloadItem = new Catalogo(
-              item.id,
-              item.Titulo,
-              item.Capa,
-              item.Tipo?.id || item.Tipo,
-              item.Status?.id || item.Status,
-              item.Plataforma?.id || item.Plataforma,
-              item.Inicio,
-              item.Fim,
-              item.Episodios,
-              item.Assistidos,
-              item.Temporadas,
-              item.Score,
-              item.Vezes,
-              item.Adicao,
-              item.id_tmdb, // Gravado em conformidade com o Sequelize
-              item.Original_Name,
-              item.Overview,
-              item.Poster_Path,
-              item.Media_Type,
-              item.Genres_Ids,
-              item.Popularity,
-              item.First_Air_Date,
-              item.Year,
-              item.Vote_Average
-            );
+          const payloadItem = new Catalogo(
+            item.id,
+            item.Titulo,
+            item.Capa,
+            item.Tipo?.id || item.Tipo,
+            item.Status?.id || item.Status,
+            item.Plataforma?.id || item.Plataforma,
+            item.Inicio,
+            item.Fim,
+            item.Episodios,
+            item.Assistidos,
+            item.Temporadas,
+            item.Score,
+            item.Vezes,
+            item.Adicao,
+            item.id_tmdb, // Gravado em conformidade com o Sequelize
+            item.Original_Name,
+            item.Overview,
+            item.Poster_Path,
+            item.Media_Type,
+            item.Genres_Ids,
+            item.Popularity,
+            item.First_Air_Date,
+            item.Year,
+            item.Vote_Average
+          );
 
-            // Chama o salvamento local do Sequelize que cuida do download em Canvas/Base64
-            await this.salvarTitulo(payloadItem);
-            processadosContador++;
+          // Chama o salvamento local do Sequelize que cuida do download em Canvas/Base64
+          await this.salvarTitulo(payloadItem);
+          processadosContador++;
 
         });
 
@@ -601,8 +644,8 @@ export class CatalogoViewModel {
       return { processados: processadosContador, erros: errosContador };
 
     } catch (error) {
-        if (progressoCallback && typeof progressoCallback === 'function') {
-          progressoCallback(`❌ Erro geral durante o processamento: ${error.message}`);
+      if (progressoCallback && typeof progressoCallback === 'function') {
+        progressoCallback(`❌ Erro geral durante o processamento: ${error.message}`);
       }
       throw error;
     }

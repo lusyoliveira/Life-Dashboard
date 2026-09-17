@@ -42,6 +42,18 @@ const api = {
         }
     },
 
+    async buscarDadosPorDescricao(descricao, endpoint, limite = 4, pagina = 1) {
+        try {
+            // Adicionando os parâmetros de paginação na string de consulta da URL
+            const query = `${urlBase}/${endpoint}/busca?titulo=${encodeURIComponent(descricao)}&limite=${limite}&pagina=${pagina}`;
+            const response = await fetch(query);
+            return await response.json();
+        } catch(error)  {
+            alert('Erro ao buscar o dado na API!');
+            throw error;
+        }
+    },
+
     async atualizarDados(dados, endpoint) {
         try {
             const response = await fetch(`${urlBase}/${endpoint}/${dados.id}`, {

@@ -2,7 +2,7 @@ import metodoData from "../../Utils/metodoData.js"
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
-import { popularSelect, limparFormulario, renderizarControlesPaginacao } from "../../Utils/utils.js";
+import { popularSelect, limparFormulario } from "../../Utils/utils.js";
 import { graficoBarra } from "../../componentes/graficos/GraficosFactory.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
@@ -83,12 +83,17 @@ export class CatalogoView {
         await this.listarStatus("status-adicionar");
 
         // Atualiza o título da modal com base no ID do TMDB, se disponível
-        this.atualizarTituloPorIDTMDB();
-
-        if(idTitulo) {
-            this.atualizarTituloPorIDTMDB(idTitulo);
-        } else {
-            this.vem.obterDadosTMDB
+        const btnBuscarTMDB = document.getElementById("btn-buscar-tmdb-manual");
+        const idTitulo = document.getElementById("id-tmdb-adicionar");
+        debugger
+        if (btnBuscarTMDB) {
+            btnBuscarTMDB.addEventListener("click", async () => {
+                if(idTitulo) {
+                    this.atualizarTituloPorIDTMDB(idTitulo);
+                } else {
+                    this.vem.obterDadosTMDB
+                }
+            });
         }
     };    
 
@@ -167,7 +172,7 @@ export class CatalogoView {
         if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
 
         // Renderiza o pôster no preview gráfico
-        const previewImg = document.getElementById('tmdb-preview-poster');
+        const previewImg = document.getElementById('poster-path-adicionar');
         if (previewImg && titulo.Poster_Path) {
             const stringPoster = String(titulo.Poster_Path).trim();
             if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
@@ -178,7 +183,7 @@ export class CatalogoView {
                 previewImg.src = "https://placeholder.com";
             }
         }
-
+        
         // Atualiza o título da modal com base no ID do TMDB, se disponível
         const descTitulo =  document.getElementById('titulo-adicionar').value
         this.atualizarTituloPorIDTMDB(descTitulo);
@@ -255,80 +260,63 @@ export class CatalogoView {
         const savedGrid = document.getElementById('saved-grid');
         if (!savedGrid) return;
         
-        savedGrid.innerHTML = '<p>Carregando sua lista...</p>';
+        savedGrid.innerHTML = '<p class="text-muted text-center my-4">Carregando sua lista...</p>';
 
         try {
             const dados = await this.vm.obterCatalogo();
+            
+            // Ordena por data de adição decrescente
             const listaOrdenada = dados.sort(
-                (b,a) => new Date(a.Adicao).getTime() - new Date(b.Adicao).getTime()
+                (b, a) => new Date(a.Adicao).getTime() - new Date(b.Adicao).getTime()
             ); 
 
-            if (!listaOrdenada || listaOrdenada.length === 0) {
-                savedGrid.innerHTML = '<p>Sua lista está vazia. Volte para a busca e adicione mídias!</p>';
-                return;
-            }
-
-            savedGrid.innerHTML = '';
-            
+            // Como a listagem padrão busca tudo do banco de uma vez, fazemos a paginação no frontend com slice
+            const totalPaginas = Math.ceil(listaOrdenada.length / this.itensPorPaginaColecao);
             const indiceInicio = (this.paginaAtualColecao - 1) * this.itensPorPaginaColecao;
             const indiceFim = indiceInicio + this.itensPorPaginaColecao;
             const itensPaginados = listaOrdenada.slice(indiceInicio, indiceFim);
 
-            itensPaginados.forEach(item => {
-                const card = document.createElement('div');
-                // Adicionado 'user-select-none' e estilo de cursor para indicar que o card é clicável
-                card.className = 'card h-100 shadow-sm';
-                card.style.cursor = 'pointer';
-                // INJEÇÃO CRÍTICA: Vincula o ID do banco de dados ao card
-                card.setAttribute('data-id', item.id);
+            // Chama o renderizador unificado
+            this.renderizarGradeColecao(savedGrid, itensPaginados, totalPaginas, this.paginaAtualColecao);
 
-                const dataInicio = item.Inicio ? metodoData.formatarDataBR(item.Inicio) : 'Não iniciada';
-                const dataFim = item.Fim ? metodoData.formatarDataBR(item.Fim) : 'Não finalizada';
-                const textoNota = item.Score ? item.Score : 'Sem nota';
-
-                // Tratamento dinâmico para renderizar a Capa Base64 ou URL da web
-                let fonteImagem = item.Capa || "https://placeholder.com";
-                const stringPoster = item.Poster_Path ? String(item.Poster_Path).trim() : "";
-
-                if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
-                    if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
-                        fonteImagem = stringPoster;
-                    } else {
-                        fonteImagem = "data:image/jpeg;base64," + stringPoster;
-                    }
-                }
-
-                card.innerHTML = 
-                    '<img class="card-img-top" src="' + fonteImagem + '" alt="' + item.Titulo + '" style="height: 320px;">' +
-                    '<div class="card-body d-flex flex-column justify-content-between">' +
-                        '<div>' +
-                            '<h5 class="card-title text-truncate">' + item.Titulo + '</h5>' +
-                            '<p class="card-text small text-muted mb-2">' +
-                                '<strong>Tipo:</strong> ' + (item.Tipo?.descricao || 'Não informado') + '<br>' +
-                                '<strong>Onde:</strong> ' + (item.Plataforma?.descricao || 'Não informado') +
-                            '</p>' +
-                        '</div>' +
-                        '<div class="border-top pt-2 mt-2 small text-muted">' +
-                            '📅 ' + dataInicio + ' até ' + dataFim +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="card-footer bg-transparent border-top-0">' +
-                        '<span class="badge bg-primary w-100 py-2">⭐ Nota: ' + textoNota + '</span>' +
-                    '</div>';
-
-                // Encapsula o card em uma coluna estruturada do Bootstrap Grid
-                const coluna = document.createElement('div');
-                coluna.className = 'col-md-3 col-sm-6 mb-4';
-                coluna.appendChild(card);
-
-                savedGrid.appendChild(coluna);
-            });
-
-            const totalPaginas = Math.ceil(listaOrdenada.length / this.itensPorPaginaColecao);
-            renderizarControlesPaginacao(savedGrid, totalPaginas, this);
         } catch (error) {
-            savedGrid.innerHTML = '<p>Erro ao carregar sua lista.</p>';
+            savedGrid.innerHTML = '<p class="text-center text-danger my-4">Erro ao carregar sua lista.</p>';
             console.error(error);
+        }
+    };
+
+    async listarColecaoPorDescricao(termoBusca, paginaAlvo = 1) {
+        const savedGrid = document.getElementById('saved-grid');
+        const btnBuscar = document.getElementById("buscar-catalogo-button");
+        const inputBuscar = document.getElementById("buscar-catalogo-input");
+        
+        if (!savedGrid) return;
+        
+        // Feedback visual de Loading
+        if (btnBuscar) {
+            btnBuscar.disabled = true;
+            btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...`;
+        }
+        if (inputBuscar) inputBuscar.disabled = true;
+
+        savedGrid.innerHTML = '<p class="text-muted text-center my-4">Pesquisando na sua coleção...</p>';
+
+        try {
+            const resultadoPaginado = await this.vm.obterCatalogoPorDescricao(termoBusca, this.itensPorPaginaColecao, paginaAlvo);
+            const { dados, totalPaginas, paginaAtual } = resultadoPaginado;
+
+            // Chama o renderizador unificado passando o termoBusca para controle dos botões de paginação
+            this.renderizarGradeColecao(savedGrid, dados, totalPaginas, paginaAtual, termoBusca);
+
+        } catch (error) {
+            savedGrid.innerHTML = '<p class="text-center text-danger my-4">Erro ao realizar a busca local.</p>';
+            console.error(error);
+        } finally {
+            if (btnBuscar) {
+                btnBuscar.disabled = false;
+                btnBuscar.innerHTML = 'Buscar';
+            }
+            if (inputBuscar) inputBuscar.disabled = false;
         }
     };
 
@@ -482,6 +470,161 @@ export class CatalogoView {
             this.vm.dadosGraficoPlataforma(),
             "Títulos por Plataforma"
         );
+    };
+
+    renderizarGradeColecao(savedGrid, dados, totalPaginas, paginaAtual, termoBusca = null) {
+        if (!dados || dados.length === 0) {
+            savedGrid.innerHTML = '<p class="text-center text-muted my-4">Nenhum título encontrado.</p>';
+            return;
+        }
+
+        savedGrid.innerHTML = '';
+        
+        // Cria a linha (row) para os cards do Bootstrap
+        const divRow = document.createElement('div');
+        divRow.className = 'row w-100 m-0';
+
+        dados.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card h-100 shadow-sm';
+            card.style.cursor = 'pointer';
+            card.setAttribute('data-id', item.id);
+
+            const dataInicio = item.Inicio ? metodoData.formatarDataBR(item.Inicio) : 'Não iniciada';
+            const dataFim = item.Fim ? metodoData.formatarDataBR(item.Fim) : 'Não finalizada';
+            const textoNota = item.Score ? item.Score : 'Sem nota';
+
+            // Tratamento de imagem unificado (URL ou Base64)
+            let fonteImagem = item.Capa || "https://placeholder.com"; 
+
+            // Extrai o Poster_Path do TMDB tratando os formatos do Sequelize
+            let stringPoster = "";
+
+            if (item.Poster_Path) {
+                // Cenário A: Se o Sequelize devolveu como um objeto contendo o array de bytes do Buffer
+                if (typeof item.Poster_Path === 'object' && item.Poster_Path.data) {
+                    const bytes = item.Poster_Path.data;
+                    // Converte o array de inteiros em String Base64 de forma ultra rápida
+                    stringPoster = btoa(String.fromCharCode.apply(null, new Uint8Array(bytes)));
+                } 
+                // Cenário B: Se ele veio como uma instância direta de Uint8Array ou similar
+                else if (item.Poster_Path instanceof Uint8Array || item.Poster_Path.constructor?.name === "Uint8Array") {
+                    stringPoster = btoa(String.fromCharCode.apply(null, new Uint8Array(item.Poster_Path)));
+                }
+                // Cenário C: Se já for uma string comum de texto puro
+                else if (typeof item.Poster_Path === 'string') {
+                    stringPoster = item.Poster_Path.trim();
+                }
+            }
+
+            // 3. Monta e valida a fonte final da imagem para a tag <img>
+            if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
+                if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
+                    fonteImagem = stringPoster;
+                } else {
+                    // Se for o Base64 limpo que veio do banco, adiciona o prefixo indispensável para o navegador
+                    fonteImagem = "data:image/jpeg;base64," + stringPoster;
+                }
+            }
+
+            card.innerHTML = 
+                `<img class="card-img-top" src="${fonteImagem}" alt="${item.Titulo}" style="height: 320px;">` +
+                '<div class="card-body d-flex flex-column justify-content-between">' +
+                    '<div>' +
+                        `<h5 class="card-title text-truncate">${item.Titulo}</h5>` +
+                        '<p class="card-text small text-muted mb-2">' +
+                            `<strong>Tipo:</strong> ${item.Tipo?.descricao || 'Não informado'}<br>` +
+                            `<strong>Onde:</strong> ${item.Plataforma?.descricao || 'Não informado'}` +
+                        '</p>' +
+                    '</div>' +
+                    `<div class="border-top pt-2 mt-2 small text-muted">📅 ${dataInicio} até ${dataFim}</div>` +
+                '</div>' +
+                `<div class="card-footer bg-transparent border-top-0"><span class="badge bg-primary w-100 py-2">⭐ Nota: ${textoNota}</span></div>`;
+
+            const coluna = document.createElement('div');
+            coluna.className = 'col-md-3 col-sm-6 mb-4';
+            coluna.appendChild(card);
+            divRow.appendChild(coluna);
+        });
+
+        savedGrid.appendChild(divRow);
+
+        // Renderização do componente de Paginação nativo do Bootstrap (Truncada/Limitada)
+        if (totalPaginas > 1) {
+            const navPaginacao = document.createElement('nav');
+            navPaginacao.className = 'd-flex justify-content-center mt-4 w-100';
+            
+            // Configuração da janela visual: quantos números mostrar antes e depois da página ativa
+            const maxBotoesVisiveis = 2; 
+            let htmlItens = '';
+
+            // Botão para ir direto para a PRIMEIRA página (mostra apenas se estiver longe dela)
+            if (paginaAtual > maxBotoesVisiveis + 1) {
+                htmlItens += `
+                    <li class="page-item">
+                        <button class="page-link btn-ir-pagina" data-pagina="1">1</button>
+                    </li>
+                `;
+                if (paginaAtual > maxBotoesVisiveis + 2) {
+                    htmlItens += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            // Calcula dinamicamente o intervalo de páginas que vão aparecer na tela
+            const paginaInicio = Math.max(1, paginaAtual - maxBotoesVisiveis);
+            const paginaFim = Math.min(totalPaginas, paginaAtual + maxBotoesVisiveis);
+
+            // Renderiza apenas os números que estão dentro do limite da janela calculada
+            for (let i = paginaInicio; i <= paginaFim; i++) {
+                const classeAtiva = (i === paginaAtual) ? 'active' : '';
+                htmlItens += `
+                    <li class="page-item ${classeAtiva}">
+                        <button class="page-link btn-ir-pagina" data-pagina="${i}">${i}</button>
+                    </li>
+                `;
+            }
+
+            // Botão para ir direto para a ÚLTIMA página (mostra apenas se estiver longe dela)
+            if (paginaAtual < totalPaginas - maxBotoesVisiveis) {
+                if (paginaAtual < totalPaginas - maxBotoesVisiveis - 1) {
+                    htmlItens += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+                htmlItens += `
+                    <li class="page-item">
+                        <button class="page-link btn-ir-pagina" data-pagina="${totalPaginas}">${totalPaginas}</button>
+                    </li>
+                `;
+            }
+
+            // Montagem final com os botões de Anterior, Próximo e o miolo dinâmico calculado
+            navPaginacao.innerHTML = `
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item ${paginaAtual === 1 ? 'disabled' : ''}">
+                        <button class="page-link btn-ir-pagina" data-pagina="${paginaAtual - 1}">Anterior</button>
+                    </li>
+                    ${htmlItens}
+                    <li class="page-item ${paginaAtual === totalPaginas ? 'disabled' : ''}">
+                        <button class="page-link btn-ir-pagina" data-pagina="${paginaAtual + 1}">Próximo</button>
+                    </li>
+                </ul>
+            `;
+
+            // Mantém o mesmo escutador de cliques por delegação que já criamos
+            navPaginacao.addEventListener('click', async (e) => {
+                const botaoLink = e.target.closest('.btn-ir-pagina');
+                if (botaoLink) {
+                    const paginaSelecionada = parseInt(botaoLink.dataset.pagina);
+                    if (termoBusca) {
+                        await this.buscarColecaoLocal(termoBusca, paginaSelecionada);
+                    } else {
+                        this.paginaAtualColecao = paginaSelecionada;
+                        await this.listarColecao();
+                    }
+                }
+            });
+
+            savedGrid.appendChild(navPaginacao);
+        }
     };
 
     // Renderiza os títulos adicionados recentemente na página de catálogo
