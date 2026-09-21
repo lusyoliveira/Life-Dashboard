@@ -190,6 +190,222 @@ export class CatalogoViewModel {
     return this.obterCatalogo();
   };
 
+  // Método para buscar dados no TMDB e preencher os campos do formulário
+  async obterDadosTMDB(nome, elementoId) {
+    const elementoDestino = document.getElementById(elementoId);
+
+    elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
+    try {
+      const catalogoTMDB = await apiTMDB.obterPrograma(nome);
+
+      return catalogoTMDB
+    } catch (error) {
+      elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
+    }
+  };
+
+  // Método para buscar dados no TMDB especificamento por título e tipo
+  async obterDadosTMDBPorDescricao(nome, tipo) {
+    try {
+      const catalogoTMDB = await apiTMDB.obterProgramaPorDescricao(nome,tipo);
+
+      return catalogoTMDB
+    } catch (error) {
+      elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
+    }
+  };
+
+  // Método dedicado para preencher metadados de itens pendentes
+  async atualizarCatalogoEmLote(progressoCallback = null) {
+    try {
+      // 1. Busca TODOS os itens cadastrados no seu sistema
+      const dadosCatalogo = await this.obterCatalogo(); // Obtém todos os títulos do catálogo     
+      const todosOsItens = dadosCatalogo ? (Array.isArray(dadosCatalogo) ? dadosCatalogo : [dadosCatalogo]) : [];
+
+      if (todosOsItens.length === 0) {
+        console.warn("Nenhum item encontrado no banco de dados para processamento.");
+        return { processados: 0, erros: 0 };
+      }
+
+      // Filtra APENAS os itens onde o ID_TMDB é nulo, indefinido ou vazio
+      const itensPendentes = todosOsItens.filter(item => !item.IdTMDB || item.IdTMDB === "" || item.IdTMDB === "null");
+
+      if (itensPendentes.length === 0) {
+        if (progressoCallback) progressoCallback("✅ Todos os títulos já possuem ID do TMDB vinculado!");
+        return { processados: 0, erros: 0 };
+      }
+
+      // Extração da configuração da API
+      const cfvm = new ConfiguracaoViewModel('configuracoes');
+      const dadosConfig = (await cfvm.obterConfiguracoes())[0] ;
+      const API_KEY = dadosConfig?.chaveTMDB; 
+
+      let processadosContador = 0;
+      let errosContador = 0;
+
+      // Divide a lista filtrada em lotes paralelos de 20 em 20 itens
+      const tamanhoDoLote = 20;
+      const lotes = [];
+      for (let i = 0; i < itensPendentes.length; i += tamanhoDoLote) {
+        lotes.push(itensPendentes.slice(i, i + tamanhoDoLote));
+      }
+
+      console.log(`🎬 Iniciando reconciliação. Há ${itensPendentes.length} títulos pendentes de ID do TMDB.`);
+
+      for (const [index, lote] of lotes.entries()) {
+        if (progressoCallback) {
+          progressoCallback(`Analisando bloco de pendentes ${index + 1} de ${lotes.length}...`);
+        }
+
+        const promessasLote = lote.map(async (item) => {
+          if (!item.Titulo) return;
+
+          // Limpa termos de temporada ("9ª Temporada", etc.) para a busca por texto não falhar
+          let tituloLimpo = item.Titulo
+            .replace(/\d+ª\s*temporada/i, '')
+            .replace(/temporada\s*\d+/i, '')
+            .replace(/season\s*\d+/i, '')
+            .replace(/s\d+/i, '')
+            .replace(/\d+ª\s*temp/i, '')
+            .replace(/(Parte 3)\s*\d+/i, '')
+            .replace(/1ª á 4ª Temporada\s*\d+/i, '')
+            .replace(/1ª á 3ª Temporada\s*\d+/i, '')
+            .replace(/11ª e 12ª Temporada\s*\d+/i, '')
+            .trim();
+
+          if (!tituloLimpo) tituloLimpo = item.Titulo;
+
+          const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
+          const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
+          const urlBuscaTexto = "https://api.themoviedb.org/3/search/" + deparTipo + "?api_key=" + API_KEY + "&query=" + encodeURIComponent(tituloLimpo) + "&language=pt-BR";
+
+          try {
+            const respostaBusca = await fetch(urlBuscaTexto);
+            if (!respostaBusca.ok) throw new Error(`Erro na busca: HTTP ${respostaBusca.status}`);
+
+            const resultadoBusca = await respostaBusca.json();
+
+            if (!resultadoBusca.results || resultadoBusca.results.length === 0) {
+              console.warn(`⚠️ Nenhuma correspondência encontrada no TMDB para o título: "${item.Titulo}" (Buscado como: "${tituloLimpo}")`);
+              return;
+            }
+
+            // CORREÇÃO CRÍTICA DO INDICE: Lendo o primeiro item da lista de resultados da pesquisa textual
+            const dadosTMDB = resultadoBusca.results[0];
+            const urlPosterCorreta = dadosTMDB.poster_path 
+              ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path
+              : item.Poster_Path;
+
+            item.IdTMDB = dadosTMDB.id.toString();
+            item.Original_Name = dadosTMDB.original_title || dadosTMDB.original_name || item.Original_Name;
+            item.Overview = dadosTMDB.overview || item.Overview;
+            item.Poster_Path = urlPosterCorreta;
+            item.Popularity = dadosTMDB.popularity || item.Popularity;
+            item.First_Air_Date = dadosTMDB.release_date || dadosTMDB.first_air_date || item.First_Air_Date;
+            item.Vote_Average = dadosTMDB.vote_average || item.Vote_Average;
+            item.Media_Type = dadosTMDB.media_type || item.Media_Type;
+            item.Genres_Ids = dadosTMDB.genre_ids || item.Genres_Ids;
+
+            if (dadosTMDB.release_date || dadosTMDB.first_air_date) {
+              item.Year = new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear();
+            }
+
+            const payloadItem = new Catalogo(
+              item.id,
+              item.Titulo,
+              item.Capa,
+              item.Tipo?.id || item.Tipo,
+              item.Status?.id || item.Status,
+              item.Plataforma?.id || item.Plataforma,
+              item.Inicio,
+              item.Fim,
+              item.Episodios,
+              item.Assistidos,
+              item.Temporadas,
+              item.Score,
+              item.Vezes,
+              item.Adicao,
+              item.IdTMDB, 
+              item.Original_Name,
+              item.Overview,
+              item.Poster_Path,
+              item.Media_Type,
+              item.Genres_Ids,
+              item.Popularity,
+              item.First_Air_Date,
+              item.Year,
+              item.Vote_Average
+            );
+
+            await this.salvarTitulo(payloadItem);
+            processadosContador++;
+          } catch (erro) {
+            console.error(`❌ Falha ao tentar reconciliar o título "${item.Titulo}":`, erro.message);
+            errosContador++;
+          }
+        });
+
+        await Promise.all(promessasLote);
+        await new Promise(resolve => setTimeout(resolve, 400));
+      }
+
+      return { processados: processadosContador, erros: errosContador };
+
+    } catch (error) {
+      console.error("Erro geral durante o processamento em lote:", error);
+      throw error;
+    }
+  };
+
+  //metodo para 
+  async atualizarDadosPorIdTMDB(idTitulo) {
+    try {
+      const item = await this.obterTituloPorID(idTitulo);
+      if (!item || !item.IdTMDB) {
+        throw new Error("Título não encontrado ou não possui ID do TMDB vinculado.");
+      }
+
+      const cfvm = new ConfiguracaoViewModel('configuracoes');
+      const dadosConfig = (await cfvm.obterConfiguracoes())[0];
+      const API_KEY = dadosConfig?.chaveTMDB;
+
+      const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
+      const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
+      
+      // Busca direta no TMDB pelo ID numérico oficial deles
+      const url = `https://api.themoviedb.org/3/search/{deparTipo}/${item.IdTMDB}?api_key=${API_KEY}&language=pt-BR`;
+      
+      const resposta = await fetch(url);
+      if (!resposta.ok) throw new Error(`Erro HTTP ${resposta.status} ao consultar ID no TMDB.`);
+      const dadosTMDB = await resposta.json();
+
+      // Atualiza apenas as propriedades de metadados
+      item.Original_Name = dadosTMDB.original_title || dadosTMDB.original_name || item.Original_Name;
+      item.Overview = dadosTMDB.overview || item.Overview;
+      item.Popularity = dadosTMDB.popularity || item.Popularity;
+      item.Vote_Average = dadosTMDB.vote_average || item.Vote_Average;
+      
+      if (dadosTMDB.poster_path) {
+        item.Poster_Path = "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path;
+      }
+
+      const payloadItem = new Catalogo(
+        item.id, item.Titulo, item.Capa,
+        item.Tipo?.id || item.Tipo, item.Status?.id || item.Status, item.Plataforma?.id || item.Plataforma,
+        item.Inicio, item.Fim, item.Episodios, item.Assistidos, item.Temporadas,
+        item.Score, item.Vezes, item.Adicao,
+        item.IdTMDB, item.Original_Name, item.Overview, item.Poster_Path,
+        deparTipo, item.Genres_Ids, item.Popularity, item.First_Air_Date, item.Year, item.Vote_Average
+      );
+
+      await this.salvarTitulo(payloadItem);
+      return true;
+    } catch (error) {
+      console.error("Erro ao atualizar por ID TMDB:", error);
+      throw error;
+    }
+  };
+
   filtrarPorStatus(status) {
     return this.catalogo.filter((t) => t.Status.descricao === status);
   };
@@ -342,314 +558,6 @@ export class CatalogoViewModel {
     return { labels: plataformas, data: valores };
   };
 
-  //pesquisa TMDB
-  async obterDadosTMDB(nome, elementoId) {
-    const elementoDestino = document.getElementById(elementoId);
-
-    elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
-    try {
-      const cfvm = new ConfiguracaoViewModel('configuracoes');
-      const dadosConfig = (await cfvm.obterConfiguracoes())[0];
-      const catalogoTMDB = await apiTMDB.obterPrograma(nome, dadosConfig);
-
-      return catalogoTMDB
-    } catch (error) {
-      elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
-    }
-  };
-
-  // Método dedicado para preencher metadados de itens pendentes
-  // async atualizarCatalogoTMDB(progressoCallback = null) {
-  //   try {
-  //     // 1. Busca TODOS os itens cadastrados no seu sistema
-  //     //const dadosCatalogo = await this.obterTituloPorID(1);   
-  //     const dadosCatalogo = await this.obterCatalogo(); // Obtém todos os títulos do catálogo     
-  //     const todosOsItens = dadosCatalogo ? (Array.isArray(dadosCatalogo) ? dadosCatalogo : [dadosCatalogo]) : [];
-
-  //     if (todosOsItens.length === 0) {
-  //       console.warn("Nenhum item encontrado no banco de dados para processamento.");
-  //       return { processados: 0, erros: 0 };
-  //     }
-
-  //     // Filtra APENAS os itens onde o ID_TMDB é nulo, indefinido ou vazio
-  //     const itensPendentes = todosOsItens.filter(item => !item.IdTMDB || item.IdTMDB === "" || item.IdTMDB === "null");
-
-  //     if (itensPendentes.length === 0) {
-  //       if (progressoCallback) progressoCallback("✅ Todos os títulos já possuem ID do TMDB vinculado!");
-  //       return { processados: 0, erros: 0 };
-  //     }
-
-  //     // Extração da configuração da API
-  //     const cfvm = new ConfiguracaoViewModel('configuracoes');
-  //     const dadosConfig = (await cfvm.obterConfiguracoes())[0] ;
-  //     const API_KEY = dadosConfig?.chaveTMDB; 
-
-  //     let processadosContador = 0;
-  //     let errosContador = 0;
-
-  //     // Divide a lista filtrada em lotes paralelos de 20 em 20 itens
-  //     const tamanhoDoLote = 20;
-  //     const lotes = [];
-  //     for (let i = 0; i < itensPendentes.length; i += tamanhoDoLote) {
-  //       lotes.push(itensPendentes.slice(i, i + tamanhoDoLote));
-  //     }
-
-  //     console.log(`🎬 Iniciando reconciliação. Há ${itensPendentes.length} títulos pendentes de ID do TMDB.`);
-
-  //     for (const [index, lote] of lotes.entries()) {
-  //       if (progressoCallback) {
-  //         progressoCallback(`Analisando bloco de pendentes ${index + 1} de ${lotes.length}...`);
-  //       }
-
-  //       const promessasLote = lote.map(async (item) => {
-  //         if (!item.Titulo) return;
-
-  //         // Limpa termos de temporada ("9ª Temporada", etc.) para a busca por texto não falhar
-  //         let tituloLimpo = item.Titulo
-  //           .replace(/\d+ª\s*temporada/i, '')
-  //           .replace(/temporada\s*\d+/i, '')
-  //           .replace(/season\s*\d+/i, '')
-  //           .replace(/s\d+/i, '')
-  //           .replace(/\d+ª\s*temp/i, '')
-  //           .replace(/(Parte 3)\s*\d+/i, '')
-  //           .replace(/1ª á 4ª Temporada\s*\d+/i, '')
-  //           .replace(/1ª á 3ª Temporada\s*\d+/i, '')
-  //           .replace(/11ª e 12ª Temporada\s*\d+/i, '')
-  //           .trim();
-
-  //         if (!tituloLimpo) tituloLimpo = item.Titulo;
-
-  //         const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
-  //         const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
-  //         const urlBuscaTexto = "https://api.themoviedb.org/3/search/" + deparTipo + "?api_key=" + API_KEY + "&query=" + encodeURIComponent(tituloLimpo) + "&language=pt-BR";
-
-  //         try {
-  //           const respostaBusca = await fetch(urlBuscaTexto);
-  //           if (!respostaBusca.ok) throw new Error(`Erro na busca: HTTP ${respostaBusca.status}`);
-
-  //           const resultadoBusca = await respostaBusca.json();
-
-  //           if (!resultadoBusca.results || resultadoBusca.results.length === 0) {
-  //             console.warn(`⚠️ Nenhuma correspondência encontrada no TMDB para o título: "${item.Titulo}" (Buscado como: "${tituloLimpo}")`);
-  //             return;
-  //           }
-
-  //           // CORREÇÃO CRÍTICA DO INDICE: Lendo o primeiro item da lista de resultados da pesquisa textual
-  //           const dadosTMDB = resultadoBusca.results[0];
-  //           const urlPosterCorreta = dadosTMDB.poster_path 
-  //             ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path
-  //             : item.Poster_Path;
-
-  //           item.IdTMDB = dadosTMDB.id.toString();
-  //           item.Original_Name = dadosTMDB.original_title || dadosTMDB.original_name || item.Original_Name;
-  //           item.Overview = dadosTMDB.overview || item.Overview;
-  //           item.Poster_Path = urlPosterCorreta;
-  //           item.Popularity = dadosTMDB.popularity || item.Popularity;
-  //           item.First_Air_Date = dadosTMDB.release_date || dadosTMDB.first_air_date || item.First_Air_Date;
-  //           item.Vote_Average = dadosTMDB.vote_average || item.Vote_Average;
-  //           item.Media_Type = dadosTMDB.media_type || item.Media_Type;
-  //           item.Genres_Ids = dadosTMDB.genre_ids || item.Genres_Ids;
-
-  //           if (dadosTMDB.release_date || dadosTMDB.first_air_date) {
-  //             item.Year = new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear();
-  //           }
-
-  //           const payloadItem = new Catalogo(
-  //             item.id,
-  //             item.Titulo,
-  //             item.Capa,
-  //             item.Tipo?.id || item.Tipo,
-  //             item.Status?.id || item.Status,
-  //             item.Plataforma?.id || item.Plataforma,
-  //             item.Inicio,
-  //             item.Fim,
-  //             item.Episodios,
-  //             item.Assistidos,
-  //             item.Temporadas,
-  //             item.Score,
-  //             item.Vezes,
-  //             item.Adicao,
-  //             item.IdTMDB, 
-  //             item.Original_Name,
-  //             item.Overview,
-  //             item.Poster_Path,
-  //             item.Media_Type,
-  //             item.Genres_Ids,
-  //             item.Popularity,
-  //             item.First_Air_Date,
-  //             item.Year,
-  //             item.Vote_Average
-  //           );
-
-  //           await this.salvarTitulo(payloadItem);
-  //           processadosContador++;
-  //         } catch (erro) {
-  //           console.error(`❌ Falha ao tentar reconciliar o título "${item.Titulo}":`, erro.message);
-  //           errosContador++;
-  //         }
-  //       });
-
-  //       await Promise.all(promessasLote);
-  //       await new Promise(resolve => setTimeout(resolve, 400));
-  //     }
-
-  //     return { processados: processadosContador, erros: errosContador };
-
-  //   } catch (error) {
-  //     console.error("Erro geral durante o processamento em lote:", error);
-  //     throw error;
-  //   }
-  // };
-
-  //Método adaptado para atualizar em lote (sem passar ID) OU individualmente (passando idTitulo)
-  async atualizarCatalogoTMDB(progressoCallback = null, idTitulo = null, descTitulo = null) {
-    try {
-      let todosOsItens = [];
-
-      if (idTitulo) {
-        // Cenário A: Atualização Manual na tela de Edição
-        const itemUnico = await this.obterTituloPorID(idTitulo);
-        if (itemUnico) todosOsItens = [itemUnico];
-      } else if (descTitulo) {
-        // Cenário B: Novo registro - Reconcilia pelo texto digitado no Input
-        const dadosTMDB = await apiTMDB.obterProgramaPorDescricao(descTitulo, tipoMidia);
-        if (!dadosTMDB) {
-          if (progressoCallback) progressoCallback(`⚠️ Nenhuma correspondência para Novo Registro: "${descTitulo}"`);
-          return { processados: 0, erros: 0 };
-        }
-        // Simula uma estrutura compatível temporária para reaproveitar a rotina de injeção
-        todosOsItens = [{
-          id: null, Titulo: descTitulo, Tipo: tipoMidia, Capa: '', Status: '1', Plataforma: '1',
-          Inicio: new Date(), Fim: null, Episodios: 0, Assistidos: 0, Temporadas: 1, Score: 0, Vezes: 0, Adicao: new Date()
-        }];
-      } else {
-        // Cenário C: Varredura incremental em Lote total
-        const dadosCatalogo = await this.obterCatalogo();
-        todosOsItens = dadosCatalogo ? (Array.isArray(dadosCatalogo) ? dadosCatalogo : [dadosCatalogo]) : [];
-      }
-
-      if (todosOsItens.length === 0) {
-        console.warn("Nenhum item encontrado no banco de dados para processamento.");
-        return { processados: 0, erros: 0 };
-      }
-
-      // Filtra os itens. Se for individual, ignora a checagem de nulo para forçar a atualização
-      const itensFiltrados = (idTitulo || descTitulo)
-        ? todosOsItens
-        : todosOsItens.filter(item => !item.IdTMDB || item.IdTMDB === "" || item.IdTMDB === "null");
-
-      if (itensFiltrados.length === 0) {
-        if (progressoCallback) progressoCallback("✅ Todos os títulos já possuem ID do TMDB vinculado!");
-        return { processados: 0, erros: 0 };
-      }
-
-      let processadosContador = 0;
-      let errosContador = 0;
-
-      // Divide a lista em lotes de 20
-      const tamanhoDoLote = 20;
-      const lotes = [];
-      for (let i = 0; i < itensFiltrados.length; i += tamanhoDoLote) {
-        lotes.push(itensFiltrados.slice(i, i + tamanhoDoLote));
-      }
-
-      if (progressoCallback && typeof progressoCallback === 'function') {
-        progressoCallback(`Iniciando sincronização do TMDB. Alvos: ${itensFiltrados.length} mídias.`);
-      }
-
-      for (const [index, lote] of lotes.entries()) {
-        const promessasLote = lote.map(async (item) => {
-          // Determina o texto de pesquisa
-          const buscaNome = descTitulo || item.Titulo;
-          if (!buscaNome) return;
-
-          let tituloLimpo = buscaNome
-            .replace(/\d+ª\s*temporada/i, '')
-            .replace(/temporada\s*\d+/i, '')
-            .replace(/season\s*\d+/i, '')
-            .replace(/s\d+/i, '')
-            .replace(/\d+ª\s*temp/i, '')
-            .replace(/(Parte 3)\s*\d+/i, '')
-            .replace(/1ª á 4ª Temporada\s*\d+/i, '')
-            .replace(/1ª á 3ª Temporada\s*\d+/i, '')
-            .replace(/11ª e 12ª Temporada\s*\d+/i, '')
-            .trim();
-
-          if (!tituloLimpo) tituloLimpo = buscaNome;
-
-          const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
-          const deparTipo = tipoMidia || ((stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv');
-
-          const dadosTMDB = await apiTMDB.obterProgramaPorDescricao(tituloLimpo, deparTipo);
-
-          if (!dadosTMDB) {
-            console.warn(`⚠️ Nenhuma correspondência encontrada no TMDB para: "${buscaNome}"`);
-            return;
-          }
-
-          const urlPosterCorreta = dadosTMDB.Poster_Path
-            ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.Poster_Path
-            : item.Poster_Path;
-
-          // Alinha as duas propriedades para que o payload mapeie corretamente para o Sequelize
-          item.IdTMDB = dadosTMDB.id_tmdb.toString();
-          item.Original_Name = dadosTMDB.Original_Name || item.Original_Name;
-          item.Overview = dadosTMDB.Overview || item.Overview;
-          item.Poster_Path = urlPosterCorreta;
-          item.Popularity = dadosTMDB.Popularity || item.Popularity;
-          item.First_Air_Date = dadosTMDB.First_Air_Date || item.First_Air_Date;
-          item.Vote_Average = dadosTMDB.Vote_Average || item.Vote_Average;
-          item.Media_Type = deparTipo;
-          item.Genres_Ids = dadosTMDB.Genres_Ids || item.Genres_Ids;
-          item.Year = dadosTMDB.Year !== 'N/A' ? dadosTMDB.Year : item.Year;
-
-
-          const payloadItem = new Catalogo(
-            item.id,
-            item.Titulo,
-            item.Capa,
-            item.Tipo?.id || item.Tipo,
-            item.Status?.id || item.Status,
-            item.Plataforma?.id || item.Plataforma,
-            item.Inicio,
-            item.Fim,
-            item.Episodios,
-            item.Assistidos,
-            item.Temporadas,
-            item.Score,
-            item.Vezes,
-            item.Adicao,
-            item.id_tmdb, // Gravado em conformidade com o Sequelize
-            item.Original_Name,
-            item.Overview,
-            item.Poster_Path,
-            item.Media_Type,
-            item.Genres_Ids,
-            item.Popularity,
-            item.First_Air_Date,
-            item.Year,
-            item.Vote_Average
-          );
-
-          // Chama o salvamento local do Sequelize que cuida do download em Canvas/Base64
-          await this.salvarTitulo(payloadItem);
-          processadosContador++;
-
-        });
-
-        await Promise.all(promessasLote);
-        await new Promise(resolve => setTimeout(resolve, 400));
-      }
-
-      return { processados: processadosContador, erros: errosContador };
-
-    } catch (error) {
-      if (progressoCallback && typeof progressoCallback === 'function') {
-        progressoCallback(`❌ Erro geral durante o processamento: ${error.message}`);
-      }
-      throw error;
-    }
-  }
 
 }
 

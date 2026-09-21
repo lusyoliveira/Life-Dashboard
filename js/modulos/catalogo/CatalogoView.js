@@ -82,20 +82,77 @@ export class CatalogoView {
         await this.listarPlataforma("plataforma-adicionar");
         await this.listarStatus("status-adicionar");
 
-        // Atualiza o título da modal com base no ID do TMDB, se disponível
         const btnBuscarTMDB = document.getElementById("btn-buscar-tmdb-manual");
-        const idTitulo = document.getElementById("id-tmdb-adicionar");
-        debugger
         if (btnBuscarTMDB) {
-            btnBuscarTMDB.addEventListener("click", async () => {
-                if(idTitulo) {
-                    this.atualizarTituloPorIDTMDB(idTitulo);
-                } else {
-                    this.vem.obterDadosTMDB
-                }
+            // Remove qualquer listener antigo para não duplicar cliques
+            const novoBtn = btnBuscarTMDB.cloneNode(true);
+            btnBuscarTMDB.parentNode.replaceChild(novoBtn, btnBuscarTMDB);
+
+            novoBtn.addEventListener("click", async (e) => {
+                e.preventDefault();
+                await this.vincularCamposFormularioTMDB();
             });
         }
     };    
+
+    async vincularCamposFormularioTMDB() {
+        const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
+        const nomeInput = document.getElementById('titulo-adicionar')?.value.trim();
+        const idTMDB = document.getElementById("id-tmdb-adicionar");
+
+        if (!nomeInput) {
+            alert("⚠️ Por favor, digite o nome do título antes de realizar a busca!");
+            return;
+        }
+
+        if (btnBuscar) {
+            btnBuscar.disabled = true;
+            btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...`;
+        }
+
+        if(idTMDB)
+            try {
+                await this.vm.atualizarDadosPorIdTMDB(idTMDB);
+                alert(`✅ Título sincronizado com sucesso baseado no ID fornecido!`);
+                
+                // Recarrega a modal ou os dados da tela após atualizar
+                await this.abrirModalEditarCatalogo(id);
+            } catch (erro) {
+                alert(`❌ Falha ao vincular mídias: ${erro.message}`);
+            } finally {
+                btnBuscar.disabled = false;
+                btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
+        } else {
+            const nome = document.getElementById("titulo-adicionar");
+            const tipo = document.getElementById("tipo-adicionar");
+
+            try {
+                // Passamos 'status-sincronizacao-lote' apenas como container de texto caso ocorra erro
+                const item = await this.vm.obterDadosTMDB(nome,tipo);;
+              
+                // Injeta os dados mapeados pelo seu método direto nos inputs da tela
+                if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.title || nomeInput;
+                if(document.getElementById('capa-adicionar')) document.getElementById('capa-adicionar').value = item.image || '';
+                if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.synopsis || '';
+                if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id || '';
+                
+                // Metadados técnicos ocultos para salvar corretamente depois
+                if(document.getElementById('vote-average-adicionar')) document.getElementById('vote-average-adicionar').value = item.score || '0';
+                if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = item.type || '';
+                if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.score || 'N/A';
+                
+                alert(`✅ Dados de "${item.title}" preenchidos na tela! Ajuste o que precisar e clique em Salvar.`);
+
+            } catch (error) {
+                alert(`❌ Erro ao buscar dados: ${error.message}`);
+            } finally {
+                if (btnBuscar) {
+                    btnBuscar.disabled = false;
+                    btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
+                }
+            }
+        }        
+    };
 
     async abrirModalEditarCatalogo(id) {
         const titulo = await this.vm.obterTituloPorID(id);
@@ -173,20 +230,48 @@ export class CatalogoView {
 
         // Renderiza o pôster no preview gráfico
         const previewImg = document.getElementById('poster-path-adicionar');
-        if (previewImg && titulo.Poster_Path) {
-            const stringPoster = String(titulo.Poster_Path).trim();
-            if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
-                previewImg.src = stringPoster.startsWith("data:image") || stringPoster.startsWith("http")
-                    ? stringPoster
-                    : "data:image/jpeg;base64," + stringPoster;
-            } else {
-                previewImg.src = "https://placeholder.com";
+        if (previewImg) {
+            // 1. Damos prioridade total para o link absoluto guardado na contingência do campo Capa
+            let fonteImagemFinal = titulo.Capa || "https://placeholder.com";
+            let stringPoster = "";
+
+            // 2. Se o campo Capa for inválido ou for um placeholder, tentamos processar o Poster_Path binário
+            if (!titulo.Capa || titulo.Capa.includes("placeholder") || titulo.Capa === "") {
+                if (titulo.Poster_Path) {
+                    if (typeof titulo.Poster_Path === 'object' && titulo.Poster_Path.data) {
+                        const bytes = titulo.Poster_Path.data;
+                        stringPoster = btoa(String.fromCharCode.apply(null, new Uint8Array(bytes)));
+                    } else if (titulo.Poster_Path instanceof Uint8Array || titulo.Poster_Path.constructor?.name === "Uint8Array") {
+                        stringPoster = btoa(String.fromCharCode.apply(null, new Uint8Array(titulo.Poster_Path)));
+                    } else if (typeof titulo.Poster_Path === 'string') {
+                        stringPoster = titulo.Poster_Path.trim();
+                    }
+                }
+
+                if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
+                    if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
+                        fonteImagemFinal = stringPoster;
+                    } else {
+                        fonteImagemFinal = "data:image/jpeg;base64," + stringPoster;
+                    }
+                }
             }
+
+            // 3. Aplica o link ou base64 final na tag <img> do HTML
+            previewImg.src = fonteImagemFinal;
         }
-        
-        // Atualiza o título da modal com base no ID do TMDB, se disponível
-        const descTitulo =  document.getElementById('titulo-adicionar').value
-        this.atualizarTituloPorIDTMDB(descTitulo);
+
+        const btnBuscarTMDB = document.getElementById("btn-buscar-tmdb-manual");
+        if (btnBuscarTMDB) {
+            // Remove qualquer listener antigo para não duplicar cliques
+            const novoBtn = btnBuscarTMDB.cloneNode(true);
+            btnBuscarTMDB.parentNode.replaceChild(novoBtn, btnBuscarTMDB);
+
+            novoBtn.addEventListener("click", async (e) => {
+                e.preventDefault();
+                await this.vincularCamposFormularioTMDB();
+            });
+        };
     };
 
     // Método para salvar o formulário de criação/edição de título
@@ -1357,8 +1442,8 @@ export class CatalogoView {
 
         divForm.appendChild(btnSalvar);
         containerAlvo.appendChild(divForm);
-    }
-    // Exemplo de método para incluir na sua CatalogoView
+    };
+
     async dispararAtualizacaoGeralMidias() {
         abrirModalAcao({
         titulo: "Atualizar Catálogo via TMDB",
@@ -1375,7 +1460,7 @@ export class CatalogoView {
                 try {
                 if (containerStatus) containerStatus.innerHTML = "⏳ Pesquisando títulos no TMDB e vinculando identificadores...";
 
-                const resultado = await this.vm.atualizarCatalogoTMDB((mensagem) => {
+                const resultado = await this.vm.atualizarCatalogoEmLote((mensagem) => {
                     if (containerStatus) containerStatus.innerHTML = `⏳ ${mensagem}`;
                 });
 
@@ -1401,51 +1486,26 @@ export class CatalogoView {
         });
     };
 
-    //Método simplificado que reutiliza nativamente a lógica unificada da ViewModel
-    atualizarTituloPorIDTMDB(idTitulo) {
-        const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
-        if (!btnBuscar) return;
+    // async atualizarTituloPorIDTMDB(idTitulo) {
+    //     const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
+    //     if (!btnBuscar || !idTitulo) return;
 
-        btnBuscar.addEventListener("click", async () => {
-            const idManualDigitado = document.getElementById("id-tmdb-adicionar")?.value.trim();
+    //     btnBuscar.disabled = true;
+    //     btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Vinculando...`;
 
-            if (!idManualDigitado && idTitulo) {
-                // Se o campo de ID manual estiver vazio na modal de edição, captura o título do form para tentar por nome
-                const nomeInput = document.getElementById('titulo-adicionar').value;
-                const selectTipo = document.getElementById("tipo-adicionar");
-                const textoTipo = selectTipo.options[selectTipo.selectedIndex]?.text || '';
-                
-                btnBuscar.disabled = true;
-                btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Vinculando...`;
-                
-                try {
-                    await this.vm.atualizarCatalogoTMDB(null, idTitulo, nomeInput, textoTipo);
-                    alert(`✅ Metadados sincronizados por texto com sucesso!`);
-                } catch(e) {
-                    alert(`❌ Erro ao sincronizar: ${e.message}`);
-                } finally {
-                    btnBuscar.disabled = false;
-                    btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
-                }
-                return;
-            }
-
-            btnBuscar.disabled = true;
-            btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Vinculando...`;
-
-            try {
-                // Dispara o barramento da ViewModel passando o id do banco
-                await this.vm.atualizarCatalogoTMDB(null, idTitulo);
-                alert(`✅ Título sincronizado com sucesso baseado no ID fornecido!`);
-                if(document.getElementById("id-tmdb-adicionar")) document.getElementById("id-tmdb-adicionar").value = "";
-            } catch (erro) {
-                alert(`❌ Falha ao vincular mídias: ${erro.message}`);
-            } finally {
-                btnBuscar.disabled = false;
-                btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
-            }
-        });
-    };
+    //     try {
+    //         await this.vm.atualizarDadosPorIdTMDB(idTitulo);
+    //         alert(`✅ Título sincronizado com sucesso baseado no ID fornecido!`);
+            
+    //         // Recarrega a modal ou os dados da tela após atualizar
+    //         await this.abrirModalEditarCatalogo(idTitulo);
+    //     } catch (erro) {
+    //         alert(`❌ Falha ao vincular mídias: ${erro.message}`);
+    //     } finally {
+    //         btnBuscar.disabled = false;
+    //         btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
+    //     }
+    // }
 
     //Captura o clique em qualquer lugar do card e abre a modal de edição
     editarColecao() {

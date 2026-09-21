@@ -1,24 +1,22 @@
+import { ConfiguracaoViewModel } from '../../modulos/configuracoes/ConfiguracaoViewModel.js';
+
 const urlBase = 'https://api.themoviedb.org/3/search';
 //const urlBase = 'https://api.themoviedb.org/3/search/multi';
 
-// // Extração da configuração da API
-// const cfvm = new ConfiguracaoViewModel('configuracoes');
-// const dadosConfig = (await cfvm.obterConfiguracoes())[0];
-
-//if (dadosConfig.ativaTMDB) {
-// const apiKey = dadosConfig?.chaveTMDB; 
-//}
+//Extração da configuração da API
+const cfvm = new ConfiguracaoViewModel();
+const dadosConfig = (await cfvm.obterConfiguracoes())[0];
 
 const apiTMDB = { 
 
-    async obterPrograma(termoBusca,configuracoes) {
+    async obterPrograma(termoBusca) {
          // Verifica se as configurações e a chave existem
-        // if (!configuracoes || !configuracoes.chaveTMDB) {
+        // if (!dadosConfig || !dadosConfig.ativaTMDB) {
         //     alert('A integração com o TMDB não está configurada corretamente.');
         //     return [];
         // }
 
-        const apiKey = configuracoes.chaveTMDB;
+        const apiKey = dadosConfig.chaveTMDB;
         const urlProgramas = `${urlBase}?{multi}?api_key=${apiKey}&query=${encodeURIComponent(termoBusca)}&language=pt-BR`;   
 
         try {
@@ -91,7 +89,7 @@ const apiTMDB = {
                 Original_Name: dadosTMDB.original_title || dadosTMDB.original_name,
                 Media_Type: deparTipo,
                 Overview: dadosTMDB.overview,
-                Poster_Path: dadosTMDB.poster_path ? "https://tmdb.org" + dadosTMDB.poster_path : null,
+                Poster_Path: dadosTMDB.poster_path ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path : null,
                 Year: (dadosTMDB.release_date || dadosTMDB.first_air_date) ? 
                     new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear() : 'N/A',
                 First_Air_Date: dadosTMDB.release_date || dadosTMDB.first_air_date || 'N/A',
