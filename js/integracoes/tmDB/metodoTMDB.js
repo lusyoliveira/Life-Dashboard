@@ -1,7 +1,7 @@
 import { ConfiguracaoViewModel } from '../../modulos/configuracoes/ConfiguracaoViewModel.js';
 
 const urlBase = 'https://api.themoviedb.org/3/search';
-//const urlBase = 'https://api.themoviedb.org/3/search/multi';
+const urlBaseMulti = 'https://api.themoviedb.org/3/search/multi';
 
 //Extração da configuração da API
 const cfvm = new ConfiguracaoViewModel();
@@ -17,7 +17,7 @@ const apiTMDB = {
         // }
 
         const apiKey = dadosConfig.chaveTMDB;
-        const urlProgramas = `${urlBase}?{multi}?api_key=${apiKey}&query=${encodeURIComponent(termoBusca)}&language=pt-BR`;   
+        const urlProgramas = `${urlBaseMulti}?api_key=${apiKey}&query=${encodeURIComponent(termoBusca)}&language=pt-BR`;   
 
         try {
             const response = await fetch(urlProgramas);
@@ -68,37 +68,60 @@ const apiTMDB = {
         const url = `${urlBase}${mediaType}/${mediaId}?api_key=${apiKey}&language=pt-BR`;    
     },
 
-    async obterProgramaPorDescricao(titulo, tipo) {
+    async obterProgramaPorDescricao(descricao, tipo) {
+    
         try {
             const apiKey = dadosConfig?.chaveTMDB;
-            const deparTipo = (tipo === 'Filme' || tipo === '6') ? 'movie' : 'tv';           
-            const url = `${urlBase}&${deparTipo}?api_key=${apiKey}&query=${encodeURIComponent(titulo)}&language=pt-BR`;
+            const mediaType = (tipo === 'Filme' || tipo === '6')
+                ? 'movie'
+                : 'tv';
 
+            const url = `${urlBase}/${mediaType}?api_key=${apiKey}&language=pt-BR&query=${encodeURIComponent(descricao)}`;
             const respostaBusca = await fetch(url);
-            if (!respostaBusca.ok) throw new Error(`HTTP ${respostaBusca.status}`);
-            
+
+            if (!respostaBusca.ok) {
+                throw new Error(`HTTP ${respostaBusca.status}`);
+            }
+
             const resultado = await respostaBusca.json();
-            
-            if (!resultado.results || resultado.results.length === 0) return null;
+
+            if (!resultado.results || resultado.results.length === 0) {
+                return null;
+            }
+
             const dadosTMDB = resultado.results[0];
 
-            // Retorna as propriedades normais mapeadas para o seu construtor
             return {
                 id_tmdb: dadosTMDB.id,
-                title: dadosTMDB.title || dadosTMDB.name,
+                Title: dadosTMDB.title || dadosTMDB.name,
                 Original_Name: dadosTMDB.original_title || dadosTMDB.original_name,
-                Media_Type: deparTipo,
+                Media_Type: mediaType,
                 Overview: dadosTMDB.overview,
-                Poster_Path: dadosTMDB.poster_path ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path : null,
-                Year: (dadosTMDB.release_date || dadosTMDB.first_air_date) ? 
-                    new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear() : 'N/A',
-                First_Air_Date: dadosTMDB.release_date || dadosTMDB.first_air_date || 'N/A',
-                Vote_Average: dadosTMDB.vote_average ? dadosTMDB.vote_average : 0,
+                Poster_Path: dadosTMDB.poster_path
+                    ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path
+                    : null,
+                Year: (dadosTMDB.release_date || dadosTMDB.first_air_date)
+                    ? new Date(
+                        dadosTMDB.release_date || dadosTMDB.first_air_date
+                    ).getFullYear()
+                    : 'N/A',
+                First_Air_Date:
+                    dadosTMDB.release_date ||
+                    dadosTMDB.first_air_date ||
+                    'N/A',
+                Vote_Average: dadosTMDB.vote_average || 0,
                 Popularity: dadosTMDB.popularity || 0,
-                Genres_Ids: dadosTMDB.genre_ids ? JSON.stringify(dadosTMDB.genre_ids) : '[]'
+                Genres_Ids: dadosTMDB.genre_ids
+                    ? JSON.stringify(dadosTMDB.genre_ids)
+                    : '[]'
             };
+
         } catch (error) {
-            console.error('Erro ao buscar programa por descrição na API:', error);
+            console.error(
+                'Erro ao buscar programa por descrição na API:',
+                error
+            );
+
             throw error;
         }
     }

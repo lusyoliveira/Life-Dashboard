@@ -211,7 +211,7 @@ export class CatalogoViewModel {
 
       return catalogoTMDB
     } catch (error) {
-      elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
+      
     }
   };
 

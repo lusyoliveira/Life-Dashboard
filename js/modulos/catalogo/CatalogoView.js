@@ -98,18 +98,18 @@ export class CatalogoView {
     async vincularCamposFormularioTMDB() {
         const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
         const nomeInput = document.getElementById('titulo-adicionar')?.value.trim();
-        const idTMDB = document.getElementById("id-tmdb-adicionar");
+        const idTMDB = document.getElementById("id-tmdb-adicionar").value;
+        const tipo = document.getElementById("tipo-adicionar").value;
 
         if (!nomeInput) {
             alert("⚠️ Por favor, digite o nome do título antes de realizar a busca!");
             return;
         }
 
-        if (btnBuscar) {
-            btnBuscar.disabled = true;
-            btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...`;
-        }
-
+        // if (btnBuscar) {
+        //     btnBuscar.disabled = true;
+        //     btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...`;
+        // }
         if(idTMDB)
             try {
                 await this.vm.atualizarDadosPorIdTMDB(idTMDB);
@@ -123,25 +123,22 @@ export class CatalogoView {
                 btnBuscar.disabled = false;
                 btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
         } else {
-            const nome = document.getElementById("titulo-adicionar");
-            const tipo = document.getElementById("tipo-adicionar");
-
             try {
-                // Passamos 'status-sincronizacao-lote' apenas como container de texto caso ocorra erro
-                const item = await this.vm.obterDadosTMDB(nome,tipo);;
-              
+                const item = await this.vm.obterDadosTMDBPorDescricao(nomeInput,tipo);
+                const previewImg = document.getElementById('poster-path-adicionar');
+                previewImg.src = item.Poster_Path 
+
                 // Injeta os dados mapeados pelo seu método direto nos inputs da tela
-                if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.title || nomeInput;
-                if(document.getElementById('capa-adicionar')) document.getElementById('capa-adicionar').value = item.image || '';
-                if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.synopsis || '';
-                if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id || '';
+                if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.Title || nomeInput;
+                if(document.getElementById('capa-adicionar')) document.getElementById('capa-adicionar').value = item.Poster_Path || '';
+                if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.Overview || '';
+                if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';          
+                if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.Vote_Average || '0';
+                if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = item.Media_Type || '';
+                if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.Popularity || 'N/A';
+                if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.Year || 'N/A';
                 
-                // Metadados técnicos ocultos para salvar corretamente depois
-                if(document.getElementById('vote-average-adicionar')) document.getElementById('vote-average-adicionar').value = item.score || '0';
-                if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = item.type || '';
-                if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.score || 'N/A';
-                
-                alert(`✅ Dados de "${item.title}" preenchidos na tela! Ajuste o que precisar e clique em Salvar.`);
+                alert(`✅ Dados de "${item.Title}" preenchidos na tela! Ajuste o que precisar e clique em Salvar.`);
 
             } catch (error) {
                 alert(`❌ Erro ao buscar dados: ${error.message}`);
@@ -209,10 +206,11 @@ export class CatalogoView {
         if(document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
         if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = titulo.Media_Type || '';
         if(document.getElementById('genres-ids-adicionar')) document.getElementById('genres-ids-adicionar').value = titulo.Genres_Ids || '';
-        if(document.getElementById('popularity-adicionar')) document.getElementById('popularity-adicionar').value = titulo.Popularity || '';
+        if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').value = titulo.Popularity || '';
         if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = titulo.First_Air_Date || '';
-        if(document.getElementById('year-adicionar')) document.getElementById('year-adicionar').value = titulo.Year || '';
-        if(document.getElementById('vote-average-adicionar')) document.getElementById('vote-average-adicionar').value = titulo.Vote_Average || '';
+        if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
+        if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
+        if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
 
         // Preenchimento da Aba 2 (Metadados TMDB) e Elementos de Preview
         if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = titulo.Overview || '';
@@ -222,11 +220,6 @@ export class CatalogoView {
         if (txtAreaPoster) {
             txtAreaPoster.value = titulo.Poster_Path || '';
         }
-        
-        // Trata os labels informativos da interface do TMDB
-        if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
-        if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
-        if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
 
         // Renderiza o pôster no preview gráfico
         const previewImg = document.getElementById('poster-path-adicionar');
@@ -292,16 +285,16 @@ export class CatalogoView {
         const idtmdb = form.querySelector('#id-tmdb-adicionar').value;
         const originalName = form.querySelector('#titulo-adicionar').value;
         const overview = form.querySelector('#overview-adicionar').value;
-        const posterPath = form.querySelector('#poster-path-adicionar').value;
+        const Poster_Path = form.querySelector('#poster-path-adicionar').value;
         const mediaType = form.querySelector('#media-type-adicionar').value;
         const genresIds = form.querySelector('#genres-ids-adicionar').value;
-        const popularity = form.querySelector('#popularity-adicionar').value;
+        const popularity = form.querySelector('#tmdb-lbl-pop').textContent;
         const firstAirDate = form.querySelector('#first-air-date-adicionar').value;
-        const year = form.querySelector('#year-adicionar').value;
-        const voteAverage = form.querySelector('#vote-average-adicionar').value;
+        const year = form.querySelector('#tmdb-lbl-year').textContent;
+        const voteAverage = form.querySelector('#tmdb-lbl-vote').textContent;
 
         let adicaoOriginal = new Date();
-
+debugger
         // edição → preservar Adicao
         if (idInput) {
             const tituloExistente = await this.vm.obterTituloPorID(idInput);
@@ -328,11 +321,11 @@ export class CatalogoView {
             idtmdb,
             originalName,
             overview,
-            posterPath,
+            Poster_Path,
             mediaType,
             genresIds,
             popularity,
-            firstAirDate,
+            metodoData.formatarParaISO(firstAirDate),
             year,
             voteAverage
         );
@@ -712,6 +705,58 @@ export class CatalogoView {
         }
     };
 
+    renderMiniatura(capa, poster) {
+        // 1. Iniciamos a variável vazia. A prioridade máxima agora é o poster local.
+        let fonteImagemFinal = ""; 
+        let stringPoster = "";
+
+        // 2. Tenta extrair e decodificar o poster binário do banco primeiro
+        if (poster) {
+            // Cenário A: Se o Sequelize devolveu um objeto contendo o array de dados do Buffer ({type: 'Buffer', data: [...]})
+            if (typeof poster === 'object' && poster.data && Array.isArray(poster.data)) {
+                const bytes = new Uint8Array(poster.data);
+                let binary = '';
+                const len = bytes.byteLength;
+                for (let i = 0; i < len; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                stringPoster = btoa(binary).trim();
+            } 
+            // Cenário B: Se ele veio como uma instância direta de Uint8Array
+            else if (poster instanceof Uint8Array || poster.constructor?.name === "Uint8Array") {
+                let binary = '';
+                for (let i = 0; i < poster.length; i++) {
+                    binary += String.fromCharCode(poster[i]);
+                }
+                stringPoster = btoa(binary).trim();
+            }
+            // Cenário C: Se já for uma string comum de texto (seja o Base64 cru ou uma string salva)
+            else if (typeof poster === 'string') {
+                stringPoster = poster.trim();
+            }
+        }
+
+        // 3. Se conseguimos uma string válida do poster e ela NÃO é o erro "[object Object]"
+        if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
+            if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
+                fonteImagemFinal = stringPoster;
+            } else {
+                // Se for o texto Base64 cru gerado do banco, adiciona o prefixo indispensável para renderizar localmente
+                fonteImagemFinal = "data:image/jpeg;base64," + stringPoster;
+            }
+        }
+
+        // 4. INVERSÃO DA PRIORIDADE (CONVERGÊNCIA):
+        // Se a fonteImagemFinal continuou vazia (porque o poster no banco está nulo ou corrompido),
+        // aí sim usamos o campo Capa (URL externa) como plano de fundo.
+        if (!fonteImagemFinal || fonteImagemFinal.includes("placeholder")) {
+            fonteImagemFinal = capa || "https://placeholder.com";
+        }
+
+        return fonteImagemFinal;
+    }
+
+
     // Renderiza os títulos adicionados recentemente na página de catálogo
     renderRecentes(elementoId)  {
         const recentes = this.vm.recentes(5);       
@@ -725,38 +770,7 @@ export class CatalogoView {
             divCard.classList.add('col','card', 'p-1', 'm-2');
 
             const imgCapa = document.createElement('img');
-            
-            let fonteImagem = titulo.Capa; 
-            let stringPoster = "";
-
-            // TRATAMENTO CRÍTICO PARA PARSE DE BLOB/BUFFER DO SEQUELIZE
-            if (titulo.Poster_Path) {
-                // Cenário A: Se o Sequelize devolveu um objeto contendo a Array de dados ({type: 'Buffer', data: [...]})
-                if (typeof titulo.Poster_Path === 'object' && titulo.Poster_Path.data) {
-                    const numeros = titulo.Poster_Path.data;
-                    stringPoster = String.fromCharCode.apply(null, new Uint8Array(numeros));
-                } 
-                // Cenário B: Se ele veio como uma instância direta de Uint8Array
-                else if (titulo.Poster_Path instanceof Uint8Array || titulo.Poster_Path.constructor?.name === "Uint8Array") {
-                    stringPoster = String.fromCharCode.apply(null, new Uint8Array(titulo.Poster_Path));
-                }
-                // Cenário C: Se já for uma String comum de texto
-                else if (typeof titulo.Poster_Path === 'string') {
-                    stringPoster = titulo.Poster_Path.trim();
-                }
-            }
-
-            // Agora que garantimos que 'stringPoster' é um texto puro, fazemos a montagem da imagem
-            if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
-                if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
-                    fonteImagem = stringPoster;
-                } else {
-                    // Se for o texto Base64 cru (como o seu /9j/4AAQ...), adiciona o prefixo
-                    fonteImagem = "data:image/jpeg;base64," + stringPoster;
-                }
-            }
-
-            imgCapa.src = fonteImagem;
+            imgCapa.src = this.renderMiniatura(titulo.Capa,titulo.Poster_Path);
             imgCapa.classList.add('card-img-top');
             imgCapa.width = 300;
             imgCapa.height = 350;
@@ -1422,9 +1436,10 @@ export class CatalogoView {
                 <input type="hidden" id="posterPath-adicionar" value="${payload.posterPath}">
                 <input type="hidden" id="mediaType-adicionar" value="${payload.mediaType}">
                 <input type="hidden" id="genresIds-adicionar" value="${payload.genresIds}">
-                <input type="hidden" id="popularity-adicionar" value="${payload.popularity}">
-                <input type="hidden" id="firstAirDate-adicionar" value="${payload.firstAirDate}">
-                <input type="hidden" id="year-adicionar" value="${payload.year}">                
+                <input type="hidden" id="tmdb-lbl-pop" value="${payload.popularity}">
+                <input type="hidden" id="firstAirDate-adicionar" value="${payload.firstAirDate}">                
+                <input type="hidden" id="tmdb-lbl-vote" value="${payload.voteAverage}">       
+                <input type="hidden" id="tmdb-lbl-year" value="${payload.year}">                
             </div>
         `;
 
