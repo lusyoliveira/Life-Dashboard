@@ -2,12 +2,13 @@ import metodoData from "../../Utils/metodoData.js"
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
-import { popularSelect, limparFormulario } from "../../Utils/utils.js";
+import { popularSelect, limparFormulario, bufferParaBase64 } from "../../Utils/utils.js";
 import { graficoBarra } from "../../componentes/graficos/GraficosFactory.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
 import { abrirModalAcao } from "../../Utils/modal.js";
 import Catalogo from "./catalogoModel.js";
+
 
 export class CatalogoView {
     constructor(vm) {
@@ -126,7 +127,15 @@ export class CatalogoView {
             try {
                 const item = await this.vm.obterDadosTMDBPorDescricao(nomeInput,tipo);
                 const previewImg = document.getElementById('poster-path-adicionar');
-                previewImg.src = item.Poster_Path 
+                const posterInput = document.getElementById('capa-adicionar');
+
+                if (previewImg) {
+                    previewImg.src = item.Poster_Path || '';
+                }
+
+                if (posterInput) {
+                    posterInput.value = item.Poster_Path || '';
+                }
 
                 // Injeta os dados mapeados pelo seu método direto nos inputs da tela
                 if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.Title || nomeInput;
@@ -206,54 +215,16 @@ export class CatalogoView {
         if(document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
         if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = titulo.Media_Type || '';
         if(document.getElementById('genres-ids-adicionar')) document.getElementById('genres-ids-adicionar').value = titulo.Genres_Ids || '';
-        if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').value = titulo.Popularity || '';
         if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = titulo.First_Air_Date || '';
         if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
         if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
         if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
-
-        // Preenchimento da Aba 2 (Metadados TMDB) e Elementos de Preview
         if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = titulo.Overview || '';
         
-        // Só atribui o valor se o campo realmente existir no HTML
-        const txtAreaPoster = document.getElementById('poster-path-adicionar');
-        if (txtAreaPoster) {
-            txtAreaPoster.value = titulo.Poster_Path || '';
-        }
-
         // Renderiza o pôster no preview gráfico
         const previewImg = document.getElementById('poster-path-adicionar');
-        if (previewImg) {
-            // 1. Damos prioridade total para o link absoluto guardado na contingência do campo Capa
-            let fonteImagemFinal = titulo.Capa || "https://placeholder.com";
-            let stringPoster = "";
-
-            // 2. Se o campo Capa for inválido ou for um placeholder, tentamos processar o Poster_Path binário
-            if (!titulo.Capa || titulo.Capa.includes("placeholder") || titulo.Capa === "") {
-                if (titulo.Poster_Path) {
-                    if (typeof titulo.Poster_Path === 'object' && titulo.Poster_Path.data) {
-                        const bytes = titulo.Poster_Path.data;
-                        stringPoster = btoa(String.fromCharCode.apply(null, new Uint8Array(bytes)));
-                    } else if (titulo.Poster_Path instanceof Uint8Array || titulo.Poster_Path.constructor?.name === "Uint8Array") {
-                        stringPoster = btoa(String.fromCharCode.apply(null, new Uint8Array(titulo.Poster_Path)));
-                    } else if (typeof titulo.Poster_Path === 'string') {
-                        stringPoster = titulo.Poster_Path.trim();
-                    }
-                }
-
-                if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
-                    if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
-                        fonteImagemFinal = stringPoster;
-                    } else {
-                        fonteImagemFinal = "data:image/jpeg;base64," + stringPoster;
-                    }
-                }
-            }
-
-            // 3. Aplica o link ou base64 final na tag <img> do HTML
-            previewImg.src = fonteImagemFinal;
-        }
-
+        previewImg.src = this.renderMiniatura(titulo.Poster_Path);
+        
         const btnBuscarTMDB = document.getElementById("btn-buscar-tmdb-manual");
         if (btnBuscarTMDB) {
             // Remove qualquer listener antigo para não duplicar cliques
@@ -285,7 +256,6 @@ export class CatalogoView {
         const idtmdb = form.querySelector('#id-tmdb-adicionar').value;
         const originalName = form.querySelector('#titulo-adicionar').value;
         const overview = form.querySelector('#overview-adicionar').value;
-        const Poster_Path = form.querySelector('#poster-path-adicionar').value;
         const mediaType = form.querySelector('#media-type-adicionar').value;
         const genresIds = form.querySelector('#genres-ids-adicionar').value;
         const popularity = form.querySelector('#tmdb-lbl-pop').textContent;
@@ -294,7 +264,6 @@ export class CatalogoView {
         const voteAverage = form.querySelector('#tmdb-lbl-vote').textContent;
 
         let adicaoOriginal = new Date();
-debugger
         // edição → preservar Adicao
         if (idInput) {
             const tituloExistente = await this.vm.obterTituloPorID(idInput);
@@ -321,7 +290,7 @@ debugger
             idtmdb,
             originalName,
             overview,
-            Poster_Path,
+            capa,
             mediaType,
             genresIds,
             popularity,
@@ -573,39 +542,9 @@ debugger
             const textoNota = item.Score ? item.Score : 'Sem nota';
 
             // Tratamento de imagem unificado (URL ou Base64)
-            let fonteImagem = item.Capa || "https://placeholder.com"; 
+            let fonteImagem = this.renderMiniatura(item.Poster_Path);
 
-            // Extrai o Poster_Path do TMDB tratando os formatos do Sequelize
-            let stringPoster = "";
-
-            if (item.Poster_Path) {
-                // Cenário A: Se o Sequelize devolveu como um objeto contendo o array de bytes do Buffer
-                if (typeof item.Poster_Path === 'object' && item.Poster_Path.data) {
-                    const bytes = item.Poster_Path.data;
-                    // Converte o array de inteiros em String Base64 de forma ultra rápida
-                    stringPoster = btoa(String.fromCharCode.apply(null, new Uint8Array(bytes)));
-                } 
-                // Cenário B: Se ele veio como uma instância direta de Uint8Array ou similar
-                else if (item.Poster_Path instanceof Uint8Array || item.Poster_Path.constructor?.name === "Uint8Array") {
-                    stringPoster = btoa(String.fromCharCode.apply(null, new Uint8Array(item.Poster_Path)));
-                }
-                // Cenário C: Se já for uma string comum de texto puro
-                else if (typeof item.Poster_Path === 'string') {
-                    stringPoster = item.Poster_Path.trim();
-                }
-            }
-
-            // 3. Monta e valida a fonte final da imagem para a tag <img>
-            if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
-                if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
-                    fonteImagem = stringPoster;
-                } else {
-                    // Se for o Base64 limpo que veio do banco, adiciona o prefixo indispensável para o navegador
-                    fonteImagem = "data:image/jpeg;base64," + stringPoster;
-                }
-            }
-
-            card.innerHTML = 
+              card.innerHTML = 
                 `<img class="card-img-top" src="${fonteImagem}" alt="${item.Titulo}" style="height: 320px;">` +
                 '<div class="card-body d-flex flex-column justify-content-between">' +
                     '<div>' +
@@ -705,16 +644,18 @@ debugger
         }
     };
 
-    renderMiniatura(capa, poster) {
-        // 1. Iniciamos a variável vazia. A prioridade máxima agora é o poster local.
+    renderMiniatura(poster) {
+        // Inicia a variável vazia. A prioridade máxima agora é o poster local.
         let fonteImagemFinal = ""; 
         let stringPoster = "";
+        const imagemConvertida = bufferParaBase64(poster);
 
-        // 2. Tenta extrair e decodificar o poster binário do banco primeiro
-        if (poster) {
+
+        // Tenta extrair e decodificar o poster binário do banco primeiro
+        if (imagemConvertida) {
             // Cenário A: Se o Sequelize devolveu um objeto contendo o array de dados do Buffer ({type: 'Buffer', data: [...]})
-            if (typeof poster === 'object' && poster.data && Array.isArray(poster.data)) {
-                const bytes = new Uint8Array(poster.data);
+            if (typeof imagemConvertida === 'object' && imagemConvertida.data && Array.isArray(imagemConvertida.data)) {
+                const bytes = new Uint8Array(imagemConvertida.data);
                 let binary = '';
                 const len = bytes.byteLength;
                 for (let i = 0; i < len; i++) {
@@ -723,20 +664,20 @@ debugger
                 stringPoster = btoa(binary).trim();
             } 
             // Cenário B: Se ele veio como uma instância direta de Uint8Array
-            else if (poster instanceof Uint8Array || poster.constructor?.name === "Uint8Array") {
+            else if (imagemConvertida instanceof Uint8Array || imagemConvertida.constructor?.name === "Uint8Array") {
                 let binary = '';
-                for (let i = 0; i < poster.length; i++) {
-                    binary += String.fromCharCode(poster[i]);
+                for (let i = 0; i < imagemConvertida.length; i++) {
+                    binary += String.fromCharCode(imagemConvertida[i]);
                 }
                 stringPoster = btoa(binary).trim();
             }
             // Cenário C: Se já for uma string comum de texto (seja o Base64 cru ou uma string salva)
-            else if (typeof poster === 'string') {
-                stringPoster = poster.trim();
+            else if (typeof imagemConvertida === 'string') {
+                stringPoster = imagemConvertida.trim();
             }
         }
-
-        // 3. Se conseguimos uma string válida do poster e ela NÃO é o erro "[object Object]"
+       
+        // Se conseguimos uma string válida do poster e ela NÃO é o erro "[object Object]"
         if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
             if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
                 fonteImagemFinal = stringPoster;
@@ -746,15 +687,8 @@ debugger
             }
         }
 
-        // 4. INVERSÃO DA PRIORIDADE (CONVERGÊNCIA):
-        // Se a fonteImagemFinal continuou vazia (porque o poster no banco está nulo ou corrompido),
-        // aí sim usamos o campo Capa (URL externa) como plano de fundo.
-        if (!fonteImagemFinal || fonteImagemFinal.includes("placeholder")) {
-            fonteImagemFinal = capa || "https://placeholder.com";
-        }
-
         return fonteImagemFinal;
-    }
+    };
 
 
     // Renderiza os títulos adicionados recentemente na página de catálogo
@@ -770,10 +704,10 @@ debugger
             divCard.classList.add('col','card', 'p-1', 'm-2');
 
             const imgCapa = document.createElement('img');
-            imgCapa.src = this.renderMiniatura(titulo.Capa,titulo.Poster_Path);
+            imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
             imgCapa.classList.add('card-img-top');
             imgCapa.width = 300;
-            imgCapa.height = 350;
+            imgCapa.height = 320;
 
             const divCardBody = document.createElement('div');
             divCardBody.classList.add('card-body');
@@ -838,7 +772,7 @@ debugger
                 li.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
     
                 const imgCapa = document.createElement('img');
-                imgCapa.src = titulo.Capa
+                imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
                 imgCapa.alt = titulo.Titulo;
                 imgCapa.width = 60;
                 imgCapa.height = 80;
@@ -899,7 +833,7 @@ debugger
                 li.classList.add('list-group-item', 'd-flex', 'align-items-center', 'gap-2', 'p-0');
 
                 const imgCapa = document.createElement('img');
-                imgCapa.src = titulo.Capa;
+                imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
                 imgCapa.alt = titulo.Titulo;
                 imgCapa.width = 60;
                 imgCapa.height = 80;
@@ -939,7 +873,7 @@ debugger
                 li.classList.add('list-group-item', 'd-flex', 'align-items-center', 'gap-2', 'p-0');
 
                 const imgCapa = document.createElement('img');
-                imgCapa.src = titulo.Capa;
+                imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
                 imgCapa.alt = titulo.Titulo;
                 imgCapa.width = 60;
                 imgCapa.height = 80;
@@ -1144,7 +1078,7 @@ debugger
 
                     const imgCapa = document.createElement('img');
                     imgCapa.classList.add('card-img-top');
-                    imgCapa.src = titulo.Capa;
+                    imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
                     imgCapa.alt = titulo.Titulo;
                     imgCapa.height = 250;
                     imgCapa.width = '100%';
@@ -1213,7 +1147,7 @@ debugger
                 li.classList.add('list-group-item', 'd-flex', 'align-items-center', 'gap-2', 'p-0');
 
                 const imgCapa = document.createElement('img');
-                imgCapa.src = titulo.Capa;
+                imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
                 imgCapa.alt = titulo.Titulo;
                 imgCapa.width = 60;
                 imgCapa.height = 80;
@@ -1500,27 +1434,6 @@ debugger
             }
         });
     };
-
-    // async atualizarTituloPorIDTMDB(idTitulo) {
-    //     const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
-    //     if (!btnBuscar || !idTitulo) return;
-
-    //     btnBuscar.disabled = true;
-    //     btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Vinculando...`;
-
-    //     try {
-    //         await this.vm.atualizarDadosPorIdTMDB(idTitulo);
-    //         alert(`✅ Título sincronizado com sucesso baseado no ID fornecido!`);
-            
-    //         // Recarrega a modal ou os dados da tela após atualizar
-    //         await this.abrirModalEditarCatalogo(idTitulo);
-    //     } catch (erro) {
-    //         alert(`❌ Falha ao vincular mídias: ${erro.message}`);
-    //     } finally {
-    //         btnBuscar.disabled = false;
-    //         btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
-    //     }
-    // }
 
     //Captura o clique em qualquer lugar do card e abre a modal de edição
     editarColecao() {

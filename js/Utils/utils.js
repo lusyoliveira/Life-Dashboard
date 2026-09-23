@@ -46,51 +46,39 @@ function fecharMenu() {
     document.getElementById("menuLateral").style.width = "0";
 };
 
-export async function converterUrlParaBase64(url) {
-  if (!url || typeof url !== 'string' || !url.startsWith('http')) {
-    return null;
-  }
+export function bufferParaBase64(poster) {
+    if (!poster) return null;
 
-  return new Promise((resolve) => {
-    const imagem = new Image();
-    
-    // Configura a permissão de leitura cruzada do elemento gráfico
-    imagem.crossOrigin = 'Anonymous';
-    
-    imagem.onload = function () {
-      try {
-        // Cria um elemento canvas invisível na memória do navegador
-        const canvas = document.createElement('canvas');
-        canvas.width = this.naturalWidth;
-        canvas.height = this.naturalHeight;
+    let bytes = null;
 
-        const contexto = canvas.getContext('2d');
-        if (!contexto) {
-          resolve(null);
-          return;
-        }
+    if (
+        typeof poster === 'object' &&
+        poster.data &&
+        Array.isArray(poster.data)
+    ) {
+        bytes = new Uint8Array(poster.data);
+    } else if (poster instanceof Uint8Array) {
+        bytes = poster;
+    } else {
+        return typeof poster === 'string'
+            ? poster
+            : null;
+    }
 
-        // Desenha o pôster baixado dentro do nosso canvas
-        contexto.drawImage(this, 0, 0);
+    let binary = '';
 
-        // Exporta o desenho diretamente como String Base64 pura
-        const dadosBase64Completo = canvas.toDataURL('image/jpeg');
-        resolve(dadosBase64Completo);
-        
-      } catch (erro) {
-        console.error("Erro ao renderizar imagem no Canvas:", erro.message);
-        resolve(null);
-      }
-    };
+    const tamanhoBloco = 8192;
 
-    imagem.onerror = function () {
-      console.error("Erro ao carregar a imagem do servidor do TMDB:", url);
-      resolve(null);
-    };
+    for (let i = 0; i < bytes.length; i += tamanhoBloco) {
+        const bloco = bytes.subarray(
+            i,
+            Math.min(i + tamanhoBloco, bytes.length)
+        );
 
-    // Dispara o download nativo da imagem pelo motor do navegador
-    imagem.src = url;
-  });
-}
+        binary += String.fromCharCode(...bloco);
+    }
+
+    return btoa(binary);
+};
 
 

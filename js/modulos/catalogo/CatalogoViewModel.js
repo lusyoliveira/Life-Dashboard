@@ -3,7 +3,6 @@ import apiTMDB from "../../integracoes/tmDB/metodoTMDB.js";
 import Catalogo from "./catalogoModel.js";
 import metodoData from "../../Utils/metodoData.js"
 import { ConfiguracaoViewModel } from "../configuracoes/ConfiguracaoViewModel.js";
-import { converterUrlParaBase64 } from "../../Utils/utils.js";
 
 export class CatalogoViewModel {
   constructor(endpoint = "catalogo") {
@@ -42,7 +41,7 @@ export class CatalogoViewModel {
         titulo.id_tmdb,
         titulo.original_name,
         titulo.overview,
-        titulo.poster_path ? (typeof titulo.poster_path === 'string' ? titulo.poster_path : titulo.poster_path.toString('utf-8')) : null,
+        titulo.poster_path,
         titulo.media_type,
         titulo.genres_ids,
         titulo.popularity,
@@ -86,7 +85,7 @@ export class CatalogoViewModel {
       titulo.id_tmdb,
       titulo.original_name,
       titulo.overview,
-      titulo.poster_path ? (typeof titulo.poster_path === 'string' ? titulo.poster_path : titulo.poster_path.toString('utf-8')) : null,
+      titulo.poster_path,
       titulo.media_type,
       titulo.genres_ids,
       titulo.popularity,
@@ -123,7 +122,7 @@ export class CatalogoViewModel {
         titulo.id_tmdb,
         titulo.original_name,
         titulo.overview,
-        titulo.poster_path ? (typeof titulo.poster_path === 'string' ? titulo.poster_path : titulo.poster_path.toString('utf-8')) : null,
+        titulo.poster_path,
         titulo.media_type,
         titulo.genres_ids,
         titulo.popularity,
@@ -142,8 +141,6 @@ export class CatalogoViewModel {
   };
 
   async salvarTitulo(titulo) {
-    // 1. Transforma o link da imagem em dados literais (Base64)
-    const imagemLiteralBase64 = await converterUrlParaBase64(titulo.Poster_Path);
 
     const payload = {
       id: titulo.id,
@@ -165,7 +162,7 @@ export class CatalogoViewModel {
       id_tmdb: titulo.IdTMDB,
       original_name: titulo.Original_Name,
       overview: titulo.Overview,
-      poster_path: imagemLiteralBase64, // 2. Passa a imagem convertida para o campo que vai para o banco
+      poster_path:  titulo.Capa,
       media_type: titulo.Media_Type,
       genres_ids: titulo.Genres_Ids,
       popularity: titulo.Popularity,
@@ -373,7 +370,7 @@ export class CatalogoViewModel {
       const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
       
       // Busca direta no TMDB pelo ID numérico oficial deles
-      const url = `https://api.themoviedb.org/3/search/{deparTipo}/${item.IdTMDB}?api_key=${API_KEY}&language=pt-BR`;
+      const url = `https://api.themoviedb.org/3/${deparTipo}/${item.IdTMDB}?api_key=${API_KEY}&language=pt-BR`;
       
       const resposta = await fetch(url);
       if (!resposta.ok) throw new Error(`Erro HTTP ${resposta.status} ao consultar ID no TMDB.`);

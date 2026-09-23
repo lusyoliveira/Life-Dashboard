@@ -1,7 +1,6 @@
 import { ConfiguracaoViewModel } from '../../modulos/configuracoes/ConfiguracaoViewModel.js';
 
-const urlBase = 'https://api.themoviedb.org/3/search';
-const urlBaseMulti = 'https://api.themoviedb.org/3/search/multi';
+const urlBase = 'https://api.themoviedb.org/3';
 
 //Extração da configuração da API
 const cfvm = new ConfiguracaoViewModel();
@@ -17,7 +16,7 @@ const apiTMDB = {
         // }
 
         const apiKey = dadosConfig.chaveTMDB;
-        const urlProgramas = `${urlBaseMulti}?api_key=${apiKey}&query=${encodeURIComponent(termoBusca)}&language=pt-BR`;   
+        const urlProgramas = `${urlBase}/search/multi/?api_key=${apiKey}&query=${encodeURIComponent(termoBusca)}&language=pt-BR`;   
 
         try {
             const response = await fetch(urlProgramas);
@@ -58,16 +57,84 @@ const apiTMDB = {
         }
     },
 
-    async obterDetalhesPrograma(id, configuracoes) {
-        if (!configuracoes || !configuracoes.chaveTMDB) {
-            alert('A integração com o TMDB não está configurada corretamente.');
+    async obterDetalhesPrograma(id) {
+        // if (!configuracoes || !configuracoes.chaveTMDB) {
+        //     alert('A integração com o TMDB não está configurada corretamente.');
+        //     return null;
+        // }
+        const apiKey = dadosConfig.chaveTMDB;
+        const [mediaType, mediaId] = id.split('-');
+        const url = `${urlBase}/${mediaType}/${mediaId}?api_key=${apiKey}&language=pt-BR`;     
+
+        const resposta = await fetch(url);
+        if (!resposta.ok) throw new Error(`Erro HTTP ${resposta.status} ao consultar ID no TMDB.`);
+
+        const resultado = await resposta.json();
+        if (!resultado.results || resultado.results.length === 0) {
             return null;
         }
-        const apiKey = configuracoes.chaveTMDB;
-        const [mediaType, mediaId] = id.split('-');
-        const url = `${urlBase}${mediaType}/${mediaId}?api_key=${apiKey}&language=pt-BR`;    
+
+        const dadosTMDB = resultado.results[0];
+
+        return {
+
+            ano: (dadosTMDB.release_date || dadosTMDB.first_air_date)
+                ? new Date(
+                    dadosTMDB.release_date || dadosTMDB.first_air_date
+                ).getFullYear()
+                : 'N/A',
+            data_exibicao:
+                dadosTMDB.release_date ||
+                dadosTMDB.first_air_date ||
+                'N/A',
+            ultima_exibicao:
+                dadosTMDB.last_air_date ||
+                'N/A',
+            quantidade_episodios: dadosTMDB.number_of_episodes,
+            quantidade_temporadas: dadosTMDB.number_of_seasons,
+            id_temporada: dadosTMDB.seasons.id,
+            nome_temporada: dadosTMDB.seasons.name,
+            sinopse_temporada: dadosTMDB.seasons.overview,
+            poster_temporada: dadosTMDB.poster_path
+                    ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.season.poster_path
+                    : null,
+            numero_temporada: dadosTMDB.seasons.season_number,
+            nota_temporada: dadosTMDB.seasons.vote_average
+        };        
     },
 
+    // Busca os episódios de uma temporada específica via TMDB
+    async obterEpisodiosDaTemporada(idTMDBSerie, numeroTemporada) {
+        const apiKey = dadosConfig.chaveTMDB;
+        const url = `${urlBase}/tv/${idTMDBSerie}/season/${numeroTemporada}?api_key=${apiKey}&language=pt-BR`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("Erro ao buscar episódios no TMDB");
+            
+            const data = await response.json();
+            
+            // data.episodes contém a lista completa de episódios daquela temporada
+            return {
+                id_tmdb_temporada: data.id,
+                nome_temporada: data.name,
+                numero_temporada: data.season_number,
+                poster_temporada: data.poster_path ? `https://image.tmdb.org/t/p/w500${data.poster_path}` : null,
+                episodios: data.episodes.map(ep => ({
+                    id_tmdb_episodio: ep.id,
+                    numero_episodio: ep.episode_number,
+                    titulo_episodio: ep.name,
+                    sinopse: ep.overview,
+                    media_votos: ep.vote_average,
+                    data_exibicao: ep.air_date
+                }))
+            };
+        } catch (error) {
+            console.error("Erro ao obter episódios do TMDB:", error);
+            throw error;
+        }
+    },
+    
     async obterProgramaPorDescricao(descricao, tipo) {
     
         try {
@@ -76,7 +143,7 @@ const apiTMDB = {
                 ? 'movie'
                 : 'tv';
 
-            const url = `${urlBase}/${mediaType}?api_key=${apiKey}&language=pt-BR&query=${encodeURIComponent(descricao)}`;
+            const url = `${urlBase}/search/${mediaType}?api_key=${apiKey}&language=pt-BR&query=${encodeURIComponent(descricao)}`;
             const respostaBusca = await fetch(url);
 
             if (!respostaBusca.ok) {
