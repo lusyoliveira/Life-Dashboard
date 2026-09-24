@@ -1,31 +1,31 @@
+import Episodio from "./episodioModel.js";
+
 export default class Temporada {
     id
     tituloId
-    temporada
+    idTMDBTemporada
+    numeroTemporada
     nomeTemporada
-    plataformaExibicao
     sinopse
-    exibicao
-    id_tmdb_temporada
+    estreia
     posterTemporada
-    mediaVotosTemporada
-    numeroEpisodio
-    tituloEpisodio
-    mediaVotosEpisodio
+    votosTemporada
+    quantidadeEpisodios
+    listaEpisodios
 
-    constructor(id, tituloId, temporada, nomeTemporada, plataformaExibicao, sinopse, exibicao, id_tmdb_temporada, posterTemporada, mediaVotosTemporada, numeroEpisodio, tituloEpisodio, mediaVotosEpisodio) {
+    constructor(id, tituloId, idTMDBTemporada, numeroTemporada, nomeTemporada, sinopse, estreia, posterTemporada, votosTemporada, quantidadeEpisodios, listaEpisodios = []) {
         this.id = id
         this.tituloId = tituloId
-        this.temporada = temporada
+        this.idTMDBTemporada = idTMDBTemporada
+        this.numeroTemporada = numeroTemporada
         this.nomeTemporada = nomeTemporada
-        this.plataformaExibicao = plataformaExibicao
         this.sinopse = sinopse
-        this.exibicao = exibicao ? new Date(exibicao) : null
-        this.id_tmdb_temporada = id_tmdb_temporada
+        this.estreia = estreia ? new Date(estreia) : null
         this.posterTemporada = posterTemporada
-        this.mediaVotosTemporada = mediaVotosTemporada
-        this.numeroEpisodio = numeroEpisodio
-        this.tituloEpisodio = tituloEpisodio
-        this.mediaVotosEpisodio = mediaVotosEpisodio
+        this.votosTemporada = votosTemporada
+        this.quantidadeEpisodios = quantidadeEpisodios
+        this.listaEpisodios = listaEpisodios.map(
+            ep => new Episodio(ep.id, ep.temporadaId, ep.idTMDB, ep.numeroEpisodio, ep.assistido, ep.tituloEpisodio, ep.sinopse, ep.duracao, ep.estreia, ep.votos)
+        );
     }
 }

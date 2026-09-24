@@ -1,4 +1,5 @@
 import metodoData from "../../Utils/metodoData.js"
+import TemporadaView from "./TemporadasView.js"
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
@@ -11,8 +12,9 @@ import Catalogo from "./catalogoModel.js";
 
 
 export class CatalogoView {
-    constructor(vm) {
+    constructor(vm, temporadaVM = new TemporadaView()) {
         this.vm = vm;
+        this.temporadaVM = temporadaVM;
         this.registrarEventosTabela();
         this.editarColecao();
         this.paginaAtualColecao = 1;
@@ -96,36 +98,98 @@ export class CatalogoView {
         }
     };    
 
+    // async vincularCamposFormularioTMDB() {
+    //     const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
+    //     const nomeInput = document.getElementById('titulo-adicionar')?.value.trim();
+    //     const idTMDB = document.getElementById("id-tmdb-adicionar").value;
+    //     const tipo = document.getElementById("tipo-adicionar").value;
+
+    //     if (!nomeInput) {
+    //         alert("⚠️ Por favor, digite o nome do título antes de realizar a busca!");
+    //         return;
+    //     }
+
+    //     // if (btnBuscar) {
+    //     //     btnBuscar.disabled = true;
+    //     //     btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...`;
+    //     // }
+    //     if(idTMDB)
+    //         try {
+    //             await this.vm.obterDadosTMDBPorId(idTMDB);
+    //             alert(`✅ Título sincronizado com sucesso baseado no ID fornecido!`);
+                
+    //             // Recarrega a modal ou os dados da tela após atualizar
+    //             await this.abrirModalEditarCatalogo(id);
+    //         } catch (erro) {
+    //             alert(`❌ Falha ao vincular mídias: ${erro.message}`);
+    //         } finally {
+    //             btnBuscar.disabled = false;
+    //             btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
+    //     } else {
+    //         try {
+    //             const item = await this.vm.obterDadosTMDBPorDescricao(nomeInput,tipo);
+    //             const previewImg = document.getElementById('poster-path-adicionar');
+    //             const posterInput = document.getElementById('capa-adicionar');
+
+    //             if (previewImg) {
+    //                 previewImg.src = item.Poster_Path || '';
+    //             }
+
+    //             if (posterInput) {
+    //                 posterInput.value = item.Poster_Path || '';
+    //             }
+
+    //             // Injeta os dados mapeados pelo seu método direto nos inputs da tela
+    //             if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.Title || nomeInput;
+    //             if(document.getElementById('capa-adicionar')) document.getElementById('capa-adicionar').value = item.Poster_Path || '';
+    //             if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.Overview || '';
+    //             if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';          
+    //             if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.Vote_Average || '0';
+    //             if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = item.Media_Type || '';
+    //             if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.Popularity || 'N/A';
+    //             if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.Year || 'N/A';
+                
+    //             alert(`✅ Dados de "${item.Title}" preenchidos na tela! Ajuste o que precisar e clique em Salvar.`);
+
+    //         } catch (error) {
+    //             alert(`❌ Erro ao buscar dados: ${error.message}`);
+    //         } finally {
+    //             if (btnBuscar) {
+    //                 btnBuscar.disabled = false;
+    //                 btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
+    //             }
+    //         }
+    //     }        
+    // };
+
     async vincularCamposFormularioTMDB() {
         const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
         const nomeInput = document.getElementById('titulo-adicionar')?.value.trim();
-        const idTMDB = document.getElementById("id-tmdb-adicionar").value;
-        const tipo = document.getElementById("tipo-adicionar").value;
+        const idTMDB = document.getElementById("id-tmdb-adicionar")?.value;
+        const tipo = document.getElementById("tipo-adicionar")?.value;
 
-        if (!nomeInput) {
-            alert("⚠️ Por favor, digite o nome do título antes de realizar a busca!");
+        if (!nomeInput && !idTMDB) {
+            alert("⚠️ Por favor, digite o nome do título ou o ID do TMDB antes de realizar a busca!");
             return;
         }
 
-        // if (btnBuscar) {
-        //     btnBuscar.disabled = true;
-        //     btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...`;
-        // }
-        if(idTMDB)
-            try {
-                await this.vm.atualizarDadosPorIdTMDB(idTMDB);
-                alert(`✅ Título sincronizado com sucesso baseado no ID fornecido!`);
-                
-                // Recarrega a modal ou os dados da tela após atualizar
-                await this.abrirModalEditarCatalogo(id);
-            } catch (erro) {
-                alert(`❌ Falha ao vincular mídias: ${erro.message}`);
-            } finally {
-                btnBuscar.disabled = false;
-                btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
-        } else {
-            try {
-                const item = await this.vm.obterDadosTMDBPorDescricao(nomeInput,tipo);
+        try {
+            let item;
+            if (idTMDB) {
+                item = await this.vm.obterDadosTMDBPorId(idTMDB);
+            } else {
+                item = await this.vm.obterDadosTMDBPorDescricao(nomeInput, tipo);
+            }
+
+            // Preenche os campos principais na Aba 1
+                if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.Title || nomeInput;
+                if(document.getElementById('capa-adicionar')) document.getElementById('capa-adicionar').value = item.Poster_Path || '';
+                if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.Overview || '';
+                if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';          
+                if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.Vote_Average || '0';
+                if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = item.Media_Type || '';
+                if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.Popularity || 'N/A';
+                if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.Year || 'N/A';
                 const previewImg = document.getElementById('poster-path-adicionar');
                 const posterInput = document.getElementById('capa-adicionar');
 
@@ -137,27 +201,16 @@ export class CatalogoView {
                     posterInput.value = item.Poster_Path || '';
                 }
 
-                // Injeta os dados mapeados pelo seu método direto nos inputs da tela
-                if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.Title || nomeInput;
-                if(document.getElementById('capa-adicionar')) document.getElementById('capa-adicionar').value = item.Poster_Path || '';
-                if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.Overview || '';
-                if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';          
-                if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.Vote_Average || '0';
-                if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = item.Media_Type || '';
-                if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.Popularity || 'N/A';
-                if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.Year || 'N/A';
-                
-                alert(`✅ Dados de "${item.Title}" preenchidos na tela! Ajuste o que precisar e clique em Salvar.`);
-
-            } catch (error) {
-                alert(`❌ Erro ao buscar dados: ${error.message}`);
-            } finally {
-                if (btnBuscar) {
-                    btnBuscar.disabled = false;
-                    btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
-                }
+            // Renderização na Segunda Aba (Aba de Temporadas e Episódios)
+            const containerAba2 = document.getElementById("container-temporadas-aba2");
+            if (item.seasons || item.TemporadasDetalhes) {
+                this.temporadaVM.renderizarAbaTemporadas(item.seasons || item.TemporadasDetalhes, containerAba2);
             }
-        }        
+
+            alert(`✅ Dados sincronizados na tela com sucesso!`);
+        } catch (error) {
+            alert(`❌ Erro ao buscar dados: ${error.message}`);
+        }
     };
 
     async abrirModalEditarCatalogo(id) {
@@ -239,6 +292,69 @@ export class CatalogoView {
     };
 
     // Método para salvar o formulário de criação/edição de título
+    // async salvarFormularioCatalogo(form) {
+    //     const idInput = form.querySelector('#id-adicionar')?.value || null;
+    //     const descricao = form.querySelector('#titulo-adicionar').value;
+    //     const capa = form.querySelector('#capa-adicionar').value;
+    //     const dataInicio = form.querySelector('#data-inicio').value;
+    //     const dataFim = form.querySelector('#data-fim').value;
+    //     const tipoId = form.querySelector('#tipo-adicionar').value;
+    //     const statusId = form.querySelector('#status-adicionar').value;
+    //     const plataformaId = form.querySelector('#plataforma-adicionar').value;
+    //     const episodios = form.querySelector('#episodios-adicionar').value;
+    //     const assistidos = form.querySelector('#assistidos-adicionar').value;
+    //     const temporada = form.querySelector('#temporada-adicionar').value;
+    //     const pontuacao = form.querySelector('#pontuacao-adicionar').value;
+    //     const vezes = form.querySelector('#vezes-adicionar').value;
+    //     const idtmdb = form.querySelector('#id-tmdb-adicionar').value;
+    //     const originalName = form.querySelector('#titulo-adicionar').value;
+    //     const overview = form.querySelector('#overview-adicionar').value;
+    //     const mediaType = form.querySelector('#media-type-adicionar').value;
+    //     const genresIds = form.querySelector('#genres-ids-adicionar').value;
+    //     const popularity = form.querySelector('#tmdb-lbl-pop').textContent;
+    //     const firstAirDate = form.querySelector('#first-air-date-adicionar').value;
+    //     const year = form.querySelector('#tmdb-lbl-year').textContent;
+    //     const voteAverage = form.querySelector('#tmdb-lbl-vote').textContent;
+
+    //     let adicaoOriginal = new Date();
+    //     // edição → preservar Adicao
+    //     if (idInput) {
+    //         const tituloExistente = await this.vm.obterTituloPorID(idInput);
+    //         if (tituloExistente) {
+    //         adicaoOriginal = tituloExistente.Adicao;
+    //         }
+    //     }
+
+    //     const titulo = new Catalogo(
+    //         idInput,
+    //         descricao,
+    //         capa,
+    //         tipoId,
+    //         statusId,
+    //         plataformaId,
+    //         metodoData.formatarParaISO(dataInicio),
+    //         dataFim ? metodoData.formatarParaISO(dataFim) : null,
+    //         Number(episodios),
+    //         Number(assistidos),
+    //         Number(temporada),
+    //         Number(pontuacao),
+    //         Number(vezes),
+    //         adicaoOriginal,
+    //         idtmdb,
+    //         originalName,
+    //         overview,
+    //         capa,
+    //         mediaType,
+    //         genresIds,
+    //         popularity,
+    //         metodoData.formatarParaISO(firstAirDate),
+    //         year,
+    //         voteAverage
+    //     );
+        
+    //     await this.vm.salvarTitulo(titulo);
+    // };
+
     async salvarFormularioCatalogo(form) {
         const idInput = form.querySelector('#id-adicionar')?.value || null;
         const descricao = form.querySelector('#titulo-adicionar').value;
@@ -253,22 +369,45 @@ export class CatalogoView {
         const temporada = form.querySelector('#temporada-adicionar').value;
         const pontuacao = form.querySelector('#pontuacao-adicionar').value;
         const vezes = form.querySelector('#vezes-adicionar').value;
-        const idtmdb = form.querySelector('#id-tmdb-adicionar').value;
+        const idtmdb = form.querySelector('#id-tmdb-adicionar')?.value || '';
         const originalName = form.querySelector('#titulo-adicionar').value;
-        const overview = form.querySelector('#overview-adicionar').value;
-        const mediaType = form.querySelector('#media-type-adicionar').value;
-        const genresIds = form.querySelector('#genres-ids-adicionar').value;
-        const popularity = form.querySelector('#tmdb-lbl-pop').textContent;
-        const firstAirDate = form.querySelector('#first-air-date-adicionar').value;
-        const year = form.querySelector('#tmdb-lbl-year').textContent;
-        const voteAverage = form.querySelector('#tmdb-lbl-vote').textContent;
+        const overview = form.querySelector('#overview-adicionar')?.value || '';
+        const mediaType = form.querySelector('#media-type-adicionar')?.value || '';
+        const genresIds = form.querySelector('#genres-ids-adicionar')?.value || '';
+        const popularity = form.querySelector('#tmdb-lbl-pop')?.textContent || 0;
+        const firstAirDate = form.querySelector('#first-air-date-adicionar')?.value || null;
+        const year = form.querySelector('#tmdb-lbl-year')?.textContent || '';
+        const voteAverage = form.querySelector('#tmdb-lbl-vote')?.textContent || 0;
+        const listaTemporadas = this.temporadaVM.extrairTemporadasDoFormulario(form);
+        // // Captura os dados da segunda aba (Temporadas e Episódios)
+        // const listaTemporadas = [];
+        // const elementosTemporadas = form.querySelectorAll('.item-temporada');
+
+        // elementosTemporadas.forEach(elTemp => {
+        //     const numeroTemp = elTemp.dataset.temporadaNumero;
+        //     const epsElements = elTemp.querySelectorAll('.item-episodio');
+        //     const listaEpisodios = [];
+
+        //     epsElements.forEach(elEp => {
+        //         const numeroEp = elEp.dataset.epNumero;
+        //         const assistido = elEp.querySelector('.chk-episodio-assistido')?.checked || false;
+        //         listaEpisodios.push({
+        //             numero: Number(numeroEp),
+        //             assistido: assistido
+        //         });
+        //     });
+
+        //     listaTemporadas.push({
+        //         numero: Number(numeroTemp),
+        //         episodios: listaEpisodios
+        //     });
+        // });
 
         let adicaoOriginal = new Date();
-        // edição → preservar Adicao
         if (idInput) {
             const tituloExistente = await this.vm.obterTituloPorID(idInput);
             if (tituloExistente) {
-            adicaoOriginal = tituloExistente.Adicao;
+                adicaoOriginal = tituloExistente.Adicao;
             }
         }
 
@@ -296,11 +435,12 @@ export class CatalogoView {
             popularity,
             metodoData.formatarParaISO(firstAirDate),
             year,
-            voteAverage
+            voteAverage,
+            listaTemporadas // Envia a estrutura capturada
         );
-        
+
         await this.vm.salvarTitulo(titulo);
-    };
+    }
 
     // Método para listar a coleção de títulos e renderizar em cards
     async listarColecao() {
@@ -1173,6 +1313,7 @@ export class CatalogoView {
             });
         }
     };
+
 
     //Lista os status disponíveis no select da página de catálogo
     async listarStatus(elementoId) { 

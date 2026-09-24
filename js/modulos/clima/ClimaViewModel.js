@@ -1,4 +1,5 @@
 import api from "../../servicos/metodoApi.js";
+import apiOpenMeteo from "../../integracoes/openMeteo.js";
 import Clima from "./climaModel.js"
 
 const urlBaseClima = 'https://api.open-meteo.com/v1/forecast';
@@ -20,53 +21,53 @@ export class ClimaViewModel {
         }
     }
 
-    async obterClima(configuracoesClima) {
-        const parametroClima = {
-            latitude: configuracoesClima.latitude,
-            longitude: configuracoesClima.longitude,
-            daily: "weather_code,temperature_2m_max,temperature_2m_min",
-            current: "weather_code,temperature_2m,relative_humidity_2m,apparent_temperature,is_day,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,rain,showers,snowfall,cloud_cover,pressure_msl,surface_pressure",
-            timeformat: "iso8601",
-            forecast_days: 7
-        };
+    // async obterClima(configuracoesClima) {
+    //     const parametroClima = {
+    //         latitude: configuracoesClima.latitude,
+    //         longitude: configuracoesClima.longitude,
+    //         daily: "weather_code,temperature_2m_max,temperature_2m_min",
+    //         current: "weather_code,temperature_2m,relative_humidity_2m,apparent_temperature,is_day,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,rain,showers,snowfall,cloud_cover,pressure_msl,surface_pressure",
+    //         timeformat: "iso8601",
+    //         forecast_days: 7
+    //     };
 
-        const queryClima = new URLSearchParams(parametroClima).toString();
-        const urlClima = `${urlBaseClima}?${queryClima}`;
+    //     const queryClima = new URLSearchParams(parametroClima).toString();
+    //     const urlClima = `${urlBaseClima}?${queryClima}`;
 
-        try {
-            const response = await fetch(urlClima)
-            return await response.json()
-        } catch (error) {
-            alert('Erro ao buscar clima na API!')
-            throw error
-        }
-    }
+    //     try {
+    //         const response = await fetch(urlClima)
+    //         return await response.json()
+    //     } catch (error) {
+    //         alert('Erro ao buscar clima na API!')
+    //         throw error
+    //     }
+    // }
 
-    async obterCidade(Cidade) {
-        const parametroCidade = {
-            name: Cidade,
-            count: 1,
-            language: "pt",
-            format: "json",
-            countryCode: "BR"
-        };
+    // async obterCidade(Cidade) {
+    //     const parametroCidade = {
+    //         name: Cidade,
+    //         count: 1,
+    //         language: "pt",
+    //         format: "json",
+    //         countryCode: "BR"
+    //     };
 
-        const queryCidade = new URLSearchParams(parametroCidade).toString();
-        const urlCidade = `${urlBaseCidade}?${queryCidade}`;
+    //     const queryCidade = new URLSearchParams(parametroCidade).toString();
+    //     const urlCidade = `${urlBaseCidade}?${queryCidade}`;
 
-        try {
-            const response = await fetch(urlCidade)
-            return await response.json()
+    //     try {
+    //         const response = await fetch(urlCidade)
+    //         return await response.json()
             
-        } catch (error) {
-            alert('Erro ao buscar cidade na API!')
-            throw error
-        }
-    }
+    //     } catch (error) {
+    //         alert('Erro ao buscar cidade na API!')
+    //         throw error
+    //     }
+    // }
 
-    async atualizarClima(configuracoesClima) {
+    async atualizarClima() {
         try {
-            const dadosCidade = await this.obterCidade(configuracoesClima.Cidade);
+            const dadosCidade = await apiOpenMeteo.obterCidade();
             if (!dadosCidade.results || dadosCidade.results.length === 0) {
                 alert('Cidade não encontrada!');
                 return;
@@ -78,7 +79,6 @@ export class ClimaViewModel {
                 longitude: cidade.longitude
             });
 
-            console.log(cidade);
             // cria uma instância da classe Clima
             const clima = new Clima(
                 cidade._id,

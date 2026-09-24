@@ -1,11 +1,12 @@
 import api from "../../servicos/metodoApi.js";
-import apiTMDB from "../../integracoes/tmDB/metodoTMDB.js";
+import apiTMDB from "../../integracoes/TMDB.js";
 import Catalogo from "./catalogoModel.js";
 import metodoData from "../../Utils/metodoData.js"
-import { ConfiguracaoViewModel } from "../configuracoes/ConfiguracaoViewModel.js";
+import { TemporadaViewModel } from './TemporadasViewModel.js';
 
 export class CatalogoViewModel {
   constructor(endpoint = "catalogo") {
+    this.temporadaVM = new TemporadaViewModel();
     this.endpoint = endpoint;
     this.catalogo = [];
   }
@@ -168,18 +169,25 @@ export class CatalogoViewModel {
       popularity: titulo.Popularity,
       first_air_date: titulo.First_Air_Date,
       year: titulo.Year,
-      vote_average: titulo.Vote_Average
+      vote_average: titulo.Vote_Average,
+      // Envio dos detalhes das temporadas/episódios capturados na View
+      listaTemporadas: titulo.listaTemporadas || []
     };
 
+    let tituloSalvo;
     if (titulo.id) {
-      //payload.Adicao = new Date(titulo.Adicao);
-      await api.atualizarDados(payload, this.endpoint);
+      tituloSalvo = await api.atualizarDados(payload, this.endpoint);
     } else {
-      //payload.Adicao = new Date();
-      await api.salvarDados(payload, this.endpoint);
+      tituloSalvo = await api.salvarDados(payload, this.endpoint);
     }
 
-    return this.obterCatalogo();
+    const tituloId = tituloSalvo.id || titulo.id;
+    if (titulo.listaTemporadas && titulo.listaTemporadas.length > 0) {
+      for (const temp of titulo.listaTemporadas) {
+          temp.tituloId = tituloId;
+          await this.temporadaVM.salvarTemporada(temp);
+      }
+    }
   };
 
   async excluirTitulo(id) {
@@ -208,9 +216,21 @@ export class CatalogoViewModel {
 
       return catalogoTMDB
     } catch (error) {
-      
+      alert('Erro ao buscar título na API!')
+      throw error
     }
   };
+
+  async obterDadosTMDBPorId(idTMDB) {
+    try {
+      const tituloTMDB = await apiTMDB.obterDetalhesPrograma(idTMDB);
+      return tituloTMDB
+
+    } catch (error) {
+      alert('Erro ao buscar título na API!')
+      throw error
+    }
+  }
 
   // Método dedicado para preencher metadados de itens pendentes
   async atualizarCatalogoEmLote(progressoCallback = null) {
@@ -231,11 +251,6 @@ export class CatalogoViewModel {
         if (progressoCallback) progressoCallback("✅ Todos os títulos já possuem ID do TMDB vinculado!");
         return { processados: 0, erros: 0 };
       }
-
-      // Extração da configuração da API
-      const cfvm = new ConfiguracaoViewModel('configuracoes');
-      const dadosConfig = (await cfvm.obterConfiguracoes())[0] ;
-      const API_KEY = dadosConfig?.chaveTMDB; 
 
       let processadosContador = 0;
       let errosContador = 0;
@@ -274,12 +289,10 @@ export class CatalogoViewModel {
 
           const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
           const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
-          const urlBuscaTexto = "https://api.themoviedb.org/3/search/" + deparTipo + "?api_key=" + API_KEY + "&query=" + encodeURIComponent(tituloLimpo) + "&language=pt-BR";
 
           try {
-            const respostaBusca = await fetch(urlBuscaTexto);
-            if (!respostaBusca.ok) throw new Error(`Erro na busca: HTTP ${respostaBusca.status}`);
 
+            const respostaBusca = await apiTMDB.obterProgramaPorDescricao(tituloLimpo,deparTipo)
             const resultadoBusca = await respostaBusca.json();
 
             if (!resultadoBusca.results || resultadoBusca.results.length === 0) {
@@ -287,7 +300,7 @@ export class CatalogoViewModel {
               return;
             }
 
-            // CORREÇÃO CRÍTICA DO INDICE: Lendo o primeiro item da lista de resultados da pesquisa textual
+            // Lendo o primeiro item da lista de resultados da pesquisa textual
             const dadosTMDB = resultadoBusca.results[0];
             const urlPosterCorreta = dadosTMDB.poster_path 
               ? "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path
@@ -350,55 +363,6 @@ export class CatalogoViewModel {
 
     } catch (error) {
       console.error("Erro geral durante o processamento em lote:", error);
-      throw error;
-    }
-  };
-
-  //metodo para 
-  async atualizarDadosPorIdTMDB(idTitulo) {
-    try {
-      const item = await this.obterTituloPorID(idTitulo);
-      if (!item || !item.IdTMDB) {
-        throw new Error("Título não encontrado ou não possui ID do TMDB vinculado.");
-      }
-
-      const cfvm = new ConfiguracaoViewModel('configuracoes');
-      const dadosConfig = (await cfvm.obterConfiguracoes())[0];
-      const API_KEY = dadosConfig?.chaveTMDB;
-
-      const stringTipo = typeof item.Tipo === 'object' ? item.Tipo.descricao : item.Tipo;
-      const deparTipo = (stringTipo === 'Filme' || stringTipo === '6' || item.Media_Type === 'movie') ? 'movie' : 'tv';
-      
-      // Busca direta no TMDB pelo ID numérico oficial deles
-      const url = `https://api.themoviedb.org/3/${deparTipo}/${item.IdTMDB}?api_key=${API_KEY}&language=pt-BR`;
-      
-      const resposta = await fetch(url);
-      if (!resposta.ok) throw new Error(`Erro HTTP ${resposta.status} ao consultar ID no TMDB.`);
-      const dadosTMDB = await resposta.json();
-
-      // Atualiza apenas as propriedades de metadados
-      item.Original_Name = dadosTMDB.original_title || dadosTMDB.original_name || item.Original_Name;
-      item.Overview = dadosTMDB.overview || item.Overview;
-      item.Popularity = dadosTMDB.popularity || item.Popularity;
-      item.Vote_Average = dadosTMDB.vote_average || item.Vote_Average;
-      
-      if (dadosTMDB.poster_path) {
-        item.Poster_Path = "https://image.tmdb.org/t/p/w500" + dadosTMDB.poster_path;
-      }
-
-      const payloadItem = new Catalogo(
-        item.id, item.Titulo, item.Capa,
-        item.Tipo?.id || item.Tipo, item.Status?.id || item.Status, item.Plataforma?.id || item.Plataforma,
-        item.Inicio, item.Fim, item.Episodios, item.Assistidos, item.Temporadas,
-        item.Score, item.Vezes, item.Adicao,
-        item.IdTMDB, item.Original_Name, item.Overview, item.Poster_Path,
-        deparTipo, item.Genres_Ids, item.Popularity, item.First_Air_Date, item.Year, item.Vote_Average
-      );
-
-      await this.salvarTitulo(payloadItem);
-      return true;
-    } catch (error) {
-      console.error("Erro ao atualizar por ID TMDB:", error);
       throw error;
     }
   };

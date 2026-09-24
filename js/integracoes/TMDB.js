@@ -1,4 +1,4 @@
-import { ConfiguracaoViewModel } from '../../modulos/configuracoes/ConfiguracaoViewModel.js';
+import { ConfiguracaoViewModel } from '../modulos/configuracoes/ConfiguracaoViewModel.js';
 
 const urlBase = 'https://api.themoviedb.org/3';
 
@@ -104,7 +104,7 @@ const apiTMDB = {
     },
 
     // Busca os episódios de uma temporada específica via TMDB
-    async obterEpisodiosDaTemporada(idTMDBSerie, numeroTemporada) {
+    async obterEpisodios(idTMDBSerie, numeroTemporada) {
         const apiKey = dadosConfig.chaveTMDB;
         const url = `${urlBase}/tv/${idTMDBSerie}/season/${numeroTemporada}?api_key=${apiKey}&language=pt-BR`;
 

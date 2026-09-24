@@ -1,3 +1,5 @@
+import Temporada from "./temporadaModel.js";
+
 export default class Catalogo {
     id
     Titulo
@@ -23,8 +25,9 @@ export default class Catalogo {
     First_Air_Date
     Year
     Vote_Average
+    listaTemporadas
 
-     constructor(id, Titulo, Capa, Tipo, Status, Plataforma, Inicio, Fim, Episodios, Assistidos, Temporadas, Score = 0, Vezes = 0, Adicao = new Date(), IdTMDB, Original_Name, Overview , Poster_Path, Media_Type, Genres_Ids, Popularity, First_Air_Date, Year, Vote_Average) {
+     constructor(id, Titulo, Capa, Tipo, Status, Plataforma, Inicio, Fim, Episodios, Assistidos, Temporadas, Score = 0, Vezes = 0, Adicao = new Date(), IdTMDB, Original_Name, Overview , Poster_Path, Media_Type, Genres_Ids, Popularity, First_Air_Date, Year, Vote_Average, listaTemporadas = []) {
         this.id = id
         this.Titulo = Titulo
         this.Capa = Capa
@@ -49,6 +52,9 @@ export default class Catalogo {
         this.First_Air_Date = First_Air_Date
         this.Year = Year
         this.Vote_Average = Vote_Average
+        this.listaTemporadas = listaTemporadas.map(
+            temp => new Temporada(temp.id, temp.tituloId, temp.idTMDBTemporada, temp.numeroTemporada, temp.nomeTemporada, temp.sinopse, temp.estreia, temp.posterTemporada, temp.votosTemporada, temp.quantidadeEpisodios, temp.listaEpisodios)
+        );
     }
 
     get Dias() {

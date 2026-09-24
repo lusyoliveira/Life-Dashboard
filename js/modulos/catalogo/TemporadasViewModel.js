@@ -1,10 +1,11 @@
 import api from "../../servicos/metodoApi.js";
-import apiTMDB from "../../integracoes/tmDB/metodoTMDB.js";
-import { ConfiguracaoViewModel } from "../configuracoes/ConfiguracaoViewModel.js";
-import Temporada from "../../modulos/catalogo/TemporadaModel.js";
+import Temporada from "../../modulos/catalogo/temporadaModel.js";
+import { EpisodioViewModel } from './EpisodioViewModel.js';
 
 export class TemporadaViewModel {
     constructor(endpoint = "temporada") {
+        this.episodioVM = new EpisodioViewModel();
+        this.endpointcat = "catalogo";
         this.endpoint = endpoint;
         this.temporada = [];
     }
@@ -56,28 +57,33 @@ export class TemporadaViewModel {
         return temporada;
     };
 
-    async salvarTemporada(temporada) {
-        const temporadaData = {
-            id: temporada.id,
-            tituloId: temporada.tituloId,
-            temporada: temporada.temporada,
-            nomeTemporada: temporada.nomeTemporada,
-            plataformaExibicao: temporada.plataformaExibicao,
-            sinopse: temporada.sinopse,
-            exibicao: temporada.exibicao,
-            id_tmdb_temporada: temporada.id_tmdb_temporada,
-            posterTemporada: temporada.posterTemporada,
-            mediaVotosTemporada: temporada.mediaVotosTemporada,
-            numeroEpisodio: temporada.numeroEpisodio,
-            tituloEpisodio: temporada.tituloEpisodio,
-            mediaVotosEpisodio: temporada.mediaVotosEpisodio
+    async salvarTemporada(temporadaModel) {
+        const payload = {
+            id : temporadaModel.id,
+            tituloId : temporadaModel.tituloId,
+            idTMDBTemporada : temporadaModel.idTMDBTemporada,
+            numeroTemporada : temporadaModel.numeroTemporada,
+            nomeTemporada : temporadaModel.nomeTemporada,
+            sinopse : temporadaModel.sinopse,
+            estreia : temporadaModel.estreia,
+            posterTemporada : temporadaModel.posterTemporada,
+            votosTemporada : temporadaModel.votosTemporada,
+            quantidadeEpisodios : temporadaModel.quantidadeEpisodios
         };
 
-        if(temporada.id) {
-            await api.atualizarDados(temporadaData, this.endpoint);
+        // 1. Salva a temporada primeiro no backend para obter/confirmar o ID
+        let temporadaSalva;
+        if (temporadaModel.id) {
+            temporadaSalva = await api.atualizarDados(payload, `${this.endpointcat}/${this.endpoint}/${temporadaModel.id}`);
         } else {
-            await api.salvarDados(temporadaData, this.endpoint);
+            temporadaSalva = await api.salvarDados(payload, `${this.endpointcat}/${temporadaModel.tituloId}/${this.endpoint}`);
         }
-        return this.temporada;
+
+        const temporadaId = temporadaSalva.id || temporadaModel.id;
+
+        // 2. Delega o salvamento dos episódios para o EpisodioViewModel
+        if (temporadaModel.episodios && temporadaModel.episodios.length > 0) {
+            await this.episodioVM.salvarListaEpisodios(temporadaModel.listaEpisodios, temporadaId);
+        }
     };
 }
