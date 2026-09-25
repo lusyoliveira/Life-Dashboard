@@ -221,10 +221,12 @@ export class CatalogoViewModel {
     }
   };
 
-  async obterDadosTMDBPorId(idTMDB) {
+  async obterDadosTMDBPorId(idTMDB, tipo) {
     try {
-      const tituloTMDB = await apiTMDB.obterDetalhesPrograma(idTMDB);
-      return tituloTMDB
+   
+      const tituloTMDB = await apiTMDB.obterProgramaPorID(idTMDB, tipo);
+console.log(tituloTMDB)
+      //return tituloTMDB
 
     } catch (error) {
       alert('Erro ao buscar título na API!')

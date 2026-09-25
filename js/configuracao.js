@@ -111,8 +111,6 @@ export async function inicializarConfiguracao() {
 
         await vm.salvarConfiguracao(novaConfiguracao);
 
-        console.log('Configuração salva.');
-
     });
 }
 

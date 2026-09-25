@@ -98,121 +98,6 @@ export class CatalogoView {
         }
     };    
 
-    // async vincularCamposFormularioTMDB() {
-    //     const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
-    //     const nomeInput = document.getElementById('titulo-adicionar')?.value.trim();
-    //     const idTMDB = document.getElementById("id-tmdb-adicionar").value;
-    //     const tipo = document.getElementById("tipo-adicionar").value;
-
-    //     if (!nomeInput) {
-    //         alert("⚠️ Por favor, digite o nome do título antes de realizar a busca!");
-    //         return;
-    //     }
-
-    //     // if (btnBuscar) {
-    //     //     btnBuscar.disabled = true;
-    //     //     btnBuscar.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...`;
-    //     // }
-    //     if(idTMDB)
-    //         try {
-    //             await this.vm.obterDadosTMDBPorId(idTMDB);
-    //             alert(`✅ Título sincronizado com sucesso baseado no ID fornecido!`);
-                
-    //             // Recarrega a modal ou os dados da tela após atualizar
-    //             await this.abrirModalEditarCatalogo(id);
-    //         } catch (erro) {
-    //             alert(`❌ Falha ao vincular mídias: ${erro.message}`);
-    //         } finally {
-    //             btnBuscar.disabled = false;
-    //             btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
-    //     } else {
-    //         try {
-    //             const item = await this.vm.obterDadosTMDBPorDescricao(nomeInput,tipo);
-    //             const previewImg = document.getElementById('poster-path-adicionar');
-    //             const posterInput = document.getElementById('capa-adicionar');
-
-    //             if (previewImg) {
-    //                 previewImg.src = item.Poster_Path || '';
-    //             }
-
-    //             if (posterInput) {
-    //                 posterInput.value = item.Poster_Path || '';
-    //             }
-
-    //             // Injeta os dados mapeados pelo seu método direto nos inputs da tela
-    //             if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.Title || nomeInput;
-    //             if(document.getElementById('capa-adicionar')) document.getElementById('capa-adicionar').value = item.Poster_Path || '';
-    //             if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.Overview || '';
-    //             if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';          
-    //             if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.Vote_Average || '0';
-    //             if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = item.Media_Type || '';
-    //             if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.Popularity || 'N/A';
-    //             if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.Year || 'N/A';
-                
-    //             alert(`✅ Dados de "${item.Title}" preenchidos na tela! Ajuste o que precisar e clique em Salvar.`);
-
-    //         } catch (error) {
-    //             alert(`❌ Erro ao buscar dados: ${error.message}`);
-    //         } finally {
-    //             if (btnBuscar) {
-    //                 btnBuscar.disabled = false;
-    //                 btnBuscar.innerHTML = `<i class="bi bi-arrow-clockwise"></i> Buscar e Vincular`;
-    //             }
-    //         }
-    //     }        
-    // };
-
-    async vincularCamposFormularioTMDB() {
-        const btnBuscar = document.getElementById("btn-buscar-tmdb-manual");
-        const nomeInput = document.getElementById('titulo-adicionar')?.value.trim();
-        const idTMDB = document.getElementById("id-tmdb-adicionar")?.value;
-        const tipo = document.getElementById("tipo-adicionar")?.value;
-
-        if (!nomeInput && !idTMDB) {
-            alert("⚠️ Por favor, digite o nome do título ou o ID do TMDB antes de realizar a busca!");
-            return;
-        }
-
-        try {
-            let item;
-            if (idTMDB) {
-                item = await this.vm.obterDadosTMDBPorId(idTMDB);
-            } else {
-                item = await this.vm.obterDadosTMDBPorDescricao(nomeInput, tipo);
-            }
-
-            // Preenche os campos principais na Aba 1
-                if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.Title || nomeInput;
-                if(document.getElementById('capa-adicionar')) document.getElementById('capa-adicionar').value = item.Poster_Path || '';
-                if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.Overview || '';
-                if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';          
-                if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.Vote_Average || '0';
-                if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = item.Media_Type || '';
-                if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.Popularity || 'N/A';
-                if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.Year || 'N/A';
-                const previewImg = document.getElementById('poster-path-adicionar');
-                const posterInput = document.getElementById('capa-adicionar');
-
-                if (previewImg) {
-                    previewImg.src = item.Poster_Path || '';
-                }
-
-                if (posterInput) {
-                    posterInput.value = item.Poster_Path || '';
-                }
-
-            // Renderização na Segunda Aba (Aba de Temporadas e Episódios)
-            const containerAba2 = document.getElementById("container-temporadas-aba2");
-            if (item.seasons || item.TemporadasDetalhes) {
-                this.temporadaVM.renderizarAbaTemporadas(item.seasons || item.TemporadasDetalhes, containerAba2);
-            }
-
-            alert(`✅ Dados sincronizados na tela com sucesso!`);
-        } catch (error) {
-            alert(`❌ Erro ao buscar dados: ${error.message}`);
-        }
-    };
-
     async abrirModalEditarCatalogo(id) {
         const titulo = await this.vm.obterTituloPorID(id);
 
@@ -286,11 +171,62 @@ export class CatalogoView {
 
             novoBtn.addEventListener("click", async (e) => {
                 e.preventDefault();
+                debugger
                 await this.vincularCamposFormularioTMDB();
             });
         };
     };
 
+    
+    async vincularCamposFormularioTMDB() {
+        const nomeInput = document.getElementById('titulo-adicionar')?.value.trim();
+        const idTMDB = document.getElementById("id-tmdb-adicionar")?.value;
+        const tipo = document.getElementById("tipo-adicionar")?.value;
+
+        if (!nomeInput && !idTMDB) {
+            alert("⚠️ Por favor, digite o nome do título ou o ID do TMDB antes de realizar a busca!");
+            return;
+        }
+
+        try {
+            let item;
+            if (idTMDB) {
+                item = await this.vm.obterDadosTMDBPorId(idTMDB, tipo);
+            } else {
+                item = await this.vm.obterDadosTMDBPorDescricao(nomeInput, tipo);
+            }
+
+            // Preenche os campos principais na Aba 1
+                if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.Title || nomeInput;
+                if(document.getElementById('capa-adicionar')) document.getElementById('capa-adicionar').value = item.Poster_Path || '';
+                if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.Overview || '';
+                if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';          
+                if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.Vote_Average || '0';
+                if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = item.Media_Type || '';
+                if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.Popularity || 'N/A';
+                if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.Year || 'N/A';
+                const previewImg = document.getElementById('poster-path-adicionar');
+                const posterInput = document.getElementById('capa-adicionar');
+
+                if (previewImg) {
+                    previewImg.src = item.Poster_Path || '';
+                }
+
+                if (posterInput) {
+                    posterInput.value = item.Poster_Path || '';
+                }
+
+            // Renderização na Segunda Aba (Aba de Temporadas e Episódios)
+            const containerAba2 = document.getElementById("container-temporadas-aba2");
+            if (item.seasons || item.TemporadasDetalhes) {
+                this.temporadaVM.renderizarAbaTemporadas(item.seasons || item.TemporadasDetalhes, containerAba2);
+            }
+
+            alert(`✅ Dados sincronizados na tela com sucesso!`);
+        } catch (error) {
+            alert(`❌ Erro ao buscar dados: ${error.message}`);
+        }
+    };
     // Método para salvar o formulário de criação/edição de título
     // async salvarFormularioCatalogo(form) {
     //     const idInput = form.querySelector('#id-adicionar')?.value || null;
