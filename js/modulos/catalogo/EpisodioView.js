@@ -7,10 +7,10 @@ export class EpisodioView {
 
     // Gera o HTML de um episódio
     renderizarItemEpisodio(episodio) {
-        const epNum = episodio.numero || episodio.episode_number;
-        const epNome = episodio.nome || episodio.name || 'Sem título';
-        const checked = episodio.assistido ? 'checked' : '';
-        const epId = episodio.id || '';
+        const epNum = episodio.numero_episodio || 0;
+        const epNome = episodio.titulo_episodio || 'Sem título';
+        const checked = '';
+        const epId = episodio.id_tmdb_episodio || '';
 
         return `
             <div class="d-flex align-items-center justify-content-between border-bottom py-2 item-episodio" 

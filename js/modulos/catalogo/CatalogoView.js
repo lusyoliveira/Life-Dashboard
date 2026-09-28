@@ -171,7 +171,7 @@ export class CatalogoView {
 
             novoBtn.addEventListener("click", async (e) => {
                 e.preventDefault();
-                debugger
+                
                 await this.vincularCamposFormularioTMDB();
             });
         };
@@ -195,31 +195,29 @@ export class CatalogoView {
             } else {
                 item = await this.vm.obterDadosTMDBPorDescricao(nomeInput, tipo);
             }
+console.log(item)
+             // Preenche os campos principais na Aba 1
+            if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.titulo || nomeInput;
+            if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.sinopse || '';
+            if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';          
+            if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.media_votos || '0';
+            if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.popularidade || 'N/A';
+            if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.ano || 'N/A';
+            const previewImg = document.getElementById('poster-path-adicionar');
+            const posterInput = document.getElementById('capa-adicionar');
 
-            // Preenche os campos principais na Aba 1
-                if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.Title || nomeInput;
-                if(document.getElementById('capa-adicionar')) document.getElementById('capa-adicionar').value = item.Poster_Path || '';
-                if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.Overview || '';
-                if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';          
-                if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.Vote_Average || '0';
-                if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = item.Media_Type || '';
-                if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.Popularity || 'N/A';
-                if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.Year || 'N/A';
-                const previewImg = document.getElementById('poster-path-adicionar');
-                const posterInput = document.getElementById('capa-adicionar');
+            if (previewImg) {
+                previewImg.src = item.poster || '';
+            }
 
-                if (previewImg) {
-                    previewImg.src = item.Poster_Path || '';
-                }
-
-                if (posterInput) {
-                    posterInput.value = item.Poster_Path || '';
-                }
+            if (posterInput) {
+                posterInput.value = item.poster || '';
+            }
 
             // Renderização na Segunda Aba (Aba de Temporadas e Episódios)
             const containerAba2 = document.getElementById("container-temporadas-aba2");
-            if (item.seasons || item.TemporadasDetalhes) {
-                this.temporadaVM.renderizarAbaTemporadas(item.seasons || item.TemporadasDetalhes, containerAba2);
+            if (item.temporadas) {
+                this.temporadaVM.renderizarAbaTemporadas(item.temporadas, containerAba2);
             }
 
             alert(`✅ Dados sincronizados na tela com sucesso!`);
@@ -315,29 +313,28 @@ export class CatalogoView {
         const year = form.querySelector('#tmdb-lbl-year')?.textContent || '';
         const voteAverage = form.querySelector('#tmdb-lbl-vote')?.textContent || 0;
         const listaTemporadas = this.temporadaVM.extrairTemporadasDoFormulario(form);
-        // // Captura os dados da segunda aba (Temporadas e Episódios)
-        // const listaTemporadas = [];
-        // const elementosTemporadas = form.querySelectorAll('.item-temporada');
+        // Captura os dados da segunda aba (Temporadas e Episódios)
+        const elementosTemporadas = form.querySelectorAll('.item-temporada');
 
-        // elementosTemporadas.forEach(elTemp => {
-        //     const numeroTemp = elTemp.dataset.temporadaNumero;
-        //     const epsElements = elTemp.querySelectorAll('.item-episodio');
-        //     const listaEpisodios = [];
+        elementosTemporadas.forEach(elTemp => {
+            const numeroTemp = elTemp.dataset.numero_temporada;
+            const epsElements = elTemp.querySelectorAll('.item-episodio');
+            const listaEpisodios = [];
 
-        //     epsElements.forEach(elEp => {
-        //         const numeroEp = elEp.dataset.epNumero;
-        //         const assistido = elEp.querySelector('.chk-episodio-assistido')?.checked || false;
-        //         listaEpisodios.push({
-        //             numero: Number(numeroEp),
-        //             assistido: assistido
-        //         });
-        //     });
+            epsElements.forEach(elEp => {
+                const numeroEp = elEp.dataset.numero_episodio;
+                const assistido = elEp.querySelector('.chk-episodio-assistido')?.checked || false;
+                listaEpisodios.push({
+                    numero: Number(numeroEp),
+                    assistido: assistido
+                });
+            });
 
-        //     listaTemporadas.push({
-        //         numero: Number(numeroTemp),
-        //         episodios: listaEpisodios
-        //     });
-        // });
+            listaTemporadas.push({
+                numero: Number(numeroTemp),
+                episodios: listaEpisodios
+            });
+        });
 
         let adicaoOriginal = new Date();
         if (idInput) {

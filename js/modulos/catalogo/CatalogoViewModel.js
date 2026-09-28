@@ -211,10 +211,12 @@ export class CatalogoViewModel {
 
   // Método para buscar dados no TMDB especificamento por título e tipo
   async obterDadosTMDBPorDescricao(nome, tipo) {
+    debugger
     try {
       const catalogoTMDB = await apiTMDB.obterProgramaPorDescricao(nome,tipo);
+      const tituloCompleto = await apiTMDB.obterProgramaPorID(catalogoTMDB.id_tmdb, tipo);
 
-      return catalogoTMDB
+      return tituloCompleto
     } catch (error) {
       alert('Erro ao buscar título na API!')
       throw error
@@ -225,8 +227,8 @@ export class CatalogoViewModel {
     try {
    
       const tituloTMDB = await apiTMDB.obterProgramaPorID(idTMDB, tipo);
-console.log(tituloTMDB)
-      //return tituloTMDB
+
+      return tituloTMDB
 
     } catch (error) {
       alert('Erro ao buscar título na API!')

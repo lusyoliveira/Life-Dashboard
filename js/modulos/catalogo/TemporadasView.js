@@ -10,6 +10,7 @@ export default class TemporadaView {
 
     // Método principal de renderização da aba
     renderizarAbaTemporadas(temporadas, containerElement) {
+        console.log(temporadas)
         if (!containerElement) return;
 
         containerElement.innerHTML = "";
@@ -24,14 +25,14 @@ export default class TemporadaView {
         accordion.id = "accordionTemporadas";
 
         temporadas.forEach((temp, index) => {
-            const tempNum = temp.numero || temp.season_number || (index + 1);
-            const tempNome = temp.nome || temp.name || `Temporada ${tempNum}`;
-            const listaEps = temp.episodios || temp.episodes || [];
+            const tempNum = temp.numero_temporada || (index + 1);
+            const tempNome = temp.titulo_temporada || `Temporada ${tempNum}`;
+            const listaEps = temp.episodios.episodios || [];
 
             const itemAcc = document.createElement("div");
             itemAcc.className = "accordion-item item-temporada";
-            itemAcc.dataset.temporadaId = temp.id || '';
-            itemAcc.dataset.temporadaNumero = tempNum;
+            itemAcc.dataset.id_tmdb_temporada = temp.id || '';
+            itemAcc.dataset.numero_temporada = tempNum;
 
             const idCollapse = `collapseTemp${index}`;
             const idHeader = `headingTemp${index}`;
@@ -43,14 +44,14 @@ export default class TemporadaView {
                     .map(ep => this.episodioView.renderizarItemEpisodio(ep))
                     .join('');
             } else {
-                const totalEps = temp.totalEpisodios || temp.episode_count || 0;
+                const totalEps = temp.total_episodios_temporada || 0;
                 listaEpisodiosHTML = `<p class="small text-muted mb-0">Total de episódios informados: ${totalEps}</p>`;
             }
 
             itemAcc.innerHTML = `
                 <h2 class="accordion-header" id="${idHeader}">
                     <button class="accordion-button ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#${idCollapse}">
-                        ${tempNome} (${listaEps.length || temp.totalEpisodios || 0} Episódios)
+                        ${tempNome} (${listaEps.length || temp.total_episodios_temporada || 0} Episódios)
                     </button>
                 </h2>
                 <div id="${idCollapse}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" data-bs-parent="#accordionTemporadas">
