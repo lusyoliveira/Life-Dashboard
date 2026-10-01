@@ -62,25 +62,12 @@ const apiTMDB = {
         //     alert('A integração com o TMDB não está configurada corretamente.');
         //     return null;
         // }
-        debugger
         const apiKey = dadosConfig.chaveTMDB;
         const mediaId = id;
         const mediaType = (tipo === 'Filme') ? 'movie' : 'tv';
         const url = `${urlBase}/${mediaType}/${mediaId}?api_key=${apiKey}&language=pt-BR`;     
 
         const respostaBusca = await fetch(url);
-
-            // if (!respostaBusca.ok) {
-            //     throw new Error(`HTTP ${respostaBusca.status}`);
-            // }
-
-            // const resultado = await respostaBusca.json();
-
-            // if (!resultado.results || resultado.results.length === 0) {
-            //     return null;
-            // }
-
-            // const dadosTMDB = resultado.results[0];
 
         const dadosTMDB = await respostaBusca.json();
         
@@ -110,20 +97,45 @@ const apiTMDB = {
             media_votos: dadosTMDB.vote_average || 0,
             popularidade: dadosTMDB.popularity || 0,
             status: dadosTMDB.status,
-            temporadas: dadosTMDB.seasons.map(temporada => ({
-                exibicao_temporada: temporada.air_date ||
-                            'N/A',
-                total_episodios_temporada: temporada.episode_count || 0,
-                id_tmdb_temporada: temporada.id,
-                titulo_temporada: temporada.name,
-                sinopse_temporada: temporada.overview,
-                poster: temporada.poster_path
-                ? "https://image.tmdb.org/t/p/w500" + temporada.poster_path
-                : null,
-                numero_temporada: temporada.season_number || 0,
-                media_votos: temporada.vote_average,
-                episodios: this.obterEpisodios(dadosTMDB.id, temporada.season_number)
-            }))
+            temporadas: await Promise.all(
+                dadosTMDB.seasons.map(async (temporada) => {
+
+                    const dadosEpisodios = await apiTMDB.obterEpisodios(
+                        dadosTMDB.id,
+                        temporada.season_number
+                    );
+
+                    return {
+                        exibicao_temporada: temporada.air_date || 'N/A',
+                        total_episodios_temporada: temporada.episode_count || 0,
+                        id_tmdb_temporada: temporada.id,
+                        titulo_temporada: temporada.name,
+                        sinopse_temporada: temporada.overview,
+                        poster: temporada.poster_path
+                            ? "https://image.tmdb.org/t/p/w500" + temporada.poster_path
+                            : null,
+                        numero_temporada: temporada.season_number || 0,
+                        media_votos_temporada: temporada.vote_average,
+
+                        // NOVO
+                        episodios: dadosEpisodios
+                    };
+                })
+            )
+
+            // temporadas: dadosTMDB.seasons.map(temporada => ({
+            //     exibicao_temporada: temporada.air_date ||
+            //                 'N/A',
+            //     total_episodios_temporada: temporada.episode_count || 0,
+            //     id_tmdb_temporada: temporada.id,
+            //     titulo_temporada: temporada.name,
+            //     sinopse_temporada: temporada.overview,
+            //     poster: temporada.poster_path
+            //     ? "https://image.tmdb.org/t/p/w500" + temporada.poster_path
+            //     : null,
+            //     numero_temporada: temporada.season_number || 0,
+            //     media_votos: temporada.vote_average
+            // }))
         };                            
     },
    

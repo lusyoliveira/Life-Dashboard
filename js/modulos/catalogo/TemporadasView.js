@@ -7,65 +7,54 @@ export default class TemporadaView {
         this.temporadaVM = temporadaViewModel;
         this.episodioView = episodioView;
     }
-
-    // Método principal de renderização da aba
-    renderizarAbaTemporadas(temporadas, containerElement) {
-        console.log(temporadas)
-        if (!containerElement) return;
-
-        containerElement.innerHTML = "";
-
-        if (!temporadas || temporadas.length === 0) {
-            containerElement.innerHTML = `<p class="text-muted p-3">Nenhuma temporada/episódio encontrado.</p>`;
+    renderizarAbaTemporadas(temporadas) {
+        // Certifique-se de que este é o ID/Classe correto do container dentro da aba "Episódios"
+        const containerAlvo = document.getElementById("accordionTemporadas")
+    
+        if (!containerAlvo) {
+            console.error("Container da aba de episódios não foi encontrado no DOM!");
             return;
         }
 
-        const accordion = document.createElement("div");
-        accordion.className = "accordion";
-        accordion.id = "accordionTemporadas";
+        containerAlvo.innerHTML = '';
+        if (!temporadas || temporadas.length === 0) {
+            containerAlvo.innerHTML = '<p class="text-muted text-center my-3">Nenhuma temporada encontrada.</p>';
+            return;
+        }
 
+        //Monta o HTML de cada temporada
         temporadas.forEach((temp, index) => {
-            const tempNum = temp.numero_temporada || (index + 1);
-            const tempNome = temp.titulo_temporada || `Temporada ${tempNum}`;
-            const listaEps = temp.episodios.episodios || [];
+            const episodios = temp.listaEpisodios || [];
+            const accordionId = `collapse-temporada-${temp.numero_temporada ?? index}`;
 
-            const itemAcc = document.createElement("div");
-            itemAcc.className = "accordion-item item-temporada";
-            itemAcc.dataset.id_tmdb_temporada = temp.id || '';
-            itemAcc.dataset.numero_temporada = tempNum;
+            // Renderiza os episódios da temporada
+           const htmlEpisodios = episodios.length > 0 
+                ? episodios.map(ep => this.episodioView.renderizarItemEpisodio(ep)).join('')
+                : '<div class="p-2 text-muted small">Nenhum episódio disponível.</div>';
 
-            const idCollapse = `collapseTemp${index}`;
-            const idHeader = `headingTemp${index}`;
-
-            // Renderiza os episódios usando a EpisodioView
-            let listaEpisodiosHTML = "";
-            if (listaEps.length > 0) {
-                listaEpisodiosHTML = listaEps
-                    .map(ep => this.episodioView.renderizarItemEpisodio(ep))
-                    .join('');
-            } else {
-                const totalEps = temp.total_episodios_temporada || 0;
-                listaEpisodiosHTML = `<p class="small text-muted mb-0">Total de episódios informados: ${totalEps}</p>`;
-            }
-
-            itemAcc.innerHTML = `
-                <h2 class="accordion-header" id="${idHeader}">
-                    <button class="accordion-button ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#${idCollapse}">
-                        ${tempNome} (${listaEps.length || temp.total_episodios_temporada || 0} Episódios)
+            const acordionItem = document.createElement('div');
+            acordionItem.className = 'accordion-item';
+            acordionItem.innerHTML = `
+                <h2 class="accordion-header d-flex gap-2 justify-content-between" id="heading-${accordionId}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${accordionId}" aria-expanded="false" aria-controls="flush-collapseOne">
+                        ${temp.titulo_temporada || `Temporada ${temp.numero_temporada}`} (${episodios.length} episódios)
+                        <small class="text-muted">Estreia: ${temp.exibicao_temporada}</small>
+                        <span class="badge text-bg-warning">Nota TMDB: ${temp.media_votos_temporada}</span>
                     </button>
                 </h2>
-                <div id="${idCollapse}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" data-bs-parent="#accordionTemporadas">
+                <div id="collapse-${accordionId}" class="accordion-collapse collapse" data-bs-parent="#accordionTemporadas">
                     <div class="accordion-body">
-                        ${listaEpisodiosHTML}
+                        <div class="list-group">
+                            ${htmlEpisodios}
+                        </div>
                     </div>
                 </div>
             `;
 
-            accordion.appendChild(itemAcc);
-        });
+            containerAlvo.appendChild(acordionItem);
 
-        containerElement.appendChild(accordion);
-    }
+       });
+    };
 
     // Extrai todas as temporadas e episódios editados na View para enviar no Salvamento
     extrairTemporadasDoFormulario(formElement) {

@@ -14,7 +14,7 @@
                 <i class="bi bi-card-text"></i> Dados Gerais
             </button>
         </li>
-        <li class="nav-item" role="presentation">
+        <li class="nav-item active" role="presentation">
             <button class="nav-link" id="tmdb-tab" data-bs-toggle="tab" data-bs-target="#tmdb-pane" type="button" role="tab" aria-controls="tmdb-pane" aria-selected="false">
                 <i class="bi bi-film"></i> Episódios
             </button>
@@ -107,9 +107,10 @@
             </div>
         </div>
 
-        <!-- Aba 2: Metadados TMDB -->
-        <div class="tab-pane fade" id="container-temporadas-aba2" role="tabpanel" aria-labelledby="dados-tab" tabindex="0">
-                    
-        </div>
+  <!-- Aba 2: Metadados TMDB -->
+        <div class="tab-pane fade" id="tmdb-pane" role="tabpanel" aria-labelledby="dados-tab" tabindex="0">
+            <div class="row" id="container-temporadas-aba2" >
+                <div class="accordion" id="accordionTemporadas"></div>
+            </div>            
     </div>
 </form>

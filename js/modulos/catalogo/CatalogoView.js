@@ -195,7 +195,7 @@ export class CatalogoView {
             } else {
                 item = await this.vm.obterDadosTMDBPorDescricao(nomeInput, tipo);
             }
-console.log(item)
+
              // Preenche os campos principais na Aba 1
             if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.titulo || nomeInput;
             if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.sinopse || '';
@@ -215,10 +215,24 @@ console.log(item)
             }
 
             // Renderização na Segunda Aba (Aba de Temporadas e Episódios)
-            const containerAba2 = document.getElementById("container-temporadas-aba2");
             if (item.temporadas) {
-                this.temporadaVM.renderizarAbaTemporadas(item.temporadas, containerAba2);
-            }
+
+                const temporadasTratadas = await Promise.all(
+                    item.temporadas.map(async (temp) => {
+                        // Resolve a Promise guardada na propriedade episodios
+                        const resultadoEpisodios = await temp.episodios;
+
+                        return {
+                            ...temp,
+                            // Extrai o Array correto que está dentro de [[PromiseResult]] -> episodios
+                            listaEpisodios: resultadoEpisodios?.episodios || []
+                        };
+                    })
+                );
+
+                // 2. Passa os dados totalmente prontos e síncronos para a View
+                this.temporadaVM.renderizarAbaTemporadas(temporadasTratadas);              
+             }
 
             alert(`✅ Dados sincronizados na tela com sucesso!`);
         } catch (error) {
@@ -313,8 +327,6 @@ console.log(item)
         const year = form.querySelector('#tmdb-lbl-year')?.textContent || '';
         const voteAverage = form.querySelector('#tmdb-lbl-vote')?.textContent || 0;
         const listaTemporadas = this.temporadaVM.extrairTemporadasDoFormulario(form);
-        // Captura os dados da segunda aba (Temporadas e Episódios)
-        const elementosTemporadas = form.querySelectorAll('.item-temporada');
 
         elementosTemporadas.forEach(elTemp => {
             const numeroTemp = elTemp.dataset.numero_temporada;
@@ -817,9 +829,9 @@ console.log(item)
 
             const smallDataAdicao = document.createElement('small');
             const dataUTC = new Date(titulo.Adicao);                
-            const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
-                        
+            const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);                        
             smallDataAdicao.textContent = dataLocal.toLocaleDateString("pt-BR");
+            
             liDataAdicao.appendChild(iIcon);
             liDataAdicao.appendChild(smallDataAdicao);
             ulInfo.appendChild(liProgresso);

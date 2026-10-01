@@ -211,7 +211,6 @@ export class CatalogoViewModel {
 
   // Método para buscar dados no TMDB especificamento por título e tipo
   async obterDadosTMDBPorDescricao(nome, tipo) {
-    debugger
     try {
       const catalogoTMDB = await apiTMDB.obterProgramaPorDescricao(nome,tipo);
       const tituloCompleto = await apiTMDB.obterProgramaPorID(catalogoTMDB.id_tmdb, tipo);
