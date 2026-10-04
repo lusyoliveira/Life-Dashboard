@@ -326,7 +326,10 @@ export class CatalogoView {
         const firstAirDate = form.querySelector('#first-air-date-adicionar')?.value || null;
         const year = form.querySelector('#tmdb-lbl-year')?.textContent || '';
         const voteAverage = form.querySelector('#tmdb-lbl-vote')?.textContent || 0;
-        const listaTemporadas = this.temporadaVM.extrairTemporadasDoFormulario(form);
+
+        // CAPTURA DOS ELEMENTOS DE TEMPORADAS PRESENTES NO DOM
+        const elementosTemporadas = form.querySelectorAll('.accordion-item, .item-temporada');
+        const listaTemporadas = [];
 
         elementosTemporadas.forEach(elTemp => {
             const numeroTemp = elTemp.dataset.numero_temporada;
@@ -381,11 +384,11 @@ export class CatalogoView {
             metodoData.formatarParaISO(firstAirDate),
             year,
             voteAverage,
-            listaTemporadas // Envia a estrutura capturada
+            listaTemporadas 
         );
 
         await this.vm.salvarTitulo(titulo);
-    }
+    };
 
     // Método para listar a coleção de títulos e renderizar em cards
     async listarColecao() {

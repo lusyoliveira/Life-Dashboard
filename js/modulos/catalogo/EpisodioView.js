@@ -13,7 +13,7 @@ export class EpisodioView {
         const epId = episodio.id_tmdb_episodio ?? episodio.idTMDB ?? '';
 
         return `
-            <div class="list-group-item list-group-item-action gap-3 py-3" aria-current="true"  
+            <div class="list-group-item list-group-item-action gap-3 py-3 item-episodio" aria-current="true"  
                 data-ep-id="${epId}" 
                 data-ep-numero="${epNum}">
                     <div class="d-flex gap-2 justify-content-between">
