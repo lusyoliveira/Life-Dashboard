@@ -25,7 +25,7 @@ export default class Temporada {
         this.votosTemporada = votosTemporada
         this.quantidadeEpisodios = quantidadeEpisodios
         this.listaEpisodios = listaEpisodios.map(
-            ep => new Episodio(ep.id, ep.temporadaId, ep.idTMDB, ep.numeroEpisodio, ep.assistido, ep.tituloEpisodio, ep.sinopse, ep.duracao, ep.estreia, ep.votos)
+            ep => new Episodio(ep)
         );
     }
 }

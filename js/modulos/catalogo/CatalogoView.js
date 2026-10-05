@@ -239,70 +239,6 @@ export class CatalogoView {
             alert(`❌ Erro ao buscar dados: ${error.message}`);
         }
     };
-    // Método para salvar o formulário de criação/edição de título
-    // async salvarFormularioCatalogo(form) {
-    //     const idInput = form.querySelector('#id-adicionar')?.value || null;
-    //     const descricao = form.querySelector('#titulo-adicionar').value;
-    //     const capa = form.querySelector('#capa-adicionar').value;
-    //     const dataInicio = form.querySelector('#data-inicio').value;
-    //     const dataFim = form.querySelector('#data-fim').value;
-    //     const tipoId = form.querySelector('#tipo-adicionar').value;
-    //     const statusId = form.querySelector('#status-adicionar').value;
-    //     const plataformaId = form.querySelector('#plataforma-adicionar').value;
-    //     const episodios = form.querySelector('#episodios-adicionar').value;
-    //     const assistidos = form.querySelector('#assistidos-adicionar').value;
-    //     const temporada = form.querySelector('#temporada-adicionar').value;
-    //     const pontuacao = form.querySelector('#pontuacao-adicionar').value;
-    //     const vezes = form.querySelector('#vezes-adicionar').value;
-    //     const idtmdb = form.querySelector('#id-tmdb-adicionar').value;
-    //     const originalName = form.querySelector('#titulo-adicionar').value;
-    //     const overview = form.querySelector('#overview-adicionar').value;
-    //     const mediaType = form.querySelector('#media-type-adicionar').value;
-    //     const genresIds = form.querySelector('#genres-ids-adicionar').value;
-    //     const popularity = form.querySelector('#tmdb-lbl-pop').textContent;
-    //     const firstAirDate = form.querySelector('#first-air-date-adicionar').value;
-    //     const year = form.querySelector('#tmdb-lbl-year').textContent;
-    //     const voteAverage = form.querySelector('#tmdb-lbl-vote').textContent;
-
-    //     let adicaoOriginal = new Date();
-    //     // edição → preservar Adicao
-    //     if (idInput) {
-    //         const tituloExistente = await this.vm.obterTituloPorID(idInput);
-    //         if (tituloExistente) {
-    //         adicaoOriginal = tituloExistente.Adicao;
-    //         }
-    //     }
-
-    //     const titulo = new Catalogo(
-    //         idInput,
-    //         descricao,
-    //         capa,
-    //         tipoId,
-    //         statusId,
-    //         plataformaId,
-    //         metodoData.formatarParaISO(dataInicio),
-    //         dataFim ? metodoData.formatarParaISO(dataFim) : null,
-    //         Number(episodios),
-    //         Number(assistidos),
-    //         Number(temporada),
-    //         Number(pontuacao),
-    //         Number(vezes),
-    //         adicaoOriginal,
-    //         idtmdb,
-    //         originalName,
-    //         overview,
-    //         capa,
-    //         mediaType,
-    //         genresIds,
-    //         popularity,
-    //         metodoData.formatarParaISO(firstAirDate),
-    //         year,
-    //         voteAverage
-    //     );
-        
-    //     await this.vm.salvarTitulo(titulo);
-    // };
-
     async salvarFormularioCatalogo(form) {
         const idInput = form.querySelector('#id-adicionar')?.value || null;
         const descricao = form.querySelector('#titulo-adicionar').value;
@@ -326,28 +262,66 @@ export class CatalogoView {
         const firstAirDate = form.querySelector('#first-air-date-adicionar')?.value || null;
         const year = form.querySelector('#tmdb-lbl-year')?.textContent || '';
         const voteAverage = form.querySelector('#tmdb-lbl-vote')?.textContent || 0;
-
-        // CAPTURA DOS ELEMENTOS DE TEMPORADAS PRESENTES NO DOM
-        const elementosTemporadas = form.querySelectorAll('.accordion-item, .item-temporada');
+        const elementosTemporadas = form.querySelectorAll('#accordionTemporadas .item-temporada');
         const listaTemporadas = [];
 
         elementosTemporadas.forEach(elTemp => {
-            const numeroTemp = elTemp.dataset.numero_temporada;
+            // Lê as propriedades da temporada a partir dos datasets do elemento no HTML
+            const id = elTemp.dataset.id || null;
+            const tituloId = idInput || null;
+            const idTMDBTemporada = elTemp.dataset.temporadaidtmdb || null;
+            const numeroTemporada = Number(elTemp.dataset.temporada || null);
+            const nomeTemporada = elTemp.querySelector('.titulo-temporada')?.textContent || `Temporada ${numeroTemporada}`;
+            const sinopse = elTemp.querySelector('.sinopse-temporada')?.textContent || null;
+            const estreia = elTemp.querySelector('.estreia-temporada')?.textContent || null;
+            const posterTemporada = elTemp.querySelector('.poster-temporada')?.src || '';
+            const votosTemporada = Number(elTemp.querySelector('.nota-temporada')?.textContent.replace('Nota TMDB: ', '') || null);
+
+            // Busca os episódios no container da temporada atual
             const epsElements = elTemp.querySelectorAll('.item-episodio');
             const listaEpisodios = [];
 
             epsElements.forEach(elEp => {
-                const numeroEp = elEp.dataset.numero_episodio;
-                const assistido = elEp.querySelector('.chk-episodio-assistido')?.checked || false;
+                const idEp = elEp.dataset.id || null;
+                const temporadaId = id || null;
+                const tituloId = idInput || null;
+                const idTMDBEp = elEp.dataset.epidtmdb || null;
+                const numeroEpisodio = Number(elEp.dataset.episodio || null);
+                const assistidoInput = elEp.querySelector('input.chk-episodio-assistido');
+                const assistido = assistidoInput ? assistidoInput.checked : false;
+                const tituloEpisodio = elEp.querySelector('.titulo-episodio')?.textContent || `Episódio ${numeroEpisodio}`;
+                const sinopseEp = elEp.querySelector('.sinopse-episodio')?.textContent || '';
+                const duracao = Number(elEp.querySelector('.duracao-episodio')?.textContent || null);
+                const estreiaEp = elEp.querySelector('.exibicao-episodio')?.textContent || null;
+                const votosEp = Number(elEp.querySelector('.votos-episodio')?.textContent.replace('Votos: ', '') || null);
+
                 listaEpisodios.push({
-                    numero: Number(numeroEp),
-                    assistido: assistido
+                    id: idEp,
+                    temporadaId: temporadaId,
+                    idTMDB: idTMDBEp,
+                    tituloId: tituloId,
+                    numeroEpisodio: numeroEpisodio,
+                    assistido: assistido,
+                    tituloEpisodio: tituloEpisodio,
+                    sinopse: sinopseEp,
+                    duracao: duracao,
+                    estreia: estreiaEp,
+                    votos: votosEp
                 });
             });
 
             listaTemporadas.push({
-                numero: Number(numeroTemp),
-                episodios: listaEpisodios
+                id: id,
+                tituloId: tituloId,
+                idTMDBTemporada: idTMDBTemporada,
+                numeroTemporada: numeroTemporada,
+                nomeTemporada: nomeTemporada,
+                sinopse: sinopse,
+                estreia: estreia,
+                posterTemporada: posterTemporada,
+                votosTemporada: votosTemporada,
+                quantidadeEpisodios: listaEpisodios.length,
+                listaEpisodios: listaEpisodios
             });
         });
 
@@ -628,26 +602,41 @@ export class CatalogoView {
             const dataInicio = item.Inicio ? metodoData.formatarDataBR(item.Inicio) : 'Não iniciada';
             const dataFim = item.Fim ? metodoData.formatarDataBR(item.Fim) : 'Não finalizada';
             const textoNota = item.Score ? item.Score : 'Sem nota';
+            const notaTMDB = item.Vote_Average ? item.Vote_Average : 'N/A';
+            const progresso = item.Progresso ? item.Progresso : 0;
 
             // Tratamento de imagem unificado (URL ou Base64)
             let fonteImagem = this.renderMiniatura(item.Poster_Path);
 
-              card.innerHTML = 
-                `<img class="card-img-top" src="${fonteImagem}" alt="${item.Titulo}" style="height: 320px;">` +
+           card.innerHTML = 
+                '<div class="position-relative">' +
+                    `<img class="card-img-top" src="${fonteImagem}" alt="${item.Titulo}" style="height: 320px;">` +
+                    `<span class="position-absolute top-0 start-0 badge bg-dark m-2">${item.Tipo?.descricao || 'N/A'}</span>` +
+                        '<div class="position-absolute bottom-0 end-0 m-2 d-flex gap-1 align-items-center">' +
+                            `<span class="badge bg-warning fs-6 px-2 py-1">${notaTMDB || 'N/A'}</span>` +
+                            `<span class="badge bg-info fs-6 px-2 py-1">${textoNota || '0'}</span>` +
+                        '</div>' +
+                '</div>' +
                 '<div class="card-body d-flex flex-column justify-content-between">' +
                     '<div>' +
                         `<h5 class="card-title text-truncate">${item.Titulo}</h5>` +
-                        '<p class="card-text small text-muted mb-2">' +
-                            `<strong>Tipo:</strong> ${item.Tipo?.descricao || 'Não informado'}<br>` +
-                            `<strong>Onde:</strong> ${item.Plataforma?.descricao || 'Não informado'}` +
+                        '<p class="card-text small text-muted mb-2 d-flex gap-1 align-items-center">' +
+                            `<span class="badge bg-secondary">${item.Plataforma?.descricao || 'Não informado'}</span> ` +
+                            `<span class="badge bg-secondary">${item.Status?.descricao || 'Não informado'}</span> ` +
                         '</p>' +
                     '</div>' +
+                    `<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${progresso}" aria-valuemin="0" aria-valuemax="100">`+
+                        `<div class="progress-bar progress-bar-striped progress-bar-animated" style="width: ${progresso}%">`+ 
+                        `${progresso}%` +
+                        '</div>' +
+                    '</div>' +
+
                     `<div class="border-top pt-2 mt-2 small text-muted">📅 ${dataInicio} até ${dataFim}</div>` +
-                '</div>' +
-                `<div class="card-footer bg-transparent border-top-0"><span class="badge bg-primary w-100 py-2">⭐ Nota: ${textoNota}</span></div>`;
+                '</div>';
 
             const coluna = document.createElement('div');
             coluna.className = 'col-md-3 col-sm-6 mb-4';
+            
             coluna.appendChild(card);
             divRow.appendChild(coluna);
         });

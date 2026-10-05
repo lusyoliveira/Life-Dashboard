@@ -35,6 +35,8 @@ export default class TemporadaView {
 
             const acordionItem = document.createElement('div');
             acordionItem.className = 'accordion-item item-temporada';
+            acordionItem.setAttribute('data-temporada', temp.numero_temporada ?? index);
+            acordionItem.setAttribute('data-temporadaidtmdb', temp.id_tmdb_temporada ?? '');
 
             const h2Item = document.createElement('h2');
             h2Item.className = 'accordion-header d-flex gap-2 justify-content-between';
@@ -47,20 +49,32 @@ export default class TemporadaView {
             buttonAcordionItem.setAttribute('data-bs-target', `#collapse-${accordionId}`);
             buttonAcordionItem.setAttribute('aria-expanded', 'false');  
 
-            const tituloTemporada = temp.titulo_temporada || `Temporada ${temp.numero_temporada}`;
-            buttonAcordionItem.innerHTML = `
-                ${tituloTemporada} (${episodios.length} episódios)
-                <small class="text-muted">Estreia: ${temp.exibicao_temporada}</small>
-                <span class="badge text-bg-warning">Nota TMDB: ${temp.media_votos_temporada}</span>
-            `;
+            const h4Titulo = document.createElement('h4');
+            h4Titulo.className = 'mb-0 titulo-temporada';
+            h4Titulo.textContent = temp.titulo_temporada || `Temporada ${temp.numero_temporada}`;
+
+            const smallEstreia = document.createElement('small');
+            smallEstreia.className = 'text-muted ms-2 estreia-temporada';
+            smallEstreia.textContent = `Estreia: ${temp.exibicao_temporada}`;
+
+            const spanNota = document.createElement('span');
+            spanNota.className = 'badge text-bg-warning ms-2 nota-temporada';
+            spanNota.textContent = `Nota TMDB: ${temp.media_votos_temporada}`;
 
             const btnMarcarDesmarcar = document.createElement('button');
             btnMarcarDesmarcar.type = 'button';
             btnMarcarDesmarcar.className = 'btn btn-sm btn-marcar-desmarcar-episodios ms-2';
             btnMarcarDesmarcar.title = 'Marcar/Desmarcar Todos os Episódios';
             btnMarcarDesmarcar.innerHTML = '<i class="bi bi-check2-square"></i>';   
-            btnMarcarDesmarcar.onclick = async () => {
-                this.marcarDesmarcarTodosEpisodios(containerAlvo);
+            btnMarcarDesmarcar.onclick = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                const itemTemporada = btnMarcarDesmarcar.closest(".item-temporada, .accordion-item");
+                if (itemTemporada) {
+                    const checkboxes = itemTemporada.querySelectorAll('input[type="checkbox"]');
+                    const todosMarcados = Array.from(checkboxes).every(cb => cb.checked);
+                    checkboxes.forEach(cb => cb.checked = !todosMarcados);
+                }
             };
 
             const btnRemoverTemporada = document.createElement('button');
@@ -68,8 +82,13 @@ export default class TemporadaView {
             btnRemoverTemporada.className = 'btn btn-sm btn-remover-temporada ms-2';
             btnRemoverTemporada.title = 'Remover Temporada';
             btnRemoverTemporada.innerHTML = '<i class="bi bi-trash"></i>';
-            btnRemoverTemporada.onclick = async () => {
-                this.removerTemporada(containerAlvo);
+            btnRemoverTemporada.onclick = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                const itemTemporada = btnRemoverTemporada.closest(".item-temporada, .accordion-item");
+                if (itemTemporada) {
+                    itemTemporada.remove();
+                }
             };
 
             const divCollapse = document.createElement('div');
@@ -80,81 +99,40 @@ export default class TemporadaView {
             const divBody = document.createElement('div');
             divBody.className = 'accordion-body';
             
+            const divBodyPoster = document.createElement('div');
+            divBodyPoster.className = 'd-flex gap-3 mb-3 align-items-start';
+
+            const imgCapa = document.createElement('img');
+            imgCapa.src = temp.poster_temporada || '';
+            imgCapa.alt = `Poster da Temporada ${temp.numero_temporada}`;
+            imgCapa.className = 'img-fluid poster-temporada';
+            imgCapa.height = 120;
+            imgCapa.width = 80;
+    
+            const divSinopse = document.createElement('div');
+            divSinopse.className = 'sinopse-temporada';
+            divSinopse.textContent = temp.sinopse || '';
+
             const divListGroup = document.createElement('div');
             divListGroup.className = 'list-group';
             divListGroup.innerHTML = htmlEpisodios; 
 
+            buttonAcordionItem.appendChild(h4Titulo);
+            buttonAcordionItem.appendChild(smallEstreia);
+            buttonAcordionItem.appendChild(spanNota);
+            buttonAcordionItem.appendChild(divSinopse);
             h2Item.appendChild(buttonAcordionItem);
             h2Item.appendChild(btnMarcarDesmarcar);
             h2Item.appendChild(btnRemoverTemporada);    
             acordionItem.appendChild(h2Item);
-
+            divBodyPoster.appendChild(imgCapa);
+            divBodyPoster.appendChild(divSinopse);
+            divBody.appendChild(divBodyPoster);
             divBody.appendChild(divListGroup);
             divCollapse.appendChild(divBody);
             acordionItem.appendChild(divCollapse);
             containerAlvo.appendChild(acordionItem);
        });
 
-       //this.removerTemporada(containerAlvo);
-      // this.marcarDesmarcarTodosEpisodios(containerAlvo);
     };
-
-    marcarDesmarcarTodosEpisodios(container) {
-        container.onclick = (e) => {
-            const btnMarcarDesmarcar = e.target.closest(".btn-marcar-desmarcar-episodios");
-            if (btnMarcarDesmarcar) {
-                e.stopPropagation();
-                e.preventDefault();
-                const itemTemporada = btnMarcarDesmarcar.closest(".item-temporada, .accordion-item");
-                if (itemTemporada) {
-                    const checkboxes = itemTemporada.querySelectorAll('input[type="checkbox"]');
-                    const todosMarcados = Array.from(checkboxes).every(cb => cb.checked);
-                    checkboxes.forEach(cb => cb.checked = !todosMarcados);
-                }
-            }
-        };
-    };
-    
-    removerTemporada(container) {
-        // Remove ouvintes antigos se necessário, ou usa delegação diretamente
-        container.onclick = (e) => {
-            const btnRemover = e.target.closest(".btn-remover-temporada");
-            if (btnRemover) {
-                // Impede que o clique no botão abra/feche o accordion
-                e.stopPropagation(); 
-                e.preventDefault();
-
-                // Busca o item pai da temporada (accordion-item) e o remove do DOM
-                const itemTemporada = btnRemover.closest(".item-temporada, .accordion-item");
-                if (itemTemporada) {
-                    itemTemporada.remove();
-                }
-            }
-        };
-    };
-
-    // Extrai todas as temporadas e episódios editados na View para enviar no Salvamento
-    extrairTemporadasDoFormulario(formElement) {
-        const temporadasDetalhes = [];
-        const elementosTemporadas = formElement.querySelectorAll('.item-temporada');
-
-        elementosTemporadas.forEach(elTemp => {
-            const idTemp = elTemp.dataset.temporadaId;
-            const numeroTemp = elTemp.dataset.temporadaNumero;
-            const epsElements = elTemp.querySelectorAll('.item-episodio');
-            
-            const listaEpisodios = [];
-            epsElements.forEach(elEp => {
-                listaEpisodios.push(this.episodioView.extrairDadosEpisodioDoElemento(elEp));
-            });
-
-            temporadasDetalhes.push({
-                id: idTemp || null,
-                numero: Number(numeroTemp),
-                episodios: listaEpisodios
-            });
-        });
-
-        return temporadasDetalhes;
-    }
 }

@@ -1,25 +1,27 @@
 export default class Episodio {
-    id
-    temporadaId
-    idTMDB
-    numeroEpisodio
-    assistido
-    tituloEpisodio
-    sinopse
-    duracao
-    estreia
-    votos
-
-    constructor(id, temporadaId, idTMDB, numeroEpisodio, assistido = false, tituloEpisodio, sinopse, duracao, estreia, votos){
-        this.id = id
-        this.temporadaId = temporadaId
-        this.idTMDB = idTMDB
-        this.numeroEpisodio = numeroEpisodio
-        this.assistido = assistido
-        this.tituloEpisodio = tituloEpisodio
-        this.sinopse = sinopse
-        this.duracao = duracao
-        this.estreia = estreia
-        this.votos = votos
+    constructor({
+        id = null,
+        temporadaId = null,
+        idTMDB = null,
+        tituloId = null,
+        numeroEpisodio = null,
+        assistido = false,
+        tituloEpisodio = '',
+        sinopse = '',
+        duracao = 0,
+        estreia = null,
+        votos = 0
+    } = {}) {
+        this.id = id;
+        this.temporadaId = temporadaId;
+        this.idTMDB = idTMDB;
+        this.tituloId = tituloId;
+        this.numeroEpisodio = numeroEpisodio;
+        this.assistido = assistido;
+        this.tituloEpisodio = tituloEpisodio;
+        this.sinopse = sinopse;
+        this.duracao = duracao;
+        this.estreia = estreia;
+        this.votos = votos;
     }  
 }

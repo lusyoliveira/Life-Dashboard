@@ -84,10 +84,10 @@ export class AgendaViewModel {
 
   filtrarAgenda (){
     return [...this.agenda]
-              .filter(compromisso => {
-              const dataCompromisso = new Date(compromisso.Data);
-              return dataCompromisso > new Date(); 
-            })   
+      .filter(compromisso => {
+      const dataCompromisso = new Date(compromisso.Data);
+      return dataCompromisso > new Date(); 
+    })   
   } 
 
   filtrarProximosCompromissos(qtd = 13) {

@@ -111,7 +111,7 @@ const apiTMDB = {
                         id_tmdb_temporada: temporada.id,
                         titulo_temporada: temporada.name,
                         sinopse_temporada: temporada.overview,
-                        poster: temporada.poster_path
+                        poster_temporada: temporada.poster_path
                             ? "https://image.tmdb.org/t/p/w500" + temporada.poster_path
                             : null,
                         numero_temporada: temporada.season_number || 0,
@@ -122,20 +122,6 @@ const apiTMDB = {
                     };
                 })
             )
-
-            // temporadas: dadosTMDB.seasons.map(temporada => ({
-            //     exibicao_temporada: temporada.air_date ||
-            //                 'N/A',
-            //     total_episodios_temporada: temporada.episode_count || 0,
-            //     id_tmdb_temporada: temporada.id,
-            //     titulo_temporada: temporada.name,
-            //     sinopse_temporada: temporada.overview,
-            //     poster: temporada.poster_path
-            //     ? "https://image.tmdb.org/t/p/w500" + temporada.poster_path
-            //     : null,
-            //     numero_temporada: temporada.season_number || 0,
-            //     media_votos: temporada.vote_average
-            // }))
         };                            
     },
    
@@ -196,7 +182,8 @@ const apiTMDB = {
                     titulo_episodio: ep.name,
                     sinopse_episodio: ep.overview,
                     media_votos_episodio: ep.vote_average,
-                    exibicao_episodios: ep.air_date
+                    exibicao_episodios: ep.air_date,
+                    duracao_episodio: ep.runtime || null
                 }))
             };
         } catch (error) {
