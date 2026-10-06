@@ -299,7 +299,6 @@ export class CatalogoView {
                     id: idEp,
                     temporadaId: temporadaId,
                     idTMDB: idTMDBEp,
-                    tituloId: tituloId,
                     numeroEpisodio: numeroEpisodio,
                     assistido: assistido,
                     tituloEpisodio: tituloEpisodio,

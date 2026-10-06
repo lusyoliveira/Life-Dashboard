@@ -3,7 +3,6 @@ export default class Episodio {
         id = null,
         temporadaId = null,
         idTMDB = null,
-        tituloId = null,
         numeroEpisodio = null,
         assistido = false,
         tituloEpisodio = '',
@@ -15,7 +14,6 @@ export default class Episodio {
         this.id = id;
         this.temporadaId = temporadaId;
         this.idTMDB = idTMDB;
-        this.tituloId = tituloId;
         this.numeroEpisodio = numeroEpisodio;
         this.assistido = assistido;
         this.tituloEpisodio = tituloEpisodio;

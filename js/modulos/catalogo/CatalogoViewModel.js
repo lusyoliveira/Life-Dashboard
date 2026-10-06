@@ -142,7 +142,7 @@ export class CatalogoViewModel {
   };
 
   async salvarTitulo(titulo) {
-    debugger
+    
     const payload = {
       id: titulo.id,
       titulo: titulo.Titulo,
@@ -181,13 +181,7 @@ export class CatalogoViewModel {
       tituloSalvo = await api.salvarDados(payload, this.endpoint);
     }
 
-    const tituloId = tituloSalvo.id || titulo.id;
-    if (titulo.listaTemporadas && titulo.listaTemporadas.length > 0) {
-      for (const temp of titulo.listaTemporadas) {
-          temp.tituloId = tituloId;
-          await this.temporadaVM.salvarTemporada(temp);
-      }
-    }
+    return tituloSalvo;
   };
 
   async excluirTitulo(id) {

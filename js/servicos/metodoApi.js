@@ -63,11 +63,17 @@ const api = {
                 },
                 body: JSON.stringify(dados)
             });
-            return await response.json()
-            
-        } catch(error)  {
-            alert('Erro ao atualizar os dados na API!')
-            throw error
+
+            if (!response.ok) {
+                const erroTexto = await response.text();
+                console.error(`Erro ${response.status} na API:`, erroTexto);
+                throw new Error(`Falha no servidor (${response.status})`);
+            }
+
+            return await response.json();
+        } catch(error) {
+            alert('Erro ao atualizar os dados na API!');
+            throw error;
         }
     },
 
