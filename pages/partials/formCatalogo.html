@@ -1,12 +1,4 @@
 <form id="formCatalogo" class="needs-validation" novalidate>
-    <!-- Campos de Controle Ocultos -->
-    <input type="hidden" id="id-adicionar">
-    <input type="hidden" id="id-tmdb-adicionar">
-    <input type="hidden" id="original-name-adicionar">
-    <input type="hidden" id="media-type-adicionar">
-    <input type="hidden" id="genres-ids-adicionar">
-    <input type="hidden" id="first-air-date-adicionar">
-
     <!-- Navegação por Abas do Bootstrap -->
     <ul class="nav nav-tabs mb-3" id="cadastroTabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -50,6 +42,20 @@
                     <div class="mb-3">
                         <label for="overview-adicionar" class="form-label small fw-bold">Sinopse</label>
                         <textarea class="form-control" id="overview-adicionar" rows="6" disabled placeholder="Nenhuma sinopse importada do TMDB para este título."></textarea>
+                    </div>
+                    <div class="p-2 border rounded bg-dark d-flex justify-content-around align-items-center">                    
+                        <input type="hidden" id="original-name-adicionar">
+                        <input type="hidden" id="media-type-adicionar">
+                        <input type="hidden" id="genres-ids-adicionar">
+                        <div class="col-md-2">
+                            <input id="id-adicionar" disabled>
+                        </div>   
+                        <div class="col-md-2">
+                            <input id="id-tmdb-adicionar" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input id="first-air-date-adicionar" disabled>
+                        </div>
                     </div>
 
                     <div class="row g-3">

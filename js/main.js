@@ -68,9 +68,9 @@
         await contasVM.obterContas();
         await avm.gerarRecorrenciasAgenda();     
         
-        estudoView.renderCursando("Cursando");
+        estudoView.renderCursando("lista-cursando");
         tarefaView.listarTarefas('lista-tarefa')
-        catalogoView.renderAssistindo(['Assistindo','Re-Assistindo'],'Assistindo')
+        catalogoView.renderAssistindo(['Assistindo','Re-Assistindo'],'lista-assistindo')
         agendaView.renderProximosCompromissos('proximos-compromissos', 7)
         financeiroView.renderTransacoesAVencer('proximos-transacoes', 7)
         agendaView.renderCalendario('calendario')

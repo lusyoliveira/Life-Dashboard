@@ -111,7 +111,7 @@ export default class TemporadaView {
     
             const divSinopse = document.createElement('div');
             divSinopse.className = 'sinopse-temporada';
-            divSinopse.textContent = temp.sinopse || '';
+            divSinopse.textContent = temp.sinopse_temporada || '';
 
             const divListGroup = document.createElement('div');
             divListGroup.className = 'list-group';

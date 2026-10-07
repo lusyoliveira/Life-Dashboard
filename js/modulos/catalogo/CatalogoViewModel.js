@@ -3,6 +3,7 @@ import apiTMDB from "../../integracoes/TMDB.js";
 import Catalogo from "./catalogoModel.js";
 import metodoData from "../../Utils/metodoData.js"
 import { TemporadaViewModel } from './TemporadasViewModel.js';
+import { converterUrlParaBase64 } from "../../Utils/utils.js";
 
 export class CatalogoViewModel {
   constructor(endpoint = "catalogo") {
@@ -142,6 +143,8 @@ export class CatalogoViewModel {
   };
 
   async salvarTitulo(titulo) {
+  debugger
+    const imagemLiteralBase64 = await converterUrlParaBase64(titulo.Capa);
     
     const payload = {
       id: titulo.id,
@@ -163,14 +166,14 @@ export class CatalogoViewModel {
       id_tmdb: titulo.IdTMDB,
       original_name: titulo.Original_Name,
       overview: titulo.Overview,
-      poster_path:  titulo.Capa,
+      poster_path: imagemLiteralBase64,
+      //poster_path:titulo.Poster_Path,
       media_type: titulo.Media_Type,
       genres_ids: titulo.Genres_Ids,
       popularity: titulo.Popularity,
       first_air_date: titulo.First_Air_Date,
       year: titulo.Year,
       vote_average: titulo.Vote_Average,
-      // Envio dos detalhes das temporadas/episódios capturados na View
       listaTemporadas: titulo.listaTemporadas || []
     };
 

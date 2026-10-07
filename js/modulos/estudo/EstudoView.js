@@ -185,73 +185,71 @@ export class EstudoView {
         });
     };
 
-    renderCursando(elementoId) { 
+    renderCursando(elementoId){
         const cursando = this.vm.cursando(3);
         const elementoDestino = document.getElementById(elementoId);
 
         if (elementoDestino) {
-            elementoDestino.innerHTML = "";
-            
-            if (cursando.length > 0) {
-                cursando.forEach(curso => {
-                    const divContainer = document.createElement('div');
-                    divContainer.classList.add('col');
+                elementoDestino.innerHTML = "";
+                if (!cursando.length == 0) {
 
-                    const divContainerCard = document.createElement('div');
-                    divContainerCard.classList.add('card', 'shadow-sm');
-
+                    cursando.forEach(curso => {
+                    const li = document.createElement('li');
+                    li.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
+        
                     const imgCapa = document.createElement('img');
-                    imgCapa.classList.add('card-img-top');
-                    imgCapa.src = curso.Capa;
-                    imgCapa.alt = curso.Descricao;
-                    imgCapa.height = 250;
-                    imgCapa.width = '100%';
-
-                    const divCardBody = document.createElement('div');
-                    divCardBody.classList.add('card-body');
-                    divCardBody.id = 'principal-assistindo';
-
-                    const h5Titulo = document.createElement('h5');
-                    h5Titulo.classList.add('card-title');
-                    h5Titulo.textContent = curso.Descricao;
-
-                    const divBadge = document.createElement('div');
-                    divBadge.classList.add('d-flex', 'justify-content-between', 'align-items-center');
-
-                    const spanBadge = document.createElement('span');
-                    spanBadge.classList.add('badge', 'text-bg-info');
-                    spanBadge.textContent = curso.Area.descricao;
-
+                    imgCapa.src = this.renderMiniatura(curso.Poster_Path);
+                    imgCapa.alt = curso.Titulo;
+                    imgCapa.width = 80;
+                    imgCapa.height = 120;
+                    imgCapa.classList.add('flex-shrink-0');
+        
+                    const divInfo = document.createElement('div');
+                    divInfo.classList.add('d-flex', 'gap-2', 'w-100', 'justify-content-between', 'align-items-center');
+        
+                    const divTitulo = document.createElement('div');
+                    divTitulo.classList.add('d-flex', 'flex-column', 'gap-1');
+        
+                    const h6Titulo = document.createElement('h6');
+                    h6Titulo.classList.add('mb-0');
+                    h6Titulo.textContent = curso.Titulo;
+        
                     const divProgresso = document.createElement('div');
-                    divProgresso.classList.add('progress', 'mt-2');
+                    divProgresso.classList.add('progress');
                     divProgresso.setAttribute('role', 'progressbar');
-                    divProgresso.setAttribute('aria-label', 'Progresso Assistindo');
-                    divProgresso.setAttribute('aria-valuenow', curso.Progresso);
+                    divProgresso.setAttribute('aria-label', 'Progresso');
+                    divProgresso.setAttribute('aria-valuenow', curso.Progresso);                    
                     divProgresso.setAttribute('aria-valuemin', '0');
                     divProgresso.setAttribute('aria-valuemax', '100');
-
+        
                     const divBarraProgresso = document.createElement('div');
-                    divBarraProgresso.classList.add('progress-bar', 'bg-success');
+                    divBarraProgresso.classList.add('progress-bar');
                     divBarraProgresso.style.width = `${curso.Progresso * 100}%`;
                     divBarraProgresso.textContent = `${parseInt(curso.Progresso * 100)}%`;
 
+                    const smallDataAdicao = document.createElement('small');
+                    smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
+                    const dataUTC = new Date(curso.Adicao);                
+                    const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
+                    smallDataAdicao.textContent = metodoData.calculaTempoData(dataLocal);
+        
                     divProgresso.appendChild(divBarraProgresso);
-                    divCardBody.appendChild(h5Titulo);
-                    divBadge.appendChild(spanBadge);
-                    divCardBody.appendChild(divBadge);
-                    divCardBody.appendChild(divProgresso);
-                    divContainerCard.appendChild(imgCapa);
-                    divContainerCard.appendChild(divCardBody);
-                    divContainer.appendChild(divContainerCard);
-                    elementoDestino.appendChild(divContainer);                
+                    divInfo.appendChild(divTitulo);
+                    divTitulo.appendChild(h6Titulo);
+                    divTitulo.appendChild(divProgresso);
+                    divTitulo.appendChild(smallDataAdicao);
+                    li.appendChild(imgCapa);
+                    li.appendChild(divInfo);
+                    elementoDestino.appendChild(li);
+                        
                 });
             } else {
-                const pMensagem = document.createElement('p');
-                pMensagem.classList.add('mensagem-curso');
-                pMensagem.textContent = 'Não há cursos em andamento no momento.';
-                elementoDestino.appendChild(pMensagem);
-            }          
-        } 
+                const liMensagem = document.createElement('li');
+                liMensagem.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
+                liMensagem.textContent = 'Não há cursos em andamento no momento.';
+                elementoDestino.appendChild(liMensagem);
+            }
+        }
     };
 
     async listarStatus(elementoId) { 

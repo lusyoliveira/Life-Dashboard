@@ -92,26 +92,102 @@
                     </div>
                 </div>
     
-                <br />
-    
-                <div class="container-fliud"> 
-                    <div class="d-flex justify-content-between align-items-center mb-3 pb-1 border-bottom">
-                        <h2>Assistindo</h2>
-                        <button class="btn btn-primary mb-3" id="adicionarCatalogo">
-                            <i class="bi bi-plus-lg"></i> Adicionar ao Catálogo
-                        </button>
-                    </div>                   
-                    <div class="row d-inline-flex justify-content-start" id="Assistindo" data-filtro="principal" data-status="Assistindo"></div>          
-                </div>
-    
-                <br />
-    
-                <div class="container-fliud">
-                    <div class="d-flex justify-content-between align-items-center mb-3 pb-1 border-bottom">
-                        <h2>Cursando</h2>
-                        <button class="btn btn-primary mb-3" id="adicionarCurso">
-                            <i class="bi bi-plus-lg"></i> Adicionar curso
-                        </button>
+                <div class="row mt-4">
+                    <div class="col">
+                        <div class="card" data-filtro="principal" data-status="Assistindo">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                Assistindo
+                                <button class="btn btn-primary" id="adicionarCatalogo" title="Adicionar Título">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush gap-1" id="lista-assistindo"></ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="row d-inline-flex justify-content-start" id="Cursando" data-filtro="cursos" data-status="Cursando"></div>
+                    <div class="col">
+                        <div class="card" data-filtro="cursos" data-status="Cursando">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                Cursando
+                                <button class="btn btn-primary" id="adicionarCurso" title="Adicionar curso">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush gap-1" id="lista-cursando"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col"> </div>
+                    <div class="col"></div>
+                </div>   
+
+                <div class="row mt-5" id="custom-cards">
+                    <h2 class="pb-2 border-bottom">Neste Dia</h2>
+                    <div class="row row-cols-1 row-cols-lg-3 align-items-stretch">
+                        <div class="col">
+                            <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg"
+                                style="background-image: url('unsplash-photo-1.jpg');">
+                                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                                    <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Short title, long jacket</h3>
+                                    <ul class="d-flex list-unstyled mt-auto">
+                                        <li class="me-auto"> <img src="..." alt="Bootstrap" width="32"
+                                                height="32" class="rounded-circle border border-white"> </li>
+                                        <li class="d-flex align-items-center me-3"> <svg class="bi me-2" width="1em" height="1em"
+                                                role="img" aria-label="Location">
+                                                <use xlink:href="#geo-fill"></use>
+                                            </svg> <small>Earth</small> </li>
+                                        <li class="d-flex align-items-center"> <svg class="bi me-2" width="1em" height="1em" role="img"
+                                                aria-label="Duration">
+                                                <use xlink:href="#calendar3"></use>
+                                            </svg> <small>3d</small> </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg"
+                                style="background-image: url('unsplash-photo-2.jpg');">
+                                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                                    <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Much longer title that wraps to multiple lines
+                                    </h3>
+                                    <ul class="d-flex list-unstyled mt-auto">
+                                        <li class="me-auto"> <img src="..." alt="Bootstrap" width="32"
+                                                height="32" class="rounded-circle border border-white"> </li>
+                                        <li class="d-flex align-items-center me-3"> <svg class="bi me-2" width="1em" height="1em"
+                                                role="img" aria-label="Location">
+                                                <use xlink:href="#geo-fill"></use>
+                                            </svg> <small>Pakistan</small> </li>
+                                        <li class="d-flex align-items-center"> <svg class="bi me-2" width="1em" height="1em" role="img"
+                                                aria-label="Duration">
+                                                <use xlink:href="#calendar3"></use>
+                                            </svg> <small>4d</small> </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg"
+                                style="background-image: url('unsplash-photo-3.jpg');">
+                                <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
+                                    <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Another longer title belongs here</h3>
+                                    <ul class="d-flex list-unstyled mt-auto">
+                                        <li class="me-auto"> <img src="..." alt="Bootstrap" width="32"
+                                                height="32" class="rounded-circle border border-white"> </li>
+                                        <li class="d-flex align-items-center me-3"> <svg class="bi me-2" width="1em" height="1em"
+                                                role="img" aria-label="Location">
+                                                <use xlink:href="#geo-fill"></use>
+                                            </svg> <small>California</small> </li>
+                                        <li class="d-flex align-items-center"> <svg class="bi me-2" width="1em" height="1em" role="img"
+                                                aria-label="Duration">
+                                                <use xlink:href="#calendar3"></use>
+                                            </svg> <small>5d</small> </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                    
+                       

@@ -153,11 +153,11 @@ export class CatalogoView {
         if(document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
         if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = titulo.Media_Type || '';
         if(document.getElementById('genres-ids-adicionar')) document.getElementById('genres-ids-adicionar').value = titulo.Genres_Ids || '';
-        if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = titulo.First_Air_Date || '';
+        if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = metodoData.formatarDataBR(titulo.First_Air_Date) || '';
         if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
         if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
         if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
-        if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = titulo.Overview || '';
+        if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = titulo.Overview || ''; 
         
         // Renderiza o pôster no preview gráfico
         const previewImg = document.getElementById('poster-path-adicionar');
@@ -203,6 +203,7 @@ export class CatalogoView {
             if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.media_votos || '0';
             if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.popularidade || 'N/A';
             if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.ano || 'N/A';
+            if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = item.exibicao || '';
             const previewImg = document.getElementById('poster-path-adicionar');
             const posterInput = document.getElementById('capa-adicionar');
 
@@ -256,6 +257,7 @@ export class CatalogoView {
         const idtmdb = form.querySelector('#id-tmdb-adicionar')?.value || '';
         const originalName = form.querySelector('#titulo-adicionar').value;
         const overview = form.querySelector('#overview-adicionar')?.value || '';
+        const posterPath = form.querySelector('#poster-path-adicionar')?.value || '';
         const mediaType = form.querySelector('#media-type-adicionar')?.value || '';
         const genresIds = form.querySelector('#genres-ids-adicionar')?.value || '';
         const popularity = form.querySelector('#tmdb-lbl-pop')?.textContent || 0;
@@ -284,7 +286,6 @@ export class CatalogoView {
             epsElements.forEach(elEp => {
                 const idEp = elEp.dataset.id || null;
                 const temporadaId = id || null;
-                const tituloId = idInput || null;
                 const idTMDBEp = elEp.dataset.epidtmdb || null;
                 const numeroEpisodio = Number(elEp.dataset.episodio || null);
                 const assistidoInput = elEp.querySelector('input.chk-episodio-assistido');
@@ -350,7 +351,7 @@ export class CatalogoView {
             idtmdb,
             originalName,
             overview,
-            capa,
+            posterPath,
             mediaType,
             genresIds,
             popularity,
@@ -411,10 +412,16 @@ export class CatalogoView {
 
         try {
             const resultadoPaginado = await this.vm.obterCatalogoPorDescricao(termoBusca, this.itensPorPaginaColecao, paginaAlvo);
-            const { dados, totalPaginas, paginaAtual } = resultadoPaginado;
+            //const { dados, totalPaginas, paginaAtual } = resultadoPaginado;
+
+            const totalPaginas = Math.ceil(resultadoPaginado.length / this.itensPorPaginaColecao);
+            const indiceInicio = (this.paginaAtualColecao - 1) * this.itensPorPaginaColecao;
+            const indiceFim = indiceInicio + this.itensPorPaginaColecao;
+            const itensPaginados = resultadoPaginado.slice(indiceInicio, indiceFim);
 
             // Chama o renderizador unificado passando o termoBusca para controle dos botões de paginação
-            this.renderizarGradeColecao(savedGrid, dados, totalPaginas, paginaAtual, termoBusca);
+            //  this.renderizarGradeColecao(savedGrid, dados, totalPaginas, paginaAtual, termoBusca);
+            this.renderizarGradeColecao(savedGrid, itensPaginados, totalPaginas, this.paginaAtualColecao, termoBusca);
 
         } catch (error) {
             savedGrid.innerHTML = '<p class="text-center text-danger my-4">Erro ao realizar a busca local.</p>';
@@ -769,70 +776,97 @@ export class CatalogoView {
 
     // Renderiza os títulos adicionados recentemente na página de catálogo
     renderRecentes(elementoId)  {
-        const recentes = this.vm.recentes(5);       
+        const recentes = this.vm.recentes(4);       
         const elementoDestino = document.getElementById(elementoId);
 
         if (!elementoDestino) return;
         elementoDestino.innerHTML = "";
         
         recentes.forEach(titulo => {
-            const divCard = document.createElement('div');
-            divCard.classList.add('col','card', 'p-1', 'm-2');
+            let fonteImagem = this.renderMiniatura(titulo.Poster_Path);
+
+            const card = document.createElement('div');
+            card.className = 'card h-100 shadow-sm';
+            card.style.cursor = 'pointer';
+            card.setAttribute('data-id', titulo.id);
+
+            const divContainer = document.createElement('div');
+            divContainer.className = 'position-relative';
 
             const imgCapa = document.createElement('img');
-            imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
-            imgCapa.classList.add('card-img-top');
-            imgCapa.width = 300;
-            imgCapa.height = 320;
+            imgCapa.src = fonteImagem;
+            imgCapa.alt = titulo.Titulo;
+            imgCapa.className = 'card-img-top';
+            imgCapa.style.height = '320px';
+
+            const spanTipo = document.createElement('span');
+            spanTipo.className = 'position-absolute top-0 start-0 badge bg-dark m-2';
+            spanTipo.textContent = titulo.Tipo?.descricao || 'N/A';
+
+            const divBadges = document.createElement('div');
+            divBadges.className = 'position-absolute bottom-0 end-0 m-2 d-flex gap-1 align-items-center';
+
+            const spanNotaTMDB = document.createElement('span');
+            spanNotaTMDB.className = 'badge bg-warning fs-6 px-2 py-1';
+            spanNotaTMDB.textContent = titulo.Vote_Average || 'N/A';
+
+            const spanNotaUsuario = document.createElement('span');
+            spanNotaUsuario.className = 'badge bg-info fs-6 px-2 py-1';
+            spanNotaUsuario.textContent = titulo.Score || 'Sem nota';
+
+            divBadges.appendChild(spanNotaTMDB);
+            divBadges.appendChild(spanNotaUsuario);
+            divContainer.appendChild(imgCapa);
+            divContainer.appendChild(spanTipo);
+            divContainer.appendChild(divBadges);
+            card.appendChild(divContainer);
 
             const divCardBody = document.createElement('div');
-            divCardBody.classList.add('card-body');
+            divCardBody.className = 'card-body d-flex flex-column justify-content-between';
 
+            const divTitulo = document.createElement('div');
             const h5Titulo = document.createElement('h5');
-            h5Titulo.classList.add('card-title');
+            h5Titulo.className = 'card-title text-truncate';
             h5Titulo.textContent = titulo.Titulo;
 
-            const ulInfo = document.createElement('ul');
-            ulInfo.classList.add('d-flex', 'justify-content-between', 'align-items-lg-center', 'gap-3', 'list-unstyled', 'mt-auto');
-            const liProgresso = document.createElement('li');
-            liProgresso.classList.add('w-75');
+            const pPlataforma = document.createElement('p');
+            pPlataforma.className = 'card-text small text-muted mb-2 d-flex gap-1 align-items-center';
+            pPlataforma.innerHTML = `<span class="badge bg-secondary">${titulo.Plataforma?.descricao || 'Não informado'}</span> <span class="badge bg-secondary">${titulo.Status?.descricao || 'Não informado'}</span>`;
+
+            divTitulo.appendChild(h5Titulo);
+            divCardBody.appendChild(divTitulo);
+            divCardBody.appendChild(pPlataforma);
 
             const divProgresso = document.createElement('div');
-            divProgresso.classList.add('progress');
+            divProgresso.className = 'progress';
             divProgresso.setAttribute('role', 'progressbar');
-            divProgresso.setAttribute('aria-label', 'Example with label');
-            divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
+            divProgresso.setAttribute('aria-label', 'Progresso');
+            divProgresso.setAttribute('aria-valuenow', titulo.Progresso || 0);
             divProgresso.setAttribute('aria-valuemin', '0');
             divProgresso.setAttribute('aria-valuemax', '100');
 
             const divBarraProgresso = document.createElement('div');
-            divBarraProgresso.classList.add('progress-bar');
-            divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-            divBarraProgresso.textContent = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+            divBarraProgresso.className = 'progress-bar progress-bar-striped progress-bar-animated';
+            divBarraProgresso.style.width = `${titulo.Progresso || 0}%`;
+            divBarraProgresso.textContent = `${titulo.Progresso || 0}%`;
+
             divProgresso.appendChild(divBarraProgresso);
-            liProgresso.appendChild(divProgresso);
+            divCardBody.appendChild(divProgresso);
 
-            const liDataAdicao = document.createElement('li');
-            liDataAdicao.classList.add('d-flex', 'gap-3', 'align-items-center');
-
-            const iIcon = document.createElement('i');
-            iIcon.classList.add('bi', 'bi-calendar3');
-
-            const smallDataAdicao = document.createElement('small');
+            const divDataAdicao = document.createElement('div');
+            divDataAdicao.className = 'border-top pt-2 mt-2 small text-muted';
             const dataUTC = new Date(titulo.Adicao);                
             const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);                        
-            smallDataAdicao.textContent = dataLocal.toLocaleDateString("pt-BR");
-            
-            liDataAdicao.appendChild(iIcon);
-            liDataAdicao.appendChild(smallDataAdicao);
-            ulInfo.appendChild(liProgresso);
-            ulInfo.appendChild(liDataAdicao);
-            divCardBody.appendChild(h5Titulo);
-            divCardBody.appendChild(ulInfo);
-            divCard.appendChild(imgCapa);
-            divCard.appendChild(divCardBody);
-            elementoDestino.appendChild(divCard);
+            divDataAdicao.textContent = `📅 ${dataLocal.toLocaleDateString("pt-BR")}`;
 
+            divCardBody.appendChild(divDataAdicao);
+            card.appendChild(divCardBody);
+            elementoDestino.appendChild(card);
+
+            const coluna = document.createElement('div');
+            coluna.className = 'col-md-3 col-sm-6 mb-4';
+            coluna.appendChild(card);
+            elementoDestino.appendChild(coluna);
         });
     };
     
@@ -939,8 +973,7 @@ export class CatalogoView {
     // Renderiza os títulos recentes de forma geral na página de catálogo
     renderCardGeral(elementoId) {
         const catalogoTipo = this.vm.topGeral(4);
-        const elementoDestino = document.getElementById(elementoId);
-        
+        const elementoDestino = document.getElementById(elementoId);     
 
          if (elementoDestino) {
             elementoDestino.innerHTML = "";
@@ -1135,79 +1168,70 @@ export class CatalogoView {
             elementoDestino.appendChild(h6Card);
         }            
     };
-
-    // Renderiza os títulos assistindo na página home
-    async  renderAssistindo(statusFiltro, elementoDestinoId) {
+    async renderAssistindo(statusFiltro, elementoDestinoId){
         const catalogoStatus = this.vm.assistindo(statusFiltro,4);
-        const elementoDestino = document.getElementById(elementoDestinoId);     
-        
+        const elementoDestino = document.getElementById(elementoDestinoId);
+
         if (elementoDestino) {
-            elementoDestino.innerHTML = "";
+                elementoDestino.innerHTML = "";
+                if (!catalogoStatus.length == 0) {
 
-            if (!catalogoStatus.length == 0) {
-                catalogoStatus.forEach(titulo => {
-                    const divContainer = document.createElement('div');
-                    divContainer.classList.add('col');
-
-                    const divContainerCard = document.createElement('div');
-                    divContainerCard.classList.add('card', 'shadow-sm');
-
+                    catalogoStatus.forEach(titulo => {
+                    const li = document.createElement('li');
+                    li.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
+        
                     const imgCapa = document.createElement('img');
-                    imgCapa.classList.add('card-img-top');
                     imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
                     imgCapa.alt = titulo.Titulo;
-                    imgCapa.height = 250;
-                    imgCapa.width = '100%';
-
-                    const divCardBody = document.createElement('div');
-                    divCardBody.classList.add('card-body');
-                    divCardBody.id = 'principal-assistindo';
-
-                    const h5Titulo = document.createElement('h5');
-                    h5Titulo.classList.add('card-title');
-                    h5Titulo.textContent = titulo.Titulo;
-
-                    const divBadge = document.createElement('div');
-                    divBadge.classList.add('d-flex', 'justify-content-between', 'align-items-center');
-
-                    const spanBadgeTipo = document.createElement('span');
-                    spanBadgeTipo.classList.add('badge', 'text-bg-info');
-                    spanBadgeTipo.textContent = titulo.Tipo.descricao;
-
-                    const spanBadgeStatus = document.createElement('span');
-                    spanBadgeStatus.classList.add('badge', 'text-bg-primary');
-                    spanBadgeStatus.textContent = titulo.Status.descricao;
-
+                    imgCapa.width = 80;
+                    imgCapa.height = 120;
+                    imgCapa.classList.add('flex-shrink-0');
+        
+                    const divInfo = document.createElement('div');
+                    divInfo.classList.add('d-flex', 'gap-2', 'w-100', 'justify-content-between', 'align-items-center');
+        
+                    const divTitulo = document.createElement('div');
+                    divTitulo.classList.add('d-flex', 'flex-column', 'gap-1');
+        
+                    const h6Titulo = document.createElement('h6');
+                    h6Titulo.classList.add('mb-0');
+                    h6Titulo.textContent = titulo.Titulo;
+        
                     const divProgresso = document.createElement('div');
-                    divProgresso.classList.add('progress', 'mt-2');
+                    divProgresso.classList.add('progress');
                     divProgresso.setAttribute('role', 'progressbar');
-                    divProgresso.setAttribute('aria-label', 'Progresso Assistindo');
+                    divProgresso.setAttribute('aria-label', 'Progresso');
                     divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
                     divProgresso.setAttribute('aria-valuemin', '0');
                     divProgresso.setAttribute('aria-valuemax', '100');
-
+        
                     const divBarraProgresso = document.createElement('div');
-                    divBarraProgresso.classList.add('progress-bar', 'bg-success');
+                    divBarraProgresso.classList.add('progress-bar');
                     divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-                    divBarraProgresso.textContent = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-
+                    divBarraProgresso.textContent =  `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
+        
+                    const smallDataAdicao = document.createElement('small');
+                    smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
+                    const dataUTC = new Date(titulo.Adicao);                
+                    const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
+                    smallDataAdicao.textContent = metodoData.calculaTempoData(dataLocal);
+        
                     divProgresso.appendChild(divBarraProgresso);
-                    divCardBody.appendChild(h5Titulo);
-                    divBadge.appendChild(spanBadgeTipo);
-                    divBadge.appendChild(spanBadgeStatus);
-                    divCardBody.appendChild(divBadge);
-                    divCardBody.appendChild(divProgresso);
-                    divContainerCard.appendChild(imgCapa);
-                    divContainerCard.appendChild(divCardBody);
-                    divContainer.appendChild(divContainerCard);
-                    elementoDestino.appendChild(divContainer);
+                    divInfo.appendChild(divTitulo);
+                    divTitulo.appendChild(h6Titulo);
+                    divTitulo.appendChild(divProgresso);
+                    divTitulo.appendChild(smallDataAdicao);
+                    li.appendChild(imgCapa);
+                    li.appendChild(divInfo);
+                    elementoDestino.appendChild(li);
+                        
                 });
             } else {
-                const pMensagem = document.createElement('p');
-                pMensagem.classList.add('mensagem-curso');
-                pMensagem.textContent = 'Não há títulos em andamento no momento.';
-                elementoDestino.appendChild(pMensagem);
-            } 
+                const liMensagem = document.createElement('li');
+                liMensagem.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
+                liMensagem.textContent = 'Não há títulos em andamento no momento.';
+                elementoDestino.appendChild(liMensagem);
+            }
         }
     };
 
