@@ -17,17 +17,14 @@ export class TemporadaViewModel {
             const temporadas = new Temporada(
                 item.id,
                 item.tituloId,
-                item.temporada,
-                item.nomeTemporada,
-                item.plataformaExibicao,
-                item.sinopse,
-                item.exibicao,
                 item.id_tmdb_temporada,
-                item.posterTemporada,
-                item.mediaVotosTemporada,
-                item.numeroEpisodio,
-                item.tituloEpisodio,
-                item.mediaVotosEpisodio
+                item.numero_temporada,
+                item.nome_temporada,
+                item.sinopse,
+                item.estreia,
+                item.poster,
+                item.votos,
+                item.quantidade_episodios
             );
             return temporadas;
         });
@@ -42,48 +39,15 @@ export class TemporadaViewModel {
         const temporada = new Temporada(
             temporadaData.id,
             temporadaData.tituloId,
-            temporadaData.temporada,
-            temporadaData.nomeTemporada,
-            temporadaData.plataformaExibicao,
-            temporadaData.sinopse,
-            temporadaData.exibicao,
             temporadaData.id_tmdb_temporada,
-            temporadaData.posterTemporada,
-            temporadaData.mediaVotosTemporada,
-            temporadaData.numeroEpisodio,
-            temporadaData.tituloEpisodio,
-            temporadaData.mediaVotosEpisodio
+            temporadaData.numero_temporada,
+            temporadaData.nome_temporada,
+            temporadaData.sinopse,
+            temporadaData.estreia,
+            temporadaData.poster,
+            temporadaData.votos,
+            temporadaData.quantidade_episodios
         );
         return temporada;
-    };
-
-    async salvarTemporada(temporadaModel) {
-        const payload = {
-            id : temporadaModel.id,
-            tituloId : temporadaModel.tituloId,
-            idTMDBTemporada : temporadaModel.idTMDBTemporada,
-            numeroTemporada : temporadaModel.numeroTemporada,
-            nomeTemporada : temporadaModel.nomeTemporada,
-            sinopse : temporadaModel.sinopse,
-            estreia : temporadaModel.estreia,
-            posterTemporada : temporadaModel.posterTemporada,
-            votosTemporada : temporadaModel.votosTemporada,
-            quantidadeEpisodios : temporadaModel.quantidadeEpisodios
-        };
-
-        // 1. Salva a temporada primeiro no backend para obter/confirmar o ID
-        let temporadaSalva;
-        if (temporadaModel.id) {
-            temporadaSalva = await api.atualizarDados(payload, `${this.endpointcat}/${this.endpoint}/${temporadaModel.id}`);
-        } else {
-            temporadaSalva = await api.salvarDados(payload, `${this.endpointcat}/${temporadaModel.tituloId}/${this.endpoint}`);
-        }
-
-        const temporadaId = temporadaSalva.id || temporadaModel.id;
-
-        // 2. Delega o salvamento dos episódios para o EpisodioViewModel
-        if (temporadaModel.episodios && temporadaModel.episodios.length > 0) {
-            await this.episodioVM.salvarListaEpisodios(temporadaModel.listaEpisodios, temporadaId);
-        }
     };
 }

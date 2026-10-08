@@ -53,7 +53,7 @@ export default class Catalogo {
         this.Year = Year
         this.Vote_Average = Vote_Average
         this.listaTemporadas = listaTemporadas.map(
-            temp => new Temporada(temp.id, temp.tituloId, temp.idTMDBTemporada, temp.numeroTemporada, temp.nomeTemporada, temp.sinopse, temp.estreia, temp.posterTemporada, temp.votosTemporada, temp.quantidadeEpisodios, temp.listaEpisodios)
+            temp => new Temporada(temp.id, temp.tituloId, temp.id_tmdb_temporada, temp.numero_temporada, temp.nome_temporada, temp.sinopse, temp.estreia, temp.poster, temp.votos, temp.quantidade_episodios, temp.listaEpisodios)
         );
     }
 

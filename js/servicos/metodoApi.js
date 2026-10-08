@@ -16,22 +16,6 @@ const api = {
             throw error
         }
     },
-    async salvarDados(dados, endpoint) {
-        try {
-            const response = await fetch(`${urlBase}/${endpoint}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(dados)                
-            })
-            return await response.json()
-        } catch(error) {
-            alert('Erro ao salvar dados na API!')
-            throw error
-        }
-    },
-
     async buscarDadosPorId(id, endpoint) {
         try {
             const response = await fetch(`${urlBase}/${endpoint}/${id}`)
@@ -51,6 +35,23 @@ const api = {
         } catch(error)  {
             alert('Erro ao buscar o dado na API!');
             throw error;
+        }
+    },
+
+    async salvarDados(dados, endpoint) {
+        try {
+            debugger
+            const response = await fetch(`${urlBase}/${endpoint}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dados)                
+            })
+            return await response.json()
+        } catch(error) {
+            alert('Erro ao salvar dados na API!')
+            throw error
         }
     },
 

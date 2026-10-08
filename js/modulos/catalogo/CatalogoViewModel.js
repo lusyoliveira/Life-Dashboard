@@ -143,8 +143,6 @@ export class CatalogoViewModel {
   };
 
   async salvarTitulo(titulo) {
-  debugger
-    const imagemLiteralBase64 = await converterUrlParaBase64(titulo.Capa);
     
     const payload = {
       id: titulo.id,
@@ -166,8 +164,7 @@ export class CatalogoViewModel {
       id_tmdb: titulo.IdTMDB,
       original_name: titulo.Original_Name,
       overview: titulo.Overview,
-      poster_path: imagemLiteralBase64,
-      //poster_path:titulo.Poster_Path,
+      poster_path: titulo.Poster_Path,
       media_type: titulo.Media_Type,
       genres_ids: titulo.Genres_Ids,
       popularity: titulo.Popularity,

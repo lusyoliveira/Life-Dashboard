@@ -14,10 +14,10 @@ export class EpisodioViewModel {
         const payload = {
             id: episodioModel.id,
             temporadaId: episodioModel.temporadaId,
-            idTMDB: episodioModel.idTMDB,
-            numeroEpisodio: episodioModel.numeroEpisodio,
+            id_tmdb_episodio: episodioModel.idTMDB,
+            numero_episodio: episodioModel.numeroEpisodio,
             assistido: episodioModel.assistido,
-            tituloEpisodio: episodioModel.tituloEpisodio,
+            titulo_episodio: episodioModel.tituloEpisodio,
             sinopse: episodioModel.sinopse,
             duracao: episodioModel.duracao,
             estreia: episodioModel.estreia,

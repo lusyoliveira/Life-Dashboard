@@ -257,7 +257,7 @@ export class CatalogoView {
         const idtmdb = form.querySelector('#id-tmdb-adicionar')?.value || '';
         const originalName = form.querySelector('#titulo-adicionar').value;
         const overview = form.querySelector('#overview-adicionar')?.value || '';
-        const posterPath = form.querySelector('#poster-path-adicionar')?.value || '';
+        const posterPath = capa || '';
         const mediaType = form.querySelector('#media-type-adicionar')?.value || '';
         const genresIds = form.querySelector('#genres-ids-adicionar')?.value || '';
         const popularity = form.querySelector('#tmdb-lbl-pop')?.textContent || 0;
@@ -299,10 +299,10 @@ export class CatalogoView {
                 listaEpisodios.push({
                     id: idEp,
                     temporadaId: temporadaId,
-                    idTMDB: idTMDBEp,
-                    numeroEpisodio: numeroEpisodio,
+                    id_tmdb_episodio: idTMDBEp,
+                    numero_episodio: numeroEpisodio,
                     assistido: assistido,
-                    tituloEpisodio: tituloEpisodio,
+                    titulo_episodio: tituloEpisodio,
                     sinopse: sinopseEp,
                     duracao: duracao,
                     estreia: estreiaEp,
@@ -313,14 +313,14 @@ export class CatalogoView {
             listaTemporadas.push({
                 id: id,
                 tituloId: tituloId,
-                idTMDBTemporada: idTMDBTemporada,
-                numeroTemporada: numeroTemporada,
-                nomeTemporada: nomeTemporada,
+                id_tmdb_temporada: idTMDBTemporada,
+                numero_temporada: numeroTemporada,
+                nome_temporada: nomeTemporada,
                 sinopse: sinopse,
                 estreia: estreia,
-                posterTemporada: posterTemporada,
-                votosTemporada: votosTemporada,
-                quantidadeEpisodios: listaEpisodios.length,
+                poster: posterTemporada,
+                votos: votosTemporada,
+                quantidade_episodios: listaEpisodios.length,
                 listaEpisodios: listaEpisodios
             });
         });
