@@ -19,15 +19,13 @@ export default class Catalogo {
     Original_Name
     Overview    
     Poster_Path
-    Media_Type
-    Genres_Ids
     Popularity
     First_Air_Date
     Year
     Vote_Average
     listaTemporadas
 
-     constructor(id, Titulo, Capa, Tipo, Status, Plataforma, Inicio, Fim, Episodios, Assistidos, Temporadas, Score = 0, Vezes = 0, Adicao = new Date(), IdTMDB, Original_Name, Overview , Poster_Path, Media_Type, Genres_Ids, Popularity, First_Air_Date, Year, Vote_Average, listaTemporadas = []) {
+     constructor(id, Titulo, Capa, Tipo, Status, Plataforma, Inicio, Fim, Episodios, Assistidos, Temporadas, Score = 0, Vezes = 0, Adicao = new Date(), IdTMDB, Original_Name, Overview , Poster_Path, Popularity, First_Air_Date, Year, Vote_Average, listaTemporadas = []) {
         this.id = id
         this.Titulo = Titulo
         this.Capa = Capa
@@ -46,14 +44,22 @@ export default class Catalogo {
         this.Original_Name = Original_Name
         this.Overview = Overview
         this.Poster_Path = Poster_Path
-        this.Media_Type = Media_Type
-        this.Genres_Ids = Genres_Ids
         this.Popularity = Popularity
         this.First_Air_Date = First_Air_Date
         this.Year = Year
         this.Vote_Average = Vote_Average
         this.listaTemporadas = listaTemporadas.map(
-            temp => new Temporada(temp.id, temp.tituloId, temp.id_tmdb_temporada, temp.numero_temporada, temp.nome_temporada, temp.sinopse, temp.estreia, temp.poster, temp.votos, temp.quantidade_episodios, temp.listaEpisodios)
+            temp => new Temporada(temp.id, 
+                                    temp.tituloId, 
+                                    temp.id_tmdb_temporada, 
+                                    temp.numero_temporada, 
+                                    temp.nome_temporada, 
+                                    temp.sinopse, 
+                                    temp.estreia, 
+                                    temp.poster, 
+                                    temp.votos, 
+                                    temp.quantidade_episodios, 
+                                    temp.listaEpisodios)
         );
     }
 

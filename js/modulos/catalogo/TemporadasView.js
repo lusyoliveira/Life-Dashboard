@@ -11,7 +11,7 @@ export default class TemporadaView {
     renderizarAbaTemporadas(temporadas) {
         // Certifique-se de que este é o ID/Classe correto do container dentro da aba "Episódios"
         const containerAlvo = document.getElementById("accordionTemporadas")
-    
+    console.log("Renderizando aba de temporadas com os dados:", temporadas);
         if (!containerAlvo) {
             console.error("Container da aba de episódios não foi encontrado no DOM!");
             return;

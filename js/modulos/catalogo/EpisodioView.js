@@ -1,5 +1,3 @@
-import Episodio from "./episodioModel.js";
-
 export class EpisodioView {
         constructor(vm) {
         this.vm = vm;
@@ -29,10 +27,6 @@ export class EpisodioView {
                         <p class="mb-0 opacity-75 sinopse-episodio">${episodio.sinopse_episodio}</p>
                     </div>
             </div>
-   
-        `;
-
-
-        
+        `;        
     };
 }

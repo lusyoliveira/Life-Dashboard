@@ -44,8 +44,6 @@ export class CatalogoViewModel {
         titulo.original_name,
         titulo.overview,
         titulo.poster_path,
-        titulo.media_type,
-        titulo.genres_ids,
         titulo.popularity,
         titulo.first_air_date,
         titulo.year,
@@ -88,8 +86,6 @@ export class CatalogoViewModel {
       titulo.original_name,
       titulo.overview,
       titulo.poster_path,
-      titulo.media_type,
-      titulo.genres_ids,
       titulo.popularity,
       titulo.first_air_date,
       titulo.year,
@@ -125,8 +121,6 @@ export class CatalogoViewModel {
         titulo.original_name,
         titulo.overview,
         titulo.poster_path,
-        titulo.media_type,
-        titulo.genres_ids,
         titulo.popularity,
         titulo.first_air_date,
         titulo.year,
@@ -165,8 +159,6 @@ export class CatalogoViewModel {
       original_name: titulo.Original_Name,
       overview: titulo.Overview,
       poster_path: titulo.Poster_Path,
-      media_type: titulo.Media_Type,
-      genres_ids: titulo.Genres_Ids,
       popularity: titulo.Popularity,
       first_air_date: titulo.First_Air_Date,
       year: titulo.Year,
@@ -310,8 +302,6 @@ export class CatalogoViewModel {
             item.Popularity = dadosTMDB.popularity || item.Popularity;
             item.First_Air_Date = dadosTMDB.release_date || dadosTMDB.first_air_date || item.First_Air_Date;
             item.Vote_Average = dadosTMDB.vote_average || item.Vote_Average;
-            item.Media_Type = dadosTMDB.media_type || item.Media_Type;
-            item.Genres_Ids = dadosTMDB.genre_ids || item.Genres_Ids;
 
             if (dadosTMDB.release_date || dadosTMDB.first_air_date) {
               item.Year = new Date(dadosTMDB.release_date || dadosTMDB.first_air_date).getFullYear();
@@ -336,8 +326,6 @@ export class CatalogoViewModel {
               item.Original_Name,
               item.Overview,
               item.Poster_Path,
-              item.Media_Type,
-              item.Genres_Ids,
               item.Popularity,
               item.First_Air_Date,
               item.Year,

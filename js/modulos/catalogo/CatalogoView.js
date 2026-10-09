@@ -100,7 +100,6 @@ export class CatalogoView {
 
     async abrirModalEditarCatalogo(id) {
         const titulo = await this.vm.obterTituloPorID(id);
-
         abrirModalAcao({
             titulo: "Editar título",
             conteudoHTML: this.formHTML,
@@ -151,8 +150,6 @@ export class CatalogoView {
         // Preenchimento dos metadados ocultos de controle
         if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = titulo.IdTMDB || '';
         if(document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
-        if(document.getElementById('media-type-adicionar')) document.getElementById('media-type-adicionar').value = titulo.Media_Type || '';
-        if(document.getElementById('genres-ids-adicionar')) document.getElementById('genres-ids-adicionar').value = titulo.Genres_Ids || '';
         if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = metodoData.formatarDataBR(titulo.First_Air_Date) || '';
         if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
         if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
@@ -163,6 +160,17 @@ export class CatalogoView {
         const previewImg = document.getElementById('poster-path-adicionar');
         previewImg.src = this.renderMiniatura(titulo.Poster_Path);
         
+        console.log("Renderizando modal de edição para o título:", titulo.listaTemporadas);
+        // Renderiza a segunda aba com as temporadas e episódios
+        if (titulo.listaTemporadas && titulo.listaTemporadas.length > 0) {
+            this.temporadaVM.renderizarAbaTemporadas(titulo.listaTemporadas);
+        } else {
+            // Se não houver temporadas, limpa a aba de temporadas
+            const containerAlvo = document.getElementById("accordionTemporadas")
+            containerAlvo.innerHTML = '<p class="text-muted text-center my-3">Nenhuma temporada encontrada.</p>';
+        }
+
+
         const btnBuscarTMDB = document.getElementById("btn-buscar-tmdb-manual");
         if (btnBuscarTMDB) {
             // Remove qualquer listener antigo para não duplicar cliques
@@ -287,7 +295,7 @@ export class CatalogoView {
                 const idEp = elEp.dataset.id || null;
                 const temporadaId = id || null;
                 const idTMDBEp = elEp.dataset.epidtmdb || null;
-                const numeroEpisodio = Number(elEp.dataset.episodio || null);
+                const numeroEpisodio = Number(elEp.dataset.epnumero || null);
                 const assistidoInput = elEp.querySelector('input.chk-episodio-assistido');
                 const assistido = assistidoInput ? assistidoInput.checked : false;
                 const tituloEpisodio = elEp.querySelector('.titulo-episodio')?.textContent || `Episódio ${numeroEpisodio}`;
