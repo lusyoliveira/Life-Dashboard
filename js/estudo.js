@@ -1,5 +1,5 @@
 import "./Utils/bootstrap.js";
-import { carregarFormulario } from "./Utils/utils.js";
+import utils from "./Utils/utils.js";
 import { EstudoViewModel } from "./modulos/estudo/EstudoViewModel.js";
 import { EstudoView } from "./modulos/estudo/EstudoView.js"
 import { PlataformaViewModel } from "./modulos/plataformas/PlataformasViewModel.js";
@@ -22,7 +22,7 @@ export async function inicializarEstudo() {
   const botaoArea = document.getElementById('adiciona-areas');  
   const botaoPlataforma = document.getElementById('adiciona-plataforma'); 
   const botaoStatus = document.getElementById('adiciona-status');   
-  const formCursoHTML = await carregarFormulario("/pages/partials/formCurso.html");
+  const formCursoHTML = await utils.carregarFormulario("/pages/partials/formCurso.html");
   estudoView.formHTML = formCursoHTML
 
   await areasView.renderCardAreas('lista-areas'); 

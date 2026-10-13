@@ -1,7 +1,7 @@
 import api from "../../servicos/metodoApi.js";
+import utils from "../../Utils/utils.js"
 import Agenda from "../agenda/agendaModel.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
-import metodoData from "../../Utils/metodoData.js"
  
 export class AgendaViewModel {
   constructor(endpoint = "agenda") {
@@ -134,7 +134,7 @@ export class AgendaViewModel {
 
             const dataAtual = new Date(t.Data);
 
-            let proxima = metodoData.calcularProximaData(dataAtual, t.Periodicidade);
+            let proxima = utils.calcularProximaData(dataAtual, t.Periodicidade);
 
             const competenciaProxima = new Date(
                 proxima.getFullYear(),
@@ -165,7 +165,7 @@ export class AgendaViewModel {
             }
 
             // próxima iteração
-            const proximaIteracao = metodoData.calcularProximaData(proxima, t.Periodicidade);
+            const proximaIteracao = utils.calcularProximaData(proxima, t.Periodicidade);
 
             if (proximaIteracao.getTime() === proxima.getTime()) break;
 

@@ -78,6 +78,30 @@ const api = {
         }
     },
 
+    async atualizarCampo(dados, endpoint) {
+        try {
+            const response = await fetch(`${urlBase}/${endpoint}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dados)
+            });
+
+            if (!response.ok) {
+                const erroTexto = await response.text();
+                console.error(`Erro ${response.status} na API:`, erroTexto);
+                throw new Error(`Falha no servidor (${response.status})`);
+            }
+
+            return await response.json();
+
+        } catch(error) {
+            alert('Erro ao atualizar os dados na API!');
+            throw error;
+        }
+    },
+
     async excluirDados(id, endpoint) {
         try {
             const response = await fetch(`${urlBase}/${endpoint}/${id}`, {

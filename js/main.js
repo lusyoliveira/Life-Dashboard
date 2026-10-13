@@ -1,5 +1,5 @@
     import "./Utils/bootstrap.js";
-    import { carregarFormulario } from "./Utils/utils.js";
+    import utils from "./Utils/utils.js";
     import { EstudoViewModel } from "./modulos/estudo/EstudoViewModel.js";
     import { EstudoView } from "./modulos/estudo/EstudoView.js";
     import { CatalogoViewModel } from "./modulos/catalogo/CatalogoViewModel.js";
@@ -80,13 +80,13 @@
         relogioView.exibirRelogio('relogio')
         contasView.renderContas('lista-contas')
 
-        const formCatalogoHTML = await carregarFormulario("/pages/partials/formCatalogo.html");
+        const formCatalogoHTML = await utils.carregarFormulario("/pages/partials/formCatalogo.html");
         catalogoView.formHTML = formCatalogoHTML;
-        const formAgendaHTML = await carregarFormulario("/pages/partials/formAgenda.html");
+        const formAgendaHTML = await utils.carregarFormulario("/pages/partials/formAgenda.html");
         agendaView.formHTML = formAgendaHTML;
-        const formCursoHTML = await carregarFormulario("/pages/partials/formCurso.html");
+        const formCursoHTML = await utils.carregarFormulario("/pages/partials/formCurso.html");
         estudoView.formHTML = formCursoHTML;
-        const formTransacaoHTML = await carregarFormulario("/pages/partials/formTransacao.html");
+        const formTransacaoHTML = await utils.carregarFormulario("/pages/partials/formTransacao.html");
         financeiroView.formHTML = formTransacaoHTML
         // const alertTrigger = document.getElementById('liveAlertPlaceholder')
 

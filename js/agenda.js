@@ -1,5 +1,5 @@
 import "./Utils/bootstrap.js";
-import { carregarFormulario } from "./Utils/utils.js";
+import utils from "./Utils/utils.js";
 import { AgendaViewModel } from "./modulos/agenda/AgendaViewModel.js";
 import { AgendaView } from "../js/modulos/agenda/AgendaView.js";
 import { CategoriaViewModel } from "./modulos/categorias/CategoriasViewModel.js";
@@ -33,7 +33,7 @@ import { TiposView } from "./modulos/tipos/TiposView.js";
     const botaoTipo = document.getElementById('adiciona-tipo');
 
     const formAgendaHTML =
-        await carregarFormulario("/pages/partials/formAgenda.html");
+        await utils.carregarFormulario("/pages/partials/formAgenda.html");
 
     agendaView.formHTML = formAgendaHTML;
 

@@ -1,9 +1,8 @@
-import metodoData from "../../Utils/metodoData.js"
+import utils from "../../Utils/utils.js";
 import TemporadaView from "./TemporadasView.js"
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
-import { popularSelect, limparFormulario, bufferParaBase64 } from "../../Utils/utils.js";
 import { graficoBarra } from "../../componentes/graficos/GraficosFactory.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
@@ -79,7 +78,7 @@ export class CatalogoView {
             }
         });
 
-        limparFormulario();
+        utils.limparFormulario();
 
         await this.listarTipos("tipo-adicionar");
         await this.listarPlataforma("plataforma-adicionar");
@@ -100,6 +99,7 @@ export class CatalogoView {
 
     async abrirModalEditarCatalogo(id) {
         const titulo = await this.vm.obterTituloPorID(id);
+
         abrirModalAcao({
             titulo: "Editar título",
             conteudoHTML: this.formHTML,
@@ -150,7 +150,7 @@ export class CatalogoView {
         // Preenchimento dos metadados ocultos de controle
         if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = titulo.IdTMDB || '';
         if(document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
-        if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = metodoData.formatarDataBR(titulo.First_Air_Date) || '';
+        if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = utils.formatarDataBR(titulo.First_Air_Date) || '';
         if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
         if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
         if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
@@ -158,9 +158,9 @@ export class CatalogoView {
         
         // Renderiza o pôster no preview gráfico
         const previewImg = document.getElementById('poster-path-adicionar');
-        previewImg.src = this.renderMiniatura(titulo.Poster_Path);
+        previewImg.src = utils.renderMiniatura(titulo.Poster_Path);
         
-        console.log("Renderizando modal de edição para o título:", titulo.listaTemporadas);
+
         // Renderiza a segunda aba com as temporadas e episódios
         if (titulo.listaTemporadas && titulo.listaTemporadas.length > 0) {
             this.temporadaVM.renderizarAbaTemporadas(titulo.listaTemporadas);
@@ -348,8 +348,8 @@ export class CatalogoView {
             tipoId,
             statusId,
             plataformaId,
-            metodoData.formatarParaISO(dataInicio),
-            dataFim ? metodoData.formatarParaISO(dataFim) : null,
+            utils.formatarParaISO(dataInicio),
+            dataFim ? utils.formatarParaISO(dataFim) : null,
             Number(episodios),
             Number(assistidos),
             Number(temporada),
@@ -363,7 +363,7 @@ export class CatalogoView {
             mediaType,
             genresIds,
             popularity,
-            metodoData.formatarParaISO(firstAirDate),
+            utils.formatarParaISO(firstAirDate),
             year,
             voteAverage,
             listaTemporadas 
@@ -468,12 +468,12 @@ export class CatalogoView {
             {
                 title: "Início",
                 data: "Inicio",
-                render: (data) => metodoData.formatarDataBR(data)
+                render: (data) => utils.formatarDataBR(data)
             },
             {
                 title: "Fim",
                 data: "Fim",
-                render: (data) => metodoData.formatarDataBR(data)
+                render: (data) => utils.formatarDataBR(data)
             },
             { title: "Episódios", data: "Episodios" },
             { title: "Assistidos", data: "Assistidos" },
@@ -613,14 +613,14 @@ export class CatalogoView {
             card.style.cursor = 'pointer';
             card.setAttribute('data-id', item.id);
 
-            const dataInicio = item.Inicio ? metodoData.formatarDataBR(item.Inicio) : 'Não iniciada';
-            const dataFim = item.Fim ? metodoData.formatarDataBR(item.Fim) : 'Não finalizada';
+            const dataInicio = item.Inicio ? utils.formatarDataBR(item.Inicio) : 'Não iniciada';
+            const dataFim = item.Fim ? utils.formatarDataBR(item.Fim) : 'Não finalizada';
             const textoNota = item.Score ? item.Score : 'Sem nota';
             const notaTMDB = item.Vote_Average ? item.Vote_Average : 'N/A';
             const progresso = item.Progresso ? item.Progresso : 0;
 
             // Tratamento de imagem unificado (URL ou Base64)
-            let fonteImagem = this.renderMiniatura(item.Poster_Path);
+            let fonteImagem = utils.renderMiniatura(item.Poster_Path);
 
            card.innerHTML = 
                 '<div class="position-relative">' +
@@ -735,53 +735,6 @@ export class CatalogoView {
         }
     };
 
-    renderMiniatura(poster) {
-        // Inicia a variável vazia. A prioridade máxima agora é o poster local.
-        let fonteImagemFinal = ""; 
-        let stringPoster = "";
-        const imagemConvertida = bufferParaBase64(poster);
-
-
-        // Tenta extrair e decodificar o poster binário do banco primeiro
-        if (imagemConvertida) {
-            // Cenário A: Se o Sequelize devolveu um objeto contendo o array de dados do Buffer ({type: 'Buffer', data: [...]})
-            if (typeof imagemConvertida === 'object' && imagemConvertida.data && Array.isArray(imagemConvertida.data)) {
-                const bytes = new Uint8Array(imagemConvertida.data);
-                let binary = '';
-                const len = bytes.byteLength;
-                for (let i = 0; i < len; i++) {
-                    binary += String.fromCharCode(bytes[i]);
-                }
-                stringPoster = btoa(binary).trim();
-            } 
-            // Cenário B: Se ele veio como uma instância direta de Uint8Array
-            else if (imagemConvertida instanceof Uint8Array || imagemConvertida.constructor?.name === "Uint8Array") {
-                let binary = '';
-                for (let i = 0; i < imagemConvertida.length; i++) {
-                    binary += String.fromCharCode(imagemConvertida[i]);
-                }
-                stringPoster = btoa(binary).trim();
-            }
-            // Cenário C: Se já for uma string comum de texto (seja o Base64 cru ou uma string salva)
-            else if (typeof imagemConvertida === 'string') {
-                stringPoster = imagemConvertida.trim();
-            }
-        }
-       
-        // Se conseguimos uma string válida do poster e ela NÃO é o erro "[object Object]"
-        if (stringPoster && stringPoster !== "" && !stringPoster.includes("[object")) {
-            if (stringPoster.startsWith("data:image") || stringPoster.startsWith("http")) {
-                fonteImagemFinal = stringPoster;
-            } else {
-                // Se for o texto Base64 cru gerado do banco, adiciona o prefixo indispensável para renderizar localmente
-                fonteImagemFinal = "data:image/jpeg;base64," + stringPoster;
-            }
-        }
-
-        return fonteImagemFinal;
-    };
-
-
     // Renderiza os títulos adicionados recentemente na página de catálogo
     renderRecentes(elementoId)  {
         const recentes = this.vm.recentes(4);       
@@ -791,7 +744,7 @@ export class CatalogoView {
         elementoDestino.innerHTML = "";
         
         recentes.forEach(titulo => {
-            let fonteImagem = this.renderMiniatura(titulo.Poster_Path);
+            let fonteImagem = utils.renderMiniatura(titulo.Poster_Path);
 
             const card = document.createElement('div');
             card.className = 'card h-100 shadow-sm';
@@ -890,7 +843,7 @@ export class CatalogoView {
                 li.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
     
                 const imgCapa = document.createElement('img');
-                imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
+                imgCapa.src = utils.renderMiniatura(titulo.Poster_Path);
                 imgCapa.alt = titulo.Titulo;
                 imgCapa.width = 60;
                 imgCapa.height = 80;
@@ -923,7 +876,7 @@ export class CatalogoView {
                 smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
                 const dataUTC = new Date(titulo.Adicao);                
                 const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
-                smallDataAdicao.textContent = metodoData.calculaTempoData(dataLocal);
+                smallDataAdicao.textContent = utils.calculaTempoData(dataLocal);
     
                 divTitulo.appendChild(h6Titulo);
                 divProgresso.appendChild(divBarraProgresso);
@@ -951,7 +904,7 @@ export class CatalogoView {
                 li.classList.add('list-group-item', 'd-flex', 'align-items-center', 'gap-2', 'p-0');
 
                 const imgCapa = document.createElement('img');
-                imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
+                imgCapa.src = utils.renderMiniatura(titulo.Poster_Path);
                 imgCapa.alt = titulo.Titulo;
                 imgCapa.width = 60;
                 imgCapa.height = 80;
@@ -990,7 +943,7 @@ export class CatalogoView {
                 li.classList.add('list-group-item', 'd-flex', 'align-items-center', 'gap-2', 'p-0');
 
                 const imgCapa = document.createElement('img');
-                imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
+                imgCapa.src = utils.renderMiniatura(titulo.Poster_Path);
                 imgCapa.alt = titulo.Titulo;
                 imgCapa.width = 60;
                 imgCapa.height = 80;
@@ -1189,7 +1142,7 @@ export class CatalogoView {
                     li.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
         
                     const imgCapa = document.createElement('img');
-                    imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
+                    imgCapa.src = utils.renderMiniatura(titulo.Poster_Path);
                     imgCapa.alt = titulo.Titulo;
                     imgCapa.width = 80;
                     imgCapa.height = 120;
@@ -1222,7 +1175,7 @@ export class CatalogoView {
                     smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
                     const dataUTC = new Date(titulo.Adicao);                
                     const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
-                    smallDataAdicao.textContent = metodoData.calculaTempoData(dataLocal);
+                    smallDataAdicao.textContent = utils.calculaTempoData(dataLocal);
         
                     divProgresso.appendChild(divBarraProgresso);
                     divInfo.appendChild(divTitulo);
@@ -1255,7 +1208,7 @@ export class CatalogoView {
                 li.classList.add('list-group-item', 'd-flex', 'align-items-center', 'gap-2', 'p-0');
 
                 const imgCapa = document.createElement('img');
-                imgCapa.src = this.renderMiniatura(titulo.Poster_Path);
+                imgCapa.src = utils.renderMiniatura(titulo.Poster_Path);
                 imgCapa.alt = titulo.Titulo;
                 imgCapa.width = 60;
                 imgCapa.height = 80;
@@ -1288,7 +1241,7 @@ export class CatalogoView {
         const statusVM = new StatusViewModel();  
         const status =  await statusVM.obterStatus('Catalogo')
         
-        popularSelect(status,elementoId)
+        utils.popularSelect(status,elementoId)
     };
 
     //Lista os tipos disponíveis no select da página de catálogo
@@ -1296,7 +1249,7 @@ export class CatalogoView {
         const tiposVM = new TipoViewModel();
         const tipos =  await tiposVM.obterTipos('Catalogo')
         
-        popularSelect(tipos,elementoId)
+        utils.popularSelect(tipos,elementoId)
     };
 
     //Lista as plataformas disponíveis no select da página de catálogo
@@ -1304,7 +1257,7 @@ export class CatalogoView {
         const plataformaVM = new PlataformaViewModel();
         const plataforma = await plataformaVM.obterPlataforma('Catalogo');
 
-        popularSelect(plataforma, elementoId);
+        utils.popularSelect(plataforma, elementoId);
     };
     
     async renderizarCardsBusca(termobusca, elementoId) {

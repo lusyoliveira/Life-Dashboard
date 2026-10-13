@@ -1,9 +1,8 @@
 import api from "../../servicos/metodoApi.js";
 import apiTMDB from "../../integracoes/TMDB.js";
+import utils from "../../Utils/utils.js"
 import Catalogo from "./catalogoModel.js";
-import metodoData from "../../Utils/metodoData.js"
 import { TemporadaViewModel } from './TemporadasViewModel.js';
-import { converterUrlParaBase64 } from "../../Utils/utils.js";
 
 export class CatalogoViewModel {
   constructor(endpoint = "catalogo") {
@@ -89,7 +88,8 @@ export class CatalogoViewModel {
       titulo.popularity,
       titulo.first_air_date,
       titulo.year,
-      titulo.vote_average
+      titulo.vote_average,
+      titulo.listaTemporadas || []
     );
 
     return catalogo;
@@ -422,7 +422,7 @@ export class CatalogoViewModel {
   resumoGeral() {
     const totalDias = this.catalogo.reduce((acc, t) => acc + Number(t.Dias || 0), 0);
     const Horas = totalDias * 24;
-    const totalHoras = metodoData.formatarHorasParaHMS(Horas);
+    const totalHoras = utils.formatarHorasParaHMS(Horas);
     const totalEpisodios = this.catalogo.reduce((acc, t) => acc + Number(t.Episodios || 0), 0);
     const totalAssistidos = this.catalogo.reduce((acc, t) => acc + Number(t.Assistidos || 0), 0);
     const somaPontuacoes = this.catalogo.reduce((acc, t) => acc + Number(t.Score || 0), 0);

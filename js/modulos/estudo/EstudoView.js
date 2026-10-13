@@ -1,12 +1,10 @@
+import utils from "../../Utils/utils.js";
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { AreaViewModel } from "../areas/AreasViewModel.js";
 import { PlataformaViewModel } from "../plataformas/PlataformasViewModel.js";
-import { popularSelect, limparFormulario } from "../../Utils/utils.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
-import metodoData from "../../Utils/metodoData.js"
 import { abrirModalAcao } from "../../Utils/modal.js";
-import Curso from "./estudoModel.js";
 
 export class EstudoView {
     constructor(vm) {
@@ -65,7 +63,7 @@ export class EstudoView {
             }
         });
 
-        limparFormulario();
+        utils.limparFormulario();
 
         await this.listarArea("area-adicionar");
         await this.listarPlataforma("escola-adicionar");
@@ -136,7 +134,7 @@ export class EstudoView {
             tituloCurso,
             instrutor,
             area,
-            dataCompra: metodoData.formatarParaISO(dataCompra),
+            dataCompra: utils.formatarParaISO(dataCompra),
             valor,
             status,
             certificado
@@ -170,7 +168,7 @@ export class EstudoView {
             {
                 title: "Comprado",
                 data: "Comprado",
-                render: (data) => metodoData.formatarDataBR(data)
+                render: (data) => utils.formatarDataBR(data)
             },
             { title: "Valor", data: "Valor" },            
             {
@@ -198,7 +196,7 @@ export class EstudoView {
                     li.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
         
                     const imgCapa = document.createElement('img');
-                    imgCapa.src = this.renderMiniatura(curso.Poster_Path);
+                    imgCapa.src = utils.renderMiniatura(curso.Poster_Path);
                     imgCapa.alt = curso.Titulo;
                     imgCapa.width = 80;
                     imgCapa.height = 120;
@@ -231,7 +229,7 @@ export class EstudoView {
                     smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
                     const dataUTC = new Date(curso.Adicao);                
                     const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
-                    smallDataAdicao.textContent = metodoData.calculaTempoData(dataLocal);
+                    smallDataAdicao.textContent = utils.calculaTempoData(dataLocal);
         
                     divProgresso.appendChild(divBarraProgresso);
                     divInfo.appendChild(divTitulo);
@@ -256,21 +254,21 @@ export class EstudoView {
         const statusVM = new StatusViewModel();  
         const status =  await statusVM.obterStatus('Geral')
         
-        popularSelect(status,elementoId)
+        utils.popularSelect(status,elementoId)
     };
 
     async listarArea(elementoId) {    
         const areaVM = new AreaViewModel();
         const area =  await areaVM.obterArea()
         
-        popularSelect(area,elementoId)
+        utils.popularSelect(area,elementoId)
     };
 
     async listarPlataforma(elementoId) {
         const plataformaVM = new PlataformaViewModel();
         const plataforma = await plataformaVM.obterPlataforma('Cursos');
 
-        popularSelect(plataforma, elementoId);
+        utils.popularSelect(plataforma, elementoId);
     };
     
 }

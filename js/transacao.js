@@ -1,7 +1,7 @@
 import "./Utils/bootstrap.js";
+import utils from "./Utils/utils.js";
 import { FinanceiroViewModel } from "./modulos/financeiro/FinanceiroViewModel.js";
 import { FinanceiroView } from "./modulos/financeiro/FinanceiroView.js";
-import { carregarFormulario } from "./Utils/utils.js";
 
 export async function inicializarTransacao() {
     const vm = new FinanceiroViewModel();
@@ -9,7 +9,7 @@ export async function inicializarTransacao() {
     const botaoTransacao = document.getElementById('adicionarTransacao');
     const botaoMesAnterior = document.getElementById('mesAnterior');
     const botaoMesProximo = document.getElementById('mesProximo');
-    const formTransacaoHTML = await carregarFormulario("/pages/partials/formTransacao.html");
+    const formTransacaoHTML = await utils.carregarFormulario("/pages/partials/formTransacao.html");
     financeiroView.formHTML = formTransacaoHTML
     financeiroView.listarTransacoes('tbtransacoes');
     financeiroView.atualizarTituloMes();

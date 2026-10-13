@@ -1,4 +1,4 @@
-import { limparFormulario } from "../../Utils/utils.js";
+import utils from "../../Utils/utils.js";
 import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
 import { abrirModalAcao } from "../../Utils/modal.js";
@@ -61,7 +61,7 @@ export class ContasView {
             }
         });
 
-        limparFormulario();   
+        utils.limparFormulario();   
     };
 
     async abrirModalEditarConta(id) {

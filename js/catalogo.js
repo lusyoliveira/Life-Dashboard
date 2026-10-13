@@ -1,5 +1,5 @@
 import "./Utils/bootstrap.js";
-import { carregarFormulario } from "./Utils/utils.js";
+import utils from "./Utils/utils.js";
 import { CatalogoViewModel } from "./modulos/catalogo/CatalogoViewModel.js";
 import { CatalogoView } from "./modulos/catalogo/CatalogoView.js";
 import { PlataformaViewModel } from "./modulos/plataformas/PlataformasViewModel.js";
@@ -22,7 +22,7 @@ export async function inicializarCatalogo() {
     const botaoPlataforma = document.getElementById('adiciona-plataforma'); 
     const botaoStatus = document.getElementById('adiciona-status'); 
     const botaoTipo = document.getElementById('adiciona-tipo'); 
-    const formCatalogoHTML = await carregarFormulario("/pages/partials/formCatalogo.html");
+    const formCatalogoHTML = await utils.carregarFormulario("/pages/partials/formCatalogo.html");
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
     const btnSincronizar = document.getElementById("btnSincronizarTMDB");

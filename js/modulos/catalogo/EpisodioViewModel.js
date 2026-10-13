@@ -1,5 +1,4 @@
 import api from "../../servicos/metodoApi.js";
-import Episodio from "../../modulos/catalogo/episodioModel.js";
 
 export class EpisodioViewModel {
     constructor(endpoint = "episodios") {
@@ -42,7 +41,7 @@ export class EpisodioViewModel {
     }
 
     // Método utilitário muito comum na View: alternar status de assistido
-    async atualizarAssistido(episodioId, assistido) {
-        return await api.atualizarDados({ assistido }, `${this.endpointcat}/${this.endpointtemp}/${this.endpoint}/${episodioId}/assistido`);
+    async atualizarEpisodioAssistido(episodio, assistido) {
+        return await api.atualizarCampo({ assistido }, `${this.endpointcat}/${this.endpointtemp}/${this.endpoint}/${episodio.id}/assistido`);
     }
 }

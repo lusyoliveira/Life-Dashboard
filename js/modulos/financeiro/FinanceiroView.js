@@ -1,5 +1,4 @@
-import { popularSelect, limparFormulario } from "../../Utils/utils.js";
-import metodoData from "../../Utils/metodoData.js"
+import utils from "../../Utils/utils.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 import { ContasViewModel } from "../contas/ContasViewModel.js";
 import { graficoPizza } from "../../componentes/graficos/GraficosFactory.js";
@@ -93,7 +92,7 @@ export class FinanceiroView {
             }
         });
     }
-    limparFormulario();
+    utils.limparFormulario();
 
     await this.listarCategoria("categoria-adicionar");
     await this.listarContasSelect("conta-origem-adicionar");
@@ -174,7 +173,7 @@ export class FinanceiroView {
     const transacao = new Transacao(
       idInput ? idInput : null,
       descricao,
-      metodoData.formatarParaISO(data),
+      utils.formatarParaISO(data),
       categoria,
       contaDestino,
       contaOrigem,
@@ -409,7 +408,7 @@ export class FinanceiroView {
                         <a href="#" class="list-group-item list-group-item-action">
                             <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">${transacao.Descricao}</h5>
-                            <small>${metodoData.calculaTempoData(dataLocal)}</small>
+                            <small>${utils.calculaTempoData(dataLocal)}</small>
                             </div>
                             <small class="badge text-bg-info">${
                               transacao.Categoria.descricao
@@ -430,14 +429,14 @@ export class FinanceiroView {
     const contasVM = new ContasViewModel();
     const contas =  await contasVM.obterContas();
     
-    popularSelect(contas,elementoId)
+    utils.popularSelect(contas,elementoId)
   };
 
   async listarCategoria(elementoId) {
     const categoriaVM = new CategoriaViewModel();
     const categorias = await categoriaVM.obterCategoria('Financeiro');
 
-    popularSelect(categorias, elementoId);
+    utils.popularSelect(categorias, elementoId);
   };
 
   async renderGraficos() {

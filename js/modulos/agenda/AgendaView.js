@@ -1,5 +1,4 @@
-import metodoData from "../../Utils/metodoData.js"
-import { popularSelect, limparFormulario } from "../../Utils/utils.js";
+import utils from "../../Utils/utils.js";
 import { CategoriaViewModel } from "../categorias/CategoriasViewModel.js";
 import { StatusViewModel } from "../status/StatusViewModel.js";
 import { TipoViewModel } from "../tipos/TipoViewModel.js";
@@ -80,7 +79,7 @@ export class AgendaView {
       }
     });
 
-    limparFormulario();
+    utils.limparFormulario();
 
     await this.listarTipos('tipo-adicionar');
     await this.listarCategoria('categoria-adicionar');
@@ -135,7 +134,7 @@ export class AgendaView {
 
     const payload = {
       titulo,
-      data: metodoData.formatarParaISO(data),
+      data: utils.formatarParaISO(data),
       categoriaId,
       tipoId,
       statusId,
@@ -181,7 +180,7 @@ export class AgendaView {
         {
           title: "Data",
           data: "Data",
-          render: (Data) => metodoData.formatarDataBR(Data)
+          render: (Data) => utils.formatarDataBR(Data)
         },
         colunaAcoes({ campoId: "id" })
 
@@ -203,7 +202,7 @@ export class AgendaView {
                     <a href="#" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">${compromisso.Titulo}</h5>
-                        <small>${metodoData.calculaTempoData(dataLocal)}</small>
+                        <small>${utils.calculaTempoData(dataLocal)}</small>
                         </div>
                         <small class="badge text-bg-info">${compromisso.Categoria.descricao
           }</small>
@@ -446,21 +445,21 @@ export class AgendaView {
     const tipoVM = new TipoViewModel();
     const tipos = await tipoVM.obterTipos('Agenda');
 
-    popularSelect(tipos, elementoId)
+    utils.popularSelect(tipos, elementoId)
   };
 
   async listarStatus(elementoId) {
     const statusVM = new StatusViewModel();
     const status = await statusVM.obterStatus('Geral');
 
-    popularSelect(status, elementoId)
+    utils.popularSelect(status, elementoId)
   };
 
   async listarCategoria(elementoId) {
     const categoriaVM = new CategoriaViewModel();
     const categorias = await categoriaVM.obterCategoria('Agenda');
 
-    popularSelect(categorias, elementoId);
+    utils.popularSelect(categorias, elementoId);
   };
 
   async renderGraficos() {

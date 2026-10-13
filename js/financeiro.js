@@ -1,11 +1,11 @@
 import "./Utils/bootstrap.js";
+import utils from "./Utils/utils.js";
 import { FinanceiroViewModel } from "./modulos/financeiro/FinanceiroViewModel.js";
 import { FinanceiroView } from "./modulos/financeiro/FinanceiroView.js"; 
 import { CategoriaViewModel } from "./modulos/categorias/CategoriasViewModel.js";
 import { CategoriasView } from "./modulos/categorias/CategoriasView.js";
 import { ContasViewModel } from "./modulos/contas/ContasViewModel.js";
 import { ContasView } from "./modulos/contas/ContasView.js";
-import { carregarFormulario } from "./Utils/utils.js";
 
 export async function inicializarFinanceiro() {
     const fvm = new FinanceiroViewModel();
@@ -17,9 +17,9 @@ export async function inicializarFinanceiro() {
     const botaoCategoria = document.getElementById('adiciona-categoria'); 
     const botaoConta = document.getElementById('adicionarConta');
     const botaoTransacao = document.getElementById('adicionarTransacao');
-    const formTransacaoHTML = await carregarFormulario("/pages/partials/formTransacao.html");
+    const formTransacaoHTML = await utils.carregarFormulario("/pages/partials/formTransacao.html");
     financeiroView.formHTML = formTransacaoHTML
-    const formContaHTML = await carregarFormulario("/pages/partials/formContas.html");
+    const formContaHTML = await utils.carregarFormulario("/pages/partials/formContas.html");
     contasView.formHTML = formContaHTML
 
     await contasView.listarContas();
