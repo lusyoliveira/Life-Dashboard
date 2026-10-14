@@ -3,13 +3,12 @@ import { EpisodioView } from './EpisodioView.js';
 import { TemporadaViewModel } from './TemporadasViewModel.js'
 
 export default class TemporadaView {
-    constructor(temporadaViewModel = new TemporadaViewModel(), episodioView = new EpisodioView()) {
+    constructor(temporadaViewModel = new TemporadaViewModel(), episodioView = null) {
         this.temporadaVM = temporadaViewModel;
-        this.episodioView = episodioView;
+        this.episodioView = episodioView || new EpisodioView(this.temporadaVM.episodioVM);
     }
     
     renderizarAbaTemporadas(temporadas) {
-        // Certifique-se de que este é o ID/Classe correto do container dentro da aba "Episódios"
         const containerAlvo = document.getElementById("accordionTemporadas")
         
         if (!containerAlvo) {
@@ -44,9 +43,9 @@ export default class TemporadaView {
             buttonAcordionItem.setAttribute('data-bs-target', `#collapse-${accordionId}`);
             buttonAcordionItem.setAttribute('aria-expanded', 'false');  
 
-            const h4Titulo = document.createElement('h4');
-            h4Titulo.className = 'mb-0 titulo-temporada';
-            h4Titulo.textContent = temp.titulo_temporada || `Temporada ${temp.numero_temporada}`;
+            const h5Titulo = document.createElement('h5');
+            h5Titulo.className = 'mb-0 titulo-temporada';
+            h5Titulo.textContent = temp.titulo_temporada || `Temporada ${temp.numero_temporada}`;
 
             const smallEstreia = document.createElement('small');
             smallEstreia.className = 'text-muted ms-2 estreia-temporada';
@@ -121,7 +120,7 @@ export default class TemporadaView {
                 });
             }
 ''
-            buttonAcordionItem.appendChild(h4Titulo);
+            buttonAcordionItem.appendChild(h5Titulo);
             buttonAcordionItem.appendChild(smallEstreia);
             buttonAcordionItem.appendChild(spanNota);
             buttonAcordionItem.appendChild(divSinopse);

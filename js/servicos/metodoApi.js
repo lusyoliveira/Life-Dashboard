@@ -78,7 +78,7 @@ const api = {
         }
     },
 
-    async atualizarCampo(dados, endpoint) {
+   async atualizarCampo(dados, endpoint) {
         try {
             const response = await fetch(`${urlBase}/${endpoint}`, {
                 method: "PATCH",

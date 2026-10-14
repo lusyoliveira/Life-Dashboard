@@ -3,45 +3,19 @@ import api from "../../servicos/metodoApi.js";
 export class EpisodioViewModel {
     constructor(endpoint = "episodios") {
         this.endpoint = endpoint;
-        this.endpointcat = "catalogo";
-        this.endpointtemp = "temporadas";
         this.episodio = [];
     }
 
-   // Salva ou atualiza um único episódio
-    async salvarEpisodio(episodioModel) {
-        const payload = {
-            id: episodioModel.id,
-            temporadaId: episodioModel.temporadaId,
-            id_tmdb_episodio: episodioModel.idTMDB,
-            numero_episodio: episodioModel.numeroEpisodio,
-            assistido: episodioModel.assistido,
-            titulo_episodio: episodioModel.tituloEpisodio,
-            sinopse: episodioModel.sinopse,
-            duracao: episodioModel.duracao,
-            estreia: episodioModel.estreia,
-            votos: episodioModel.votos
-        };
-
-        if (episodioModel.id) {
-            return await api.atualizarDados(payload, `${this.endpointcat}/${this.endpointtemp}/${this.endpoint}/${episodioModel.id}`);
-        } else {
-            return await api.salvarDados(payload, `${this.endpointcat}/${this.endpointtemp}/${episodioModel.temporadaId}/${this.endpoint}`);
+    // Método para alternar status de assistido
+   async atualizarEpisodioAssistido(episodioId, assistido) {
+        try {
+            return await api.atualizarCampo(
+                { assistido }, 
+                `catalogo/temporadas/episodios/${episodioId}/assistido`
+            );
+        } catch (error) {
+            console.error("Erro no ViewModel ao atualizar episódio:", error);
+            throw error;
         }
-    }
-
-    // Salva uma lista de episódios de uma temporada (em lote ou iterativo)
-    async salvarListaEpisodios(episodios = [], temporadaId) {
-        const promessas = episodios.map(ep => {
-            ep.temporadaId = temporadaId;
-            return this.salvarEpisodio(ep);
-        });
-
-        return await Promise.all(promessas);
-    }
-
-    // Método utilitário muito comum na View: alternar status de assistido
-    async atualizarEpisodioAssistido(episodio, assistido) {
-        return await api.atualizarCampo({ assistido }, `${this.endpointcat}/${this.endpointtemp}/${this.endpoint}/${episodio.id}/assistido`);
     }
 }
