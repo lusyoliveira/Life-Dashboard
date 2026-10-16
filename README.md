@@ -20,7 +20,7 @@
 - Visualização de calendário na dashboard inicial.
 - Compromissos com recorrência são automaticamente atualizados para o próximo mês ou ano (em construção).
 - Permite associar contatos ao comprimisso (Não Iniciado).
-### ❌ Contatos (MÃO INICIADO)
+### ❌ Contatos (NÃO INICIADO)
 - Permite adicionar, editar ou excluir um contato.
 - Permite vincular o contato num compromisso da agenda.
 ### ✅ Controle de Tarefas
