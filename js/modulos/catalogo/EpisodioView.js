@@ -3,7 +3,6 @@ import utils from "../../Utils/utils.js"
 export class EpisodioView {
         constructor(vm) {
         this.vm = vm;
-        console.log(this.vm)
     }   
 
     // Gera o HTML de um episódio
@@ -41,7 +40,7 @@ export class EpisodioView {
         titulo.textContent = epNome;
 
         const smallDuracao = document.createElement('small');
-        smallDuracao.className = 'opacity-50 text-nowrap exibicao-episodio';
+        smallDuracao.className = 'opacity-50 text-nowrap duracao-episodio';
         smallDuracao.textContent = episodio.duracao_episodio || episodio.duracao || 'N/A';
 
         const containerDuracao = document.createElement('small');
@@ -65,7 +64,7 @@ export class EpisodioView {
 
         const pSinopse = document.createElement('p');
         pSinopse.className = 'mb-0 opacity-75 sinopse-episodio';
-        pSinopse.textContent = episodio.sinopse_episodio || episodio.sinopse;
+        pSinopse.textContent = episodio.sinopse_episodio || episodio.sinopse || 'Sinopse indisponível.';
 
         containerSinopse.appendChild(pSinopse);
         containerVotos.appendChild(spanVotos);

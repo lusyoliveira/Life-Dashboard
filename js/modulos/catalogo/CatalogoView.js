@@ -18,7 +18,7 @@ export class CatalogoView {
         this.editarColecao();
         this.paginaAtualColecao = 1;
         this.itensPorPaginaColecao = 4; // Ajuste este número para quantos cards 
-    }   
+    }
 
     registrarEventosTabela() {
         const tabela = document.getElementById("tabelaCatalogo");
@@ -29,11 +29,11 @@ export class CatalogoView {
             const btnExcluir = e.target.closest(".btn-excluir");
 
             if (btnEditar) {
-            await this.abrirModalEditarCatalogo(btnEditar.dataset.id);
+                await this.abrirModalEditarCatalogo(btnEditar.dataset.id);
             }
 
             if (btnExcluir) {
-            await this.abrirModalExcluirCatalogo(btnExcluir.dataset.id);
+                await this.abrirModalExcluirCatalogo(btnExcluir.dataset.id);
             }
         });
     };
@@ -46,8 +46,8 @@ export class CatalogoView {
             classeBotao: "btn-danger",
 
             onConfirmar: async () => {
-            await this.vm.excluirTitulo(id);
-            await this.listarCatalogo();
+                await this.vm.excluirTitulo(id);
+                await this.listarCatalogo();
             }
         });
     };
@@ -59,22 +59,22 @@ export class CatalogoView {
             textoConfirmar: "Salvar",
 
             onConfirmar: async () => {
-            const form = document.getElementById("formCatalogo");
+                const form = document.getElementById("formCatalogo");
 
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return false;
-            }
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return false;
+                }
 
-            await this.salvarFormularioCatalogo(form);
-            
-            const possuiTabela = document.getElementById("tabelaCatalogo");
-            const possuiGridCards = document.getElementById("saved-grid");
-            if (possuiTabela) {
-                await this.listarCatalogo();
-            } else if (possuiGridCards) {
-                await this.listarColecao();
-            }
+                await this.salvarFormularioCatalogo(form);
+
+                const possuiTabela = document.getElementById("tabelaCatalogo");
+                const possuiGridCards = document.getElementById("saved-grid");
+                if (possuiTabela) {
+                    await this.listarCatalogo();
+                } else if (possuiGridCards) {
+                    await this.listarColecao();
+                }
             }
         });
 
@@ -95,7 +95,7 @@ export class CatalogoView {
                 await this.vincularCamposFormularioTMDB();
             });
         }
-    };    
+    };
 
     async abrirModalEditarCatalogo(id) {
         const titulo = await this.vm.obterTituloPorID(id);
@@ -114,7 +114,7 @@ export class CatalogoView {
                 }
 
                 await this.salvarFormularioCatalogo(form);
-                
+
                 // Atualiza a tela de forma adaptável baseado no componente ativo no DOM
                 const possuiTabela = document.getElementById("tabelaCatalogo");
                 const possuiGridCards = document.getElementById("saved-grid");
@@ -144,22 +144,22 @@ export class CatalogoView {
         document.getElementById('episodios-adicionar').value = titulo.Episodios;
         document.getElementById('assistidos-adicionar').value = titulo.Assistidos;
         document.getElementById('temporada-adicionar').value = titulo.Temporadas;
-        document.getElementById('pontuacao-adicionar').value = titulo.Score;   
-        document.getElementById('vezes-adicionar').value = titulo.Vezes;  
+        document.getElementById('pontuacao-adicionar').value = titulo.Score;
+        document.getElementById('vezes-adicionar').value = titulo.Vezes;
 
         // Preenchimento dos metadados ocultos de controle
-        if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = titulo.IdTMDB || '';
-        if(document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
-        if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = utils.formatarDataBR(titulo.First_Air_Date) || '';
-        if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
-        if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
-        if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
-        if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = titulo.Overview || ''; 
-        
+        if (document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = titulo.IdTMDB || '';
+        if (document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
+        if (document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = utils.formatarDataBR(titulo.First_Air_Date) || '';
+        if (document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
+        if (document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
+        if (document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
+        if (document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = titulo.Overview || '';
+
         // Renderiza o pôster no preview gráfico
         const previewImg = document.getElementById('poster-path-adicionar');
         previewImg.src = utils.renderMiniatura(titulo.Poster_Path);
-        
+
 
         // Renderiza a segunda aba com as temporadas e episódios
         if (titulo.listaTemporadas && titulo.listaTemporadas.length > 0) {
@@ -179,13 +179,13 @@ export class CatalogoView {
 
             novoBtn.addEventListener("click", async (e) => {
                 e.preventDefault();
-                
+
                 await this.vincularCamposFormularioTMDB();
             });
         };
     };
 
-    
+
     async vincularCamposFormularioTMDB() {
         const nomeInput = document.getElementById('titulo-adicionar')?.value.trim();
         const idTMDB = document.getElementById("id-tmdb-adicionar")?.value;
@@ -204,14 +204,14 @@ export class CatalogoView {
                 item = await this.vm.obterDadosTMDBPorDescricao(nomeInput, tipo);
             }
 
-             // Preenche os campos principais na Aba 1
-            if(document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.titulo || nomeInput;
-            if(document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.sinopse || '';
-            if(document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';          
-            if(document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.media_votos || '0';
-            if(document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.popularidade || 'N/A';
-            if(document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.ano || 'N/A';
-            if(document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = item.exibicao || '';
+            // Preenche os campos principais na Aba 1
+            if (document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.titulo || nomeInput;
+            if (document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.sinopse || '';
+            if (document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';
+            if (document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.media_votos || '0';
+            if (document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.popularidade || 'N/A';
+            if (document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.ano || 'N/A';
+            if (document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = item.exibicao || '';
             const previewImg = document.getElementById('poster-path-adicionar');
             const posterInput = document.getElementById('capa-adicionar');
 
@@ -240,8 +240,8 @@ export class CatalogoView {
                 );
 
                 // 2. Passa os dados totalmente prontos e síncronos para a View
-                this.temporadaVM.renderizarAbaTemporadas(temporadasTratadas);              
-             }
+                this.temporadaVM.renderizarAbaTemporadas(temporadasTratadas);
+            }
 
             alert(`✅ Dados sincronizados na tela com sucesso!`);
         } catch (error) {
@@ -266,8 +266,6 @@ export class CatalogoView {
         const originalName = form.querySelector('#titulo-adicionar').value;
         const overview = form.querySelector('#overview-adicionar')?.value || '';
         const posterPath = capa || '';
-        const mediaType = form.querySelector('#media-type-adicionar')?.value || '';
-        const genresIds = form.querySelector('#genres-ids-adicionar')?.value || '';
         const popularity = form.querySelector('#tmdb-lbl-pop')?.textContent || 0;
         const firstAirDate = form.querySelector('#first-air-date-adicionar')?.value || null;
         const year = form.querySelector('#tmdb-lbl-year')?.textContent || '';
@@ -282,8 +280,8 @@ export class CatalogoView {
             const idTMDBTemporada = elTemp.dataset.temporadaidtmdb || null;
             const numeroTemporada = Number(elTemp.dataset.temporada || null);
             const nomeTemporada = elTemp.querySelector('.titulo-temporada')?.textContent || `Temporada ${numeroTemporada}`;
-            const sinopse = elTemp.querySelector('.sinopse-temporada')?.textContent || null;
-            const estreia = elTemp.querySelector('.estreia-temporada')?.textContent || null;
+            const sinopseTemporada = elTemp.querySelector('.sinopse-temporada')?.textContent || null;
+            const estreiaTemporada = elTemp.querySelector('.estreia-temporada')?.textContent || null;
             const posterTemporada = elTemp.querySelector('.poster-temporada')?.src || '';
             const votosTemporada = Number(elTemp.querySelector('.nota-temporada')?.textContent.replace('Nota TMDB: ', '') || null);
 
@@ -300,10 +298,11 @@ export class CatalogoView {
                 const assistido = assistidoInput ? assistidoInput.checked : false;
                 const tituloEpisodio = elEp.querySelector('.titulo-episodio')?.textContent || `Episódio ${numeroEpisodio}`;
                 const sinopseEp = elEp.querySelector('.sinopse-episodio')?.textContent || '';
-                const duracao = Number(elEp.querySelector('.duracao-episodio')?.textContent || null);
+                const duracaoEp = Number(elEp.querySelector('.duracao-episodio')?.textContent || null);
                 const estreiaEp = elEp.querySelector('.exibicao-episodio')?.textContent || null;
                 const votosEp = Number(elEp.querySelector('.votos-episodio')?.textContent.replace('Votos: ', '') || null);
 
+                console.log(estreiaTemporada)
                 listaEpisodios.push({
                     id: idEp,
                     temporadaId: temporadaId,
@@ -312,7 +311,7 @@ export class CatalogoView {
                     assistido: assistido,
                     titulo_episodio: tituloEpisodio,
                     sinopse: sinopseEp,
-                    duracao: duracao,
+                    duracao: duracaoEp,
                     estreia: estreiaEp,
                     votos: votosEp
                 });
@@ -324,8 +323,8 @@ export class CatalogoView {
                 id_tmdb_temporada: idTMDBTemporada,
                 numero_temporada: numeroTemporada,
                 nome_temporada: nomeTemporada,
-                sinopse: sinopse,
-                estreia: estreia,
+                sinopse: sinopseTemporada,
+                estreia: estreiaTemporada,
                 poster: posterTemporada,
                 votos: votosTemporada,
                 quantidade_episodios: listaEpisodios.length,
@@ -360,13 +359,11 @@ export class CatalogoView {
             originalName,
             overview,
             posterPath,
-            mediaType,
-            genresIds,
             popularity,
             utils.formatarParaISO(firstAirDate),
             year,
             voteAverage,
-            listaTemporadas 
+            listaTemporadas
         );
 
         await this.vm.salvarTitulo(titulo);
@@ -376,16 +373,16 @@ export class CatalogoView {
     async listarColecao() {
         const savedGrid = document.getElementById('saved-grid');
         if (!savedGrid) return;
-        
+
         savedGrid.innerHTML = '<p class="text-muted text-center my-4">Carregando sua lista...</p>';
 
         try {
             const dados = await this.vm.obterCatalogo();
-            
+
             // Ordena por data de adição decrescente
             const listaOrdenada = dados.sort(
                 (b, a) => new Date(a.Adicao).getTime() - new Date(b.Adicao).getTime()
-            ); 
+            );
 
             // Como a listagem padrão busca tudo do banco de uma vez, fazemos a paginação no frontend com slice
             const totalPaginas = Math.ceil(listaOrdenada.length / this.itensPorPaginaColecao);
@@ -406,9 +403,9 @@ export class CatalogoView {
         const savedGrid = document.getElementById('saved-grid');
         const btnBuscar = document.getElementById("buscar-catalogo-button");
         const inputBuscar = document.getElementById("buscar-catalogo-input");
-        
+
         if (!savedGrid) return;
-        
+
         // Feedback visual de Loading
         if (btnBuscar) {
             btnBuscar.disabled = true;
@@ -420,16 +417,12 @@ export class CatalogoView {
 
         try {
             const resultadoPaginado = await this.vm.obterCatalogoPorDescricao(termoBusca, this.itensPorPaginaColecao, paginaAlvo);
-            //const { dados, totalPaginas, paginaAtual } = resultadoPaginado;
 
-            const totalPaginas = Math.ceil(resultadoPaginado.length / this.itensPorPaginaColecao);
-            const indiceInicio = (this.paginaAtualColecao - 1) * this.itensPorPaginaColecao;
-            const indiceFim = indiceInicio + this.itensPorPaginaColecao;
-            const itensPaginados = resultadoPaginado.slice(indiceInicio, indiceFim);
+            // Extrai as propriedades corretas retornadas pela ViewModel
+            const { dados, totalPaginas, paginaAtual } = resultadoPaginado;
 
-            // Chama o renderizador unificado passando o termoBusca para controle dos botões de paginação
-            //  this.renderizarGradeColecao(savedGrid, dados, totalPaginas, paginaAtual, termoBusca);
-            this.renderizarGradeColecao(savedGrid, itensPaginados, totalPaginas, this.paginaAtualColecao, termoBusca);
+            // Chama o renderizador passando os dados já paginados pelo backend
+            this.renderizarGradeColecao(savedGrid, dados, totalPaginas, paginaAtual, termoBusca);
 
         } catch (error) {
             savedGrid.innerHTML = '<p class="text-center text-danger my-4">Erro ao realizar a busca local.</p>';
@@ -447,41 +440,44 @@ export class CatalogoView {
     async listarCatalogo() {
         const dados = await this.vm.obterCatalogo();
         const listaOrdenada = dados.sort(
-          (a, b) => new Date(a.Adicao).getTime() - new Date(b.Adicao).getTime()
-      );       
+            (a, b) => new Date(a.Adicao).getTime() - new Date(b.Adicao).getTime()
+        );
 
         criarDataTable({
-        tabelaId: "tabelaCatalogo",
-        dados: listaOrdenada,
-        colunas: [
-            { title: "Título", data: "Titulo" },
-            { title: "Tipo", 
-                data: "Tipo",
-                render: (data) => data.descricao
-             },
-            { title: "Status", data: "Status",
-                render: (data) => data.descricao
-             },
-            { title: "Plataforma", data: "Plataforma",
-                render: (data) => data.descricao
-             },
-            {
-                title: "Início",
-                data: "Inicio",
-                render: (data) => utils.formatarDataBR(data)
-            },
-            {
-                title: "Fim",
-                data: "Fim",
-                render: (data) => utils.formatarDataBR(data)
-            },
-            { title: "Episódios", data: "Episodios" },
-            { title: "Assistidos", data: "Assistidos" },
-            { title: "Temporadas", data: "Temporadas" },
-            { title: "Score", data: "Score" },
-            { title: "Vezes", data: "Vezes" },
-            { title: "Dias", data: "Dias" },
-            colunaAcoes({ campoId: "id" })
+            tabelaId: "tabelaCatalogo",
+            dados: listaOrdenada,
+            colunas: [
+                { title: "Título", data: "Titulo" },
+                {
+                    title: "Tipo",
+                    data: "Tipo",
+                    render: (data) => data.descricao
+                },
+                {
+                    title: "Status", data: "Status",
+                    render: (data) => data.descricao
+                },
+                {
+                    title: "Plataforma", data: "Plataforma",
+                    render: (data) => data.descricao
+                },
+                {
+                    title: "Início",
+                    data: "Inicio",
+                    render: (data) => utils.formatarDataBR(data)
+                },
+                {
+                    title: "Fim",
+                    data: "Fim",
+                    render: (data) => utils.formatarDataBR(data)
+                },
+                { title: "Episódios", data: "Episodios" },
+                { title: "Assistidos", data: "Assistidos" },
+                { title: "Temporadas", data: "Temporadas" },
+                { title: "Score", data: "Score" },
+                { title: "Vezes", data: "Vezes" },
+                { title: "Dias", data: "Dias" },
+                colunaAcoes({ campoId: "id" })
 
             ]
         });
@@ -491,10 +487,10 @@ export class CatalogoView {
     renderEstatistica(tipo, elementoId) {
         const stats = this.vm.estatisticasPorTipo(tipo);
         const elementoDestino = document.getElementById(elementoId);
-        
+
         if (elementoDestino) {
             elementoDestino.innerHTML = "";
-                elementoDestino.innerHTML += 
+            elementoDestino.innerHTML +=
                 `
                     <div class="card">
                         <div class="card-header">
@@ -506,19 +502,19 @@ export class CatalogoView {
                                 <p class="card-text">Pontuação Média: ${stats.mediaPontuacao}</p>
                             </div>
                             <div class="progress-stacked">
-                                <div class="progress" role="progressbar" aria-label="Completado" aria-valuenow="${(stats.completado/100)*stats.total}" aria-valuemin="0" aria-valuemax="100" style="width: ${(stats.completado/100)*stats.total}%">
+                                <div class="progress" role="progressbar" aria-label="Completado" aria-valuenow="${(stats.completado / 100) * stats.total}" aria-valuemin="0" aria-valuemax="100" style="width: ${(stats.completado / 100) * stats.total}%">
                                     <div class="progress-bar"></div>
                                 </div>
-                                <div class="progress" role="progressbar" aria-label="Assistido" aria-valuenow="${(stats.assistindo/100)*stats.total}" aria-valuemin="0" aria-valuemax="100" style="width: ${(stats.assistindo/100)*stats.total}%">
+                                <div class="progress" role="progressbar" aria-label="Assistido" aria-valuenow="${(stats.assistindo / 100) * stats.total}" aria-valuemin="0" aria-valuemax="100" style="width: ${(stats.assistindo / 100) * stats.total}%">
                                     <div class="progress-bar bg-success"></div>
                                 </div>
-                                <div class="progress" role="progressbar" aria-label="Dropped" aria-valuenow="${(stats.dropped/100)*stats.total}" aria-valuemin="0" aria-valuemax="100" style="width: ${(stats.dropped/100)*stats.total}%">
+                                <div class="progress" role="progressbar" aria-label="Dropped" aria-valuenow="${(stats.dropped / 100) * stats.total}" aria-valuemin="0" aria-valuemax="100" style="width: ${(stats.dropped / 100) * stats.total}%">
                                     <div class="progress-bar bg-danger"></div>
                                 </div>
-                                <div class="progress" role="progressbar" aria-label="EmEspera" aria-valuenow="${(stats.emEspera/100)*stats.total}" aria-valuemin="0" aria-valuemax="100" style="width: ${(stats.emEspera/100)*stats.total}%">
+                                <div class="progress" role="progressbar" aria-label="EmEspera" aria-valuenow="${(stats.emEspera / 100) * stats.total}" aria-valuemin="0" aria-valuemax="100" style="width: ${(stats.emEspera / 100) * stats.total}%">
                                     <div class="progress-bar bg-warning"></div>
                                 </div>
-                                <div class="progress" role="progressbar" aria-label="Planejado" aria-valuenow="${(stats.planejado/100)*stats.total}" aria-valuemin="0" aria-valuemax="100" style="width: ${(stats.planejado/100)*stats.total}%">
+                                <div class="progress" role="progressbar" aria-label="Planejado" aria-valuenow="${(stats.planejado / 100) * stats.total}" aria-valuemin="0" aria-valuemax="100" style="width: ${(stats.planejado / 100) * stats.total}%">
                                     <div class="progress-bar bg-info"></div>
                                 </div>
                             </div>
@@ -571,7 +567,7 @@ export class CatalogoView {
                         </div>
                     </div>
                 `;
-        }        
+        }
     }
 
     // Renderiza os gráficos de barra para Tipo, Status e Plataforma
@@ -602,7 +598,7 @@ export class CatalogoView {
         }
 
         savedGrid.innerHTML = '';
-        
+
         // Cria a linha (row) para os cards do Bootstrap
         const divRow = document.createElement('div');
         divRow.className = 'row w-100 m-0';
@@ -622,35 +618,35 @@ export class CatalogoView {
             // Tratamento de imagem unificado (URL ou Base64)
             let fonteImagem = utils.renderMiniatura(item.Poster_Path);
 
-           card.innerHTML = 
+            card.innerHTML =
                 '<div class="position-relative">' +
-                    `<img class="card-img-top" src="${fonteImagem}" alt="${item.Titulo}" style="height: 320px;">` +
-                    `<span class="position-absolute top-0 start-0 badge bg-dark m-2">${item.Tipo?.descricao || 'N/A'}</span>` +
-                        '<div class="position-absolute bottom-0 end-0 m-2 d-flex gap-1 align-items-center">' +
-                            `<span class="badge bg-warning fs-6 px-2 py-1">${notaTMDB || 'N/A'}</span>` +
-                            `<span class="badge bg-info fs-6 px-2 py-1">${textoNota || '0'}</span>` +
-                        '</div>' +
+                `<img class="card-img-top" src="${fonteImagem}" alt="${item.Titulo}" style="height: 320px;">` +
+                `<span class="position-absolute top-0 start-0 badge bg-dark m-2">${item.Tipo?.descricao || 'N/A'}</span>` +
+                '<div class="position-absolute bottom-0 end-0 m-2 d-flex gap-1 align-items-center">' +
+                `<span class="badge bg-warning fs-6 px-2 py-1">${notaTMDB || 'N/A'}</span>` +
+                `<span class="badge bg-info fs-6 px-2 py-1">${textoNota || '0'}</span>` +
+                '</div>' +
                 '</div>' +
                 '<div class="card-body d-flex flex-column justify-content-between">' +
-                    '<div>' +
-                        `<h5 class="card-title text-truncate">${item.Titulo}</h5>` +
-                        '<p class="card-text small text-muted mb-2 d-flex gap-1 align-items-center">' +
-                            `<span class="badge bg-secondary">${item.Plataforma?.descricao || 'Não informado'}</span> ` +
-                            `<span class="badge bg-secondary">${item.Status?.descricao || 'Não informado'}</span> ` +
-                        '</p>' +
-                    '</div>' +
-                    `<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${progresso}" aria-valuemin="0" aria-valuemax="100">`+
-                        `<div class="progress-bar progress-bar-striped progress-bar-animated" style="width: ${progresso}%">`+ 
-                        `${progresso}%` +
-                        '</div>' +
-                    '</div>' +
+                '<div>' +
+                `<h5 class="card-title text-truncate">${item.Titulo}</h5>` +
+                '<p class="card-text small text-muted mb-2 d-flex gap-1 align-items-center">' +
+                `<span class="badge bg-secondary">${item.Plataforma?.descricao || 'Não informado'}</span> ` +
+                `<span class="badge bg-secondary">${item.Status?.descricao || 'Não informado'}</span> ` +
+                '</p>' +
+                '</div>' +
+                `<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${progresso}" aria-valuemin="0" aria-valuemax="100">` +
+                `<div class="progress-bar progress-bar-striped progress-bar-animated" style="width: ${progresso}%">` +
+                `${progresso}%` +
+                '</div>' +
+                '</div>' +
 
-                    `<div class="border-top pt-2 mt-2 small text-muted">📅 ${dataInicio} até ${dataFim}</div>` +
+                `<div class="border-top pt-2 mt-2 small text-muted">📅 ${dataInicio} até ${dataFim}</div>` +
                 '</div>';
 
             const coluna = document.createElement('div');
             coluna.className = 'col-md-3 col-sm-6 mb-4';
-            
+
             coluna.appendChild(card);
             divRow.appendChild(coluna);
         });
@@ -661,9 +657,9 @@ export class CatalogoView {
         if (totalPaginas > 1) {
             const navPaginacao = document.createElement('nav');
             navPaginacao.className = 'd-flex justify-content-center mt-4 w-100';
-            
+
             // Configuração da janela visual: quantos números mostrar antes e depois da página ativa
-            const maxBotoesVisiveis = 2; 
+            const maxBotoesVisiveis = 2;
             let htmlItens = '';
 
             // Botão para ir direto para a PRIMEIRA página (mostra apenas se estiver longe dela)
@@ -723,7 +719,7 @@ export class CatalogoView {
                 if (botaoLink) {
                     const paginaSelecionada = parseInt(botaoLink.dataset.pagina);
                     if (termoBusca) {
-                        await this.buscarColecaoLocal(termoBusca, paginaSelecionada);
+                        await this.listarColecaoPorDescricao(termoBusca, paginaSelecionada); 
                     } else {
                         this.paginaAtualColecao = paginaSelecionada;
                         await this.listarColecao();
@@ -736,13 +732,13 @@ export class CatalogoView {
     };
 
     // Renderiza os títulos adicionados recentemente na página de catálogo
-    renderRecentes(elementoId)  {
-        const recentes = this.vm.recentes(4);       
+    renderRecentes(elementoId) {
+        const recentes = this.vm.recentes(4);
         const elementoDestino = document.getElementById(elementoId);
 
         if (!elementoDestino) return;
         elementoDestino.innerHTML = "";
-        
+
         recentes.forEach(titulo => {
             let fonteImagem = utils.renderMiniatura(titulo.Poster_Path);
 
@@ -816,8 +812,8 @@ export class CatalogoView {
 
             const divDataAdicao = document.createElement('div');
             divDataAdicao.className = 'border-top pt-2 mt-2 small text-muted';
-            const dataUTC = new Date(titulo.Adicao);                
-            const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);                        
+            const dataUTC = new Date(titulo.Adicao);
+            const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
             divDataAdicao.textContent = `📅 ${dataLocal.toLocaleDateString("pt-BR")}`;
 
             divCardBody.appendChild(divDataAdicao);
@@ -830,54 +826,54 @@ export class CatalogoView {
             elementoDestino.appendChild(coluna);
         });
     };
-    
+
     // Renderiza os títulos recentes por status na página de catálogo
-    renderCardStatus(status,elementoId) {
-        const catalogoStatus = this.vm.recentesPorStatus(status,4);
-        const elementoDestino = document.getElementById(elementoId);    
+    renderCardStatus(status, elementoId) {
+        const catalogoStatus = this.vm.recentesPorStatus(status, 4);
+        const elementoDestino = document.getElementById(elementoId);
 
         if (elementoDestino) {
-                elementoDestino.innerHTML = "";
-                catalogoStatus.forEach(titulo => {
+            elementoDestino.innerHTML = "";
+            catalogoStatus.forEach(titulo => {
                 const li = document.createElement('li');
                 li.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
-    
+
                 const imgCapa = document.createElement('img');
                 imgCapa.src = utils.renderMiniatura(titulo.Poster_Path);
                 imgCapa.alt = titulo.Titulo;
                 imgCapa.width = 60;
                 imgCapa.height = 80;
                 imgCapa.classList.add('flex-shrink-0');
-    
+
                 const divInfo = document.createElement('div');
                 divInfo.classList.add('d-flex', 'gap-2', 'w-100', 'justify-content-between', 'align-items-center');
-    
+
                 const divTitulo = document.createElement('div');
                 divTitulo.classList.add('d-flex', 'flex-column', 'gap-1');
-    
+
                 const h6Titulo = document.createElement('h6');
                 h6Titulo.classList.add('mb-0');
                 h6Titulo.textContent = titulo.Titulo;
-    
+
                 const divProgresso = document.createElement('div');
                 divProgresso.classList.add('progress');
                 divProgresso.setAttribute('role', 'progressbar');
                 divProgresso.setAttribute('aria-label', 'Progresso');
-                divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
+                divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos / titulo.Episodios).toFixed(1) * 100);
                 divProgresso.setAttribute('aria-valuemin', '0');
                 divProgresso.setAttribute('aria-valuemax', '100');
-    
+
                 const divBarraProgresso = document.createElement('div');
                 divBarraProgresso.classList.add('progress-bar');
-                divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-                divBarraProgresso.textContent =  `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-    
+                divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos / titulo.Episodios).toFixed(1) * 100}%`;
+                divBarraProgresso.textContent = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos / titulo.Episodios).toFixed(1) * 100}%`;
+
                 const smallDataAdicao = document.createElement('small');
-                smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
-                const dataUTC = new Date(titulo.Adicao);                
+                smallDataAdicao.classList.add('opacity-50', 'text-nowrap');
+                const dataUTC = new Date(titulo.Adicao);
                 const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
                 smallDataAdicao.textContent = utils.calculaTempoData(dataLocal);
-    
+
                 divTitulo.appendChild(h6Titulo);
                 divProgresso.appendChild(divBarraProgresso);
                 divInfo.appendChild(divTitulo);
@@ -886,18 +882,18 @@ export class CatalogoView {
                 li.appendChild(divInfo);
                 li.appendChild(smallDataAdicao);
                 elementoDestino.appendChild(li);
-                    
+
             });
         }
     };
-    
-    // Renderiza os títulos recentes por tipo na página de catálogo
-    renderCardTipo(tipo,elementoId) {
-        const catalogoTipo = this.vm.topPorScore(tipo,4);
-        const elementoDestino = document.getElementById(elementoId);
-        
 
-         if (elementoDestino) {
+    // Renderiza os títulos recentes por tipo na página de catálogo
+    renderCardTipo(tipo, elementoId) {
+        const catalogoTipo = this.vm.topPorScore(tipo, 4);
+        const elementoDestino = document.getElementById(elementoId);
+
+
+        if (elementoDestino) {
             elementoDestino.innerHTML = "";
             catalogoTipo.forEach(titulo => {
                 const li = document.createElement('li');
@@ -926,7 +922,7 @@ export class CatalogoView {
                 li.appendChild(divTituloContainer);
                 li.appendChild(spanScore);
                 elementoDestino.appendChild(li);
-                
+
             });
         }
     };
@@ -934,9 +930,9 @@ export class CatalogoView {
     // Renderiza os títulos recentes de forma geral na página de catálogo
     renderCardGeral(elementoId) {
         const catalogoTipo = this.vm.topGeral(4);
-        const elementoDestino = document.getElementById(elementoId);     
+        const elementoDestino = document.getElementById(elementoId);
 
-         if (elementoDestino) {
+        if (elementoDestino) {
             elementoDestino.innerHTML = "";
             catalogoTipo.forEach(titulo => {
                 const li = document.createElement('li');
@@ -965,20 +961,20 @@ export class CatalogoView {
                 li.appendChild(divTituloContainer);
                 li.appendChild(spanScore);
                 elementoDestino.appendChild(li);
-                
+
             });
         }
     };
 
     // Renderiza a contagem geral de títulos, episódios, assistidos, dias, horas e pontuação média na página de catálogo
-    renderContagemGeral(elementoId, tipoContagem,resumo) {
+    renderContagemGeral(elementoId, tipoContagem, resumo) {
         const catalogo = resumo || this.vm.resumoGeral();
         const elementoDestino = document.getElementById(elementoId);
-        const porcentagem = catalogo.totalAssistidos/catalogo.totalEpisodios*100;   
-       
-        let contagem = 0;      
-       
-         if (tipoContagem === 'Progresso') {
+        const porcentagem = catalogo.totalAssistidos / catalogo.totalEpisodios * 100;
+
+        let contagem = 0;
+
+        if (tipoContagem === 'Progresso') {
             contagem = catalogo.totalAssistidos
 
             const h6Card = document.createElement('h6');
@@ -1041,15 +1037,15 @@ export class CatalogoView {
             h6Card.classList.add('card-subtitle', 'mb-2', 'text-body-secondary');
             h6Card.textContent = contagem;
             elementoDestino.appendChild(h6Card);
-            
-        }else if (tipoContagem === 'Horas') {
+
+        } else if (tipoContagem === 'Horas') {
             contagem = catalogo.totalHoras
 
             const h6Card = document.createElement('h6');
             h6Card.classList.add('card-subtitle', 'mb-2', 'text-body-secondary');
             h6Card.textContent = contagem;
             elementoDestino.appendChild(h6Card);
-            
+
         } else if (tipoContagem === 'Completado') {
             contagem = catalogo.completado
 
@@ -1127,56 +1123,56 @@ export class CatalogoView {
             h6Card.classList.add('card-subtitle', 'mb-2', 'text-body-secondary');
             h6Card.textContent = contagem;
             elementoDestino.appendChild(h6Card);
-        }            
+        }
     };
-    async renderAssistindo(statusFiltro, elementoDestinoId){
-        const catalogoStatus = this.vm.assistindo(statusFiltro,4);
+    async renderAssistindo(statusFiltro, elementoDestinoId) {
+        const catalogoStatus = this.vm.assistindo(statusFiltro, 4);
         const elementoDestino = document.getElementById(elementoDestinoId);
 
         if (elementoDestino) {
-                elementoDestino.innerHTML = "";
-                if (!catalogoStatus.length == 0) {
+            elementoDestino.innerHTML = "";
+            if (!catalogoStatus.length == 0) {
 
-                    catalogoStatus.forEach(titulo => {
+                catalogoStatus.forEach(titulo => {
                     const li = document.createElement('li');
                     li.classList.add('list-group-item', 'd-flex', 'gap-2', 'p-0');
-        
+
                     const imgCapa = document.createElement('img');
                     imgCapa.src = utils.renderMiniatura(titulo.Poster_Path);
                     imgCapa.alt = titulo.Titulo;
                     imgCapa.width = 80;
                     imgCapa.height = 120;
                     imgCapa.classList.add('flex-shrink-0');
-        
+
                     const divInfo = document.createElement('div');
                     divInfo.classList.add('d-flex', 'gap-2', 'w-100', 'justify-content-between', 'align-items-center');
-        
+
                     const divTitulo = document.createElement('div');
                     divTitulo.classList.add('d-flex', 'flex-column', 'gap-1');
-        
+
                     const h6Titulo = document.createElement('h6');
                     h6Titulo.classList.add('mb-0');
                     h6Titulo.textContent = titulo.Titulo;
-        
+
                     const divProgresso = document.createElement('div');
                     divProgresso.classList.add('progress');
                     divProgresso.setAttribute('role', 'progressbar');
                     divProgresso.setAttribute('aria-label', 'Progresso');
-                    divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100);
+                    divProgresso.setAttribute('aria-valuenow', titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos / titulo.Episodios).toFixed(1) * 100);
                     divProgresso.setAttribute('aria-valuemin', '0');
                     divProgresso.setAttribute('aria-valuemax', '100');
-        
+
                     const divBarraProgresso = document.createElement('div');
                     divBarraProgresso.classList.add('progress-bar');
-                    divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-                    divBarraProgresso.textContent =  `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos/titulo.Episodios).toFixed(1)*100}%`;
-        
+                    divBarraProgresso.style.width = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos / titulo.Episodios).toFixed(1) * 100}%`;
+                    divBarraProgresso.textContent = `${titulo.Status.descricao === 'Planejado' ? 0 : (titulo.Assistidos / titulo.Episodios).toFixed(1) * 100}%`;
+
                     const smallDataAdicao = document.createElement('small');
-                    smallDataAdicao.classList.add('opacity-50', 'text-nowrap');  
-                    const dataUTC = new Date(titulo.Adicao);                
+                    smallDataAdicao.classList.add('opacity-50', 'text-nowrap');
+                    const dataUTC = new Date(titulo.Adicao);
                     const dataLocal = new Date(dataUTC.getTime() + dataUTC.getTimezoneOffset() * 60000);
                     smallDataAdicao.textContent = utils.calculaTempoData(dataLocal);
-        
+
                     divProgresso.appendChild(divBarraProgresso);
                     divInfo.appendChild(divTitulo);
                     divTitulo.appendChild(h6Titulo);
@@ -1185,7 +1181,7 @@ export class CatalogoView {
                     li.appendChild(imgCapa);
                     li.appendChild(divInfo);
                     elementoDestino.appendChild(li);
-                        
+
                 });
             } else {
                 const liMensagem = document.createElement('li');
@@ -1197,11 +1193,11 @@ export class CatalogoView {
     };
 
     // Renderiza os títulos mais frequentes na página do catalogo
-    renderCardFrequentes(tipo,elementoId) {
-        const catalogoTipo = this.vm.fequentes(tipo,4);
-        const elementoDestino = document.getElementById(elementoId);      
+    renderCardFrequentes(tipo, elementoId) {
+        const catalogoTipo = this.vm.fequentes(tipo, 4);
+        const elementoDestino = document.getElementById(elementoId);
 
-         if (elementoDestino) {
+        if (elementoDestino) {
             elementoDestino.innerHTML = "";
             catalogoTipo.forEach(titulo => {
                 const li = document.createElement('li');
@@ -1230,26 +1226,26 @@ export class CatalogoView {
                 li.appendChild(divTituloContainer);
                 li.appendChild(spanScore);
                 elementoDestino.appendChild(li);
-                
+
             });
         }
     };
 
 
     //Lista os status disponíveis no select da página de catálogo
-    async listarStatus(elementoId) { 
-        const statusVM = new StatusViewModel();  
-        const status =  await statusVM.obterStatus('Catalogo')
-        
-        utils.popularSelect(status,elementoId)
+    async listarStatus(elementoId) {
+        const statusVM = new StatusViewModel();
+        const status = await statusVM.obterStatus('Catalogo')
+
+        utils.popularSelect(status, elementoId)
     };
 
     //Lista os tipos disponíveis no select da página de catálogo
-    async listarTipos(elementoId) {    
+    async listarTipos(elementoId) {
         const tiposVM = new TipoViewModel();
-        const tipos =  await tiposVM.obterTipos('Catalogo')
-        
-        utils.popularSelect(tipos,elementoId)
+        const tipos = await tiposVM.obterTipos('Catalogo')
+
+        utils.popularSelect(tipos, elementoId)
     };
 
     //Lista as plataformas disponíveis no select da página de catálogo
@@ -1259,13 +1255,13 @@ export class CatalogoView {
 
         utils.popularSelect(plataforma, elementoId);
     };
-    
+
     async renderizarCardsBusca(termobusca, elementoId) {
         const elementoDestino = document.getElementById(elementoId);
-        
+
         if (!elementoDestino) {
             console.warn(`Aviso: O elemento "${elementoId}" ainda não está pronto no DOM.`);
-            return; 
+            return;
         }
 
         // Define o estado visual de carregamento
@@ -1273,20 +1269,20 @@ export class CatalogoView {
 
         try {
             const items = await this.vm.obterDadosTMDB(termobusca, elementoId);
-            
+
             // Limpa o estado de carregamento
             elementoDestino.innerHTML = '';
-            
+
             if (!items || items.length === 0) {
                 elementoDestino.innerHTML = '<p>Nenhuma mídia encontrada no TMDB.</p>';
                 return;
             }
-            
+
             // Cria a div com as classes de grid do Bootstrap
             const divLinha = document.createElement('div');
             divLinha.className = 'row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4';
-            
-            items.forEach(item => { 
+
+            items.forEach(item => {
                 // 1. Cria a coluna do grid
                 const divColuna = document.createElement('div');
                 divColuna.className = 'col';
@@ -1294,10 +1290,10 @@ export class CatalogoView {
                 // 2. Cria a estrutura do card
                 const elementoCard = document.createElement('div');
                 elementoCard.className = 'card h-100';
-                
+
                 const capa = item.image ? item.image : "https://placeholder.com";
                 const tituloLimpo = item.title.replace(/"/g, '&quot;').replace(/'/g, "\\'");
-                
+
                 elementoCard.innerHTML = `
                     <img class="card-img-top" src="${capa}" alt="${tituloLimpo}">
                     <div class="card-body d-flex flex-column justify-content-between">
@@ -1315,22 +1311,25 @@ export class CatalogoView {
                     </div>
                 `;
 
-                // 3. Adiciona os elementos de ação dinâmicos do select (antigo bloco !isEstatico)
+                // 3. Adiciona os elementos de ação dinâmicos do select
                 const containerAcao = elementoCard.querySelector(`.action-container-${item.id}`);
-                
+
                 const selectStatus = document.createElement('select');
-                selectStatus.id = "status-adicionar";
+                // CORREÇÃO 1: Uso correto de crases para interpolar o ID dinâmico
+                selectStatus.id = `status-buscar-${item.id}`;
                 selectStatus.className = 'status-select form-select form-select-sm mb-2';
                 selectStatus.required = true;
-                
-                this.listarStatus("status-adicionar");
 
+                // CORREÇÃO 2: Passando o ID dinâmico ou o próprio elemento para popular as opções corretamente em cada card
+                this.listarStatus(selectStatus.id);
 
                 // Escutador do select que invoca o método alternarFormulario da classe
                 selectStatus.addEventListener('change', (e) => {
 
                     const payload = {
-                        statusId: document.getElementById('status-adicionar').value,
+                        // CORREÇÃO 3: Captura o valor do select correto que disparou o evento (e.target.value) 
+                        // em vez de buscar um ID estático global 'status-buscar'
+                        statusId: e.target.value,
                         episodios: item.episodes || 0,
                         temporada: item.season || 0,
                         idtmdb: item.id,
@@ -1364,12 +1363,12 @@ export class CatalogoView {
         }
     };
 
-    alternarFormulario( val, containerAlvo, payload) {
+    alternarFormulario(val, containerAlvo, payload) {
         // Localiza e limpa qualquer tracker anterior que já esteja aberto neste card
         const formAntigo = containerAlvo.querySelector(`.form-tracker-dinamico`);
         if (formAntigo) {
             formAntigo.remove();
-        }    
+        }
 
         // Se o usuário selecionou a opção vazia de volta, cancela a criação
         if (val === "") return;
@@ -1378,16 +1377,15 @@ export class CatalogoView {
         const divForm = document.createElement('div');
         divForm.className = 'form-tracker-dinamico mt-2 border-top pt-2';
 
-
         divForm.innerHTML = `
             <div class="mb-2">
-                <label for="plataforma-adicionar" class="form-label small mb-1 fw-bold">Plataforma</label>
-                <select class="form-select" id="plataforma-adicionar" required></select>
+                <label for="plataforma-buscar" class="form-label small mb-1 fw-bold">Plataforma</label>
+                <select class="form-select" id="plataforma-buscar" required></select>
             </div>
             <div class="row g-2 mb-2">
                 <div class="col-8">
                     <label class="form-label small mb-1 fw-bold">Minha Nota</label>
-                    <select id="pontuacao-adicionar" class="form-select form-select-sm">
+                    <select id="pontuacao-buscar" class="form-select form-select-sm">
                         <option value="10">⭐ (10) Obra-Prima</option>
                         <option value="9">⭐ (9) Excelente</option>
                         <option value="8">⭐ (8) Muito Bom</option>
@@ -1400,15 +1398,18 @@ export class CatalogoView {
                         <option value="1">⭐ (1) Tragédia</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="row g-2 mb-2">            
                 <div class="col-4">
-                    <label for="tipo-adicionar" class="form-label small fw-bold">Tipo</label>
-                    <select class="form-select form-select-sm" id="tipo-adicionar" required></select>
+                    <label for="tipo-buscar" class="form-label small fw-bold">Tipo</label>
+                    <select class="form-select form-select-sm" id="tipo-buscar" required></select>
                 </div>
             </div>
             <div class="row g-2 mb-2">                
-                <div class="col-4">
+                <div class="col">
                     <label class="form-label small mb-1 fw-bold">Episódios Assistidos</label>
-                    <input type="number" id="assistidos-adicionar" class="form-control form-control-sm" value="0" min="0" required>
+                    <input type="number" id="assistidos-buscar" class="form-control form-control-sm" value="0" min="0" required>
                 </div>
             </div>
 
@@ -1417,38 +1418,39 @@ export class CatalogoView {
                     <label class="form-label small mb-1 fw-bold">Início</label>
                     <input type="date" id="data-inicio" class="form-control form-control-sm">
                 </div>
+            </div>
+
+            <div class="row g-2 mb-3">
                 <div class="col-6">
                     <label class="form-label small mb-1 fw-bold">Fim</label>
                     <input type="date" id="data-fim" class="form-control form-control-sm">
                 </div>
             </div>
             <div class="mb-2">
-                <input type="hidden" id="status-adicionar" value="${payload.statusId}">
-                <input type="hidden" id="temporada-adicionar" value="${payload.temporada}">
-                <input type="hidden" id="episodios-adicionar" value="${payload.episodios}">
-                <input type="hidden" id="idtmdb-adicionar" value="${payload.idtmdb}">
-                <input type="hidden" id="originalName-adicionar" value="${payload.originalName}">
-                <input type="hidden" id="overview-adicionar" value="${payload.overview}">
-                <input type="hidden" id="posterPath-adicionar" value="${payload.posterPath}">
-                <input type="hidden" id="mediaType-adicionar" value="${payload.mediaType}">
-                <input type="hidden" id="genresIds-adicionar" value="${payload.genresIds}">
+                <input type="hidden" id="status-buscar" value="${payload.statusId}">
+                <input type="hidden" id="temporada-buscar" value="${payload.temporada}">
+                <input type="hidden" id="episodios-buscar" value="${payload.episodios}">
+                <input type="hidden" id="idtmdb-buscar" value="${payload.idtmdb}">
+                <input type="hidden" id="originalName-buscar" value="${payload.originalName}">
+                <input type="hidden" id="overview-buscar" value="${payload.overview}">
+                <input type="hidden" id="posterPath-buscar" value="${payload.posterPath}">
                 <input type="hidden" id="tmdb-lbl-pop" value="${payload.popularity}">
-                <input type="hidden" id="firstAirDate-adicionar" value="${payload.firstAirDate}">                
+                <input type="hidden" id="firstAirDate-buscar" value="${payload.firstAirDate}">                
                 <input type="hidden" id="tmdb-lbl-vote" value="${payload.voteAverage}">       
                 <input type="hidden" id="tmdb-lbl-year" value="${payload.year}">                
             </div>
         `;
 
-        this.listarTipos("tipo-adicionar");
-        this.listarPlataforma("plataforma-adicionar");
+        this.listarTipos("tipo-buscar");
+        this.listarPlataforma("plataforma-buscar");
 
         // Instancia o botão de confirmação com escopo léxico puro
         const btnSalvar = document.createElement('button');
         btnSalvar.className = 'btn btn-success btn-sm w-100 btn-salvar-dinamico';
-        btnSalvar.textContent = 'Confirmar e Salvar';
-        
+        btnSalvar.textContent = 'Salvar';
+
         btnSalvar.addEventListener('click', async () => {
-             await this.salvarFormularioCatalogo(formAntigo);
+            await this.salvarFormularioCatalogo(formAntigo);
         });
 
         divForm.appendChild(btnSalvar);
@@ -1457,41 +1459,41 @@ export class CatalogoView {
 
     async dispararAtualizacaoGeralMidias() {
         abrirModalAcao({
-        titulo: "Atualizar Catálogo via TMDB",
-        conteudoHTML: `
+            titulo: "Atualizar Catálogo via TMDB",
+            conteudoHTML: `
         <p>Deseja sincronizar e atualizar as informações os títulos do seu banco de dados com o TMDB agora?</p>
         <div id="status-sincronizacao-lote" class="text-muted small fw-bold"></div>
         `,
-        textoConfirmar: "Iniciar Atualização",
-        classeBotao: "btn-primary",
+            textoConfirmar: "Iniciar Atualização",
+            classeBotao: "btn-primary",
 
             onConfirmar: async () => {
                 const containerStatus = document.getElementById("status-sincronizacao-lote");
-                
+
                 try {
-                if (containerStatus) containerStatus.innerHTML = "⏳ Pesquisando títulos no TMDB e vinculando identificadores...";
+                    if (containerStatus) containerStatus.innerHTML = "⏳ Pesquisando títulos no TMDB e vinculando identificadores...";
 
-                const resultado = await this.vm.atualizarCatalogoEmLote((mensagem) => {
-                    if (containerStatus) containerStatus.innerHTML = `⏳ ${mensagem}`;
-                });
+                    const resultado = await this.vm.atualizarCatalogoEmLote((mensagem) => {
+                        if (containerStatus) containerStatus.innerHTML = `⏳ ${mensagem}`;
+                    });
 
-                if (containerStatus) {
-                    containerStatus.innerHTML = `✅ Concluído! ${resultado.processados} itens vinculados e atualizados. Falhas: ${resultado.erros}`;
-                }
-                
-                // Atualiza a interface de forma segura verificando qual elemento existe no DOM
-                const possuiTabela = document.getElementById("tabelaCatalogo");
-                const possuiGridCards = document.getElementById("saved-grid");
+                    if (containerStatus) {
+                        containerStatus.innerHTML = `✅ Concluído! ${resultado.processados} itens vinculados e atualizados. Falhas: ${resultado.erros}`;
+                    }
 
-                if (possuiTabela) {
-                    await this.listarCatalogo();
-                } else if (possuiGridCards) {
-                    await this.listarColecao();
-                }
-                
+                    // Atualiza a interface de forma segura verificando qual elemento existe no DOM
+                    const possuiTabela = document.getElementById("tabelaCatalogo");
+                    const possuiGridCards = document.getElementById("saved-grid");
+
+                    if (possuiTabela) {
+                        await this.listarCatalogo();
+                    } else if (possuiGridCards) {
+                        await this.listarColecao();
+                    }
+
                 } catch (erro) {
-                if (containerStatus) containerStatus.innerHTML = `❌ Ocorreu um erro crítico: ${erro.message}`;
-                return false;
+                    if (containerStatus) containerStatus.innerHTML = `❌ Ocorreu um erro crítico: ${erro.message}`;
+                    return false;
                 }
             }
         });
@@ -1507,7 +1509,7 @@ export class CatalogoView {
             const cardAlvo = e.target.closest("[data-id]");
             if (!cardAlvo) return;
 
-            const idTitulo = cardAlvo.dataset.id;           
+            const idTitulo = cardAlvo.dataset.id;
             // Dispara o mesmo método de edição que a tabela usa
             await this.abrirModalEditarCatalogo(idTitulo);
         });

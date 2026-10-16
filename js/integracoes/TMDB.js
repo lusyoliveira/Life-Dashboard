@@ -16,7 +16,7 @@ const apiTMDB = {
         // }
 
         const apiKey = dadosConfig.chaveTMDB;
-        const urlProgramas = `${urlBase}/search/multi/?api_key=${apiKey}&query=${encodeURIComponent(termoBusca)}&language=pt-BR`;   
+        const urlProgramas = `${urlBase}/search/multi?api_key=${apiKey}&query=${encodeURIComponent(termoBusca)}&language=pt-BR`;   
 
         try {
             const response = await fetch(urlProgramas);

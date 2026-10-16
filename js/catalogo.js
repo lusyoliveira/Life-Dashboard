@@ -18,7 +18,7 @@ export async function inicializarCatalogo() {
     const statusView = new StatusView(statusVM);
     const tipoVM = new TipoViewModel();
     const tipoView = new TiposView(tipoVM);
-    const botaoAdicionar = document.getElementById("adicionarCatalogo");
+    //const botaoAdicionar = document.getElementById("adicionarCatalogo");
     const botaoPlataforma = document.getElementById('adiciona-plataforma'); 
     const botaoStatus = document.getElementById('adiciona-status'); 
     const botaoTipo = document.getElementById('adiciona-tipo'); 
@@ -67,7 +67,7 @@ export async function inicializarCatalogo() {
     catalogoView.renderGraficos();
 
     //Adicionados Recentemente
-    catalogoView.renderRecentes("recentes");
+    //catalogoView.renderRecentes("recentes");
 
     //Card por Status
     catalogoView.renderCardStatus("Assistindo", "lista-assistindo");
@@ -86,9 +86,9 @@ export async function inicializarCatalogo() {
     catalogoView.renderCardFrequentes("Desenho", "frequentes-desenho");
 
     //Adicionar Catalogo
-    botaoAdicionar.addEventListener("click", async () => {
-        await catalogoView.abrirModalCriarCatalogo();
-    });
+    // botaoAdicionar.addEventListener("click", async () => {
+    //     await catalogoView.abrirModalCriarCatalogo();
+    // });
 
     //Adiciona plataforma
     botaoPlataforma.addEventListener("click", async (evento) => { 

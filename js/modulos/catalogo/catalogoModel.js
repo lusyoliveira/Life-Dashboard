@@ -48,7 +48,7 @@ export default class Catalogo {
         this.First_Air_Date = First_Air_Date
         this.Year = Year
         this.Vote_Average = Vote_Average
-        this.listaTemporadas = listaTemporadas.map(
+        this.listaTemporadas = (Array.isArray(listaTemporadas) ? listaTemporadas : []).map(
             temp => new Temporada(temp.id, 
                                     temp.tituloId, 
                                     temp.id_tmdb_temporada, 
@@ -61,6 +61,19 @@ export default class Catalogo {
                                     temp.quantidade_episodios, 
                                     temp.listaEpisodios)
         );
+        // this.listaTemporadas = listaTemporadas.map(
+        //     temp => new Temporada(temp.id, 
+        //                             temp.tituloId, 
+        //                             temp.id_tmdb_temporada, 
+        //                             temp.numero_temporada, 
+        //                             temp.nome_temporada, 
+        //                             temp.sinopse, 
+        //                             temp.estreia, 
+        //                             temp.poster, 
+        //                             temp.votos, 
+        //                             temp.quantidade_episodios, 
+        //                             temp.listaEpisodios)
+        // );
     }
 
     get Dias() {
