@@ -249,27 +249,41 @@ export class CatalogoView {
         }
     };
     async salvarFormularioCatalogo(form) {
+        // Se o formulário veio da busca dinâmica, recuperamos os dados originais do TMDB salvos no dataset
+        let dadosTMDB = {};
+        if (form.dataset.payload) {
+            try {
+                dadosTMDB = JSON.parse(form.dataset.payload);
+            } catch (e) {
+                console.error("Erro ao ler payload do formulário", e);
+            }
+        }
+
         const idInput = form.querySelector('#id-adicionar')?.value || null;
-        const descricao = form.querySelector('#titulo-adicionar').value;
-        const capa = form.querySelector('#capa-adicionar').value;
-        const dataInicio = form.querySelector('#data-inicio').value;
-        const dataFim = form.querySelector('#data-fim').value;
-        const tipoId = form.querySelector('#tipo-adicionar').value;
-        const statusId = form.querySelector('#status-adicionar').value;
-        const plataformaId = form.querySelector('#plataforma-adicionar').value;
-        const episodios = form.querySelector('#episodios-adicionar').value;
-        const assistidos = form.querySelector('#assistidos-adicionar').value;
-        const temporada = form.querySelector('#temporada-adicionar').value;
-        const pontuacao = form.querySelector('#pontuacao-adicionar').value;
-        const vezes = form.querySelector('#vezes-adicionar').value;
-        const idtmdb = form.querySelector('#id-tmdb-adicionar')?.value || '';
-        const originalName = form.querySelector('#titulo-adicionar').value;
-        const overview = form.querySelector('#overview-adicionar')?.value || '';
-        const posterPath = capa || '';
-        const popularity = form.querySelector('#tmdb-lbl-pop')?.textContent || 0;
-        const firstAirDate = form.querySelector('#first-air-date-adicionar')?.value || null;
-        const year = form.querySelector('#tmdb-lbl-year')?.textContent || '';
-        const voteAverage = form.querySelector('#tmdb-lbl-vote')?.textContent || 0;
+        
+        // Prioriza o dado do payload da busca, se não existir tenta buscar dos inputs manuais
+        const descricao = dadosTMDB.titulo || form.querySelector('#titulo-adicionar')?.value || '';
+        const capa = dadosTMDB.posterPath || form.querySelector('#capa-adicionar')?.value || '';
+        
+        // Campos preenchidos pelo usuário no formulário
+        const dataInicio = form.querySelector('[id^="data-inicio-buscar"]')?.value || form.querySelector('#data-inicio')?.value || '';
+        const dataFim = form.querySelector('[id^="data-fim-buscar"]')?.value || form.querySelector('#data-fim')?.value || '';
+        const tipoId = form.querySelector('[id^="tipo-buscar"]')?.value || form.querySelector('#tipo-adicionar')?.value || '';
+        const statusId = dadosTMDB.statusId || form.querySelector('#status-adicionar')?.value || '';
+        const plataformaId = form.querySelector('[id^="plataforma-buscar"]')?.value || form.querySelector('#plataforma-adicionar')?.value || '';  
+        const episodios = dadosTMDB.episodios || form.querySelector('#episodios-adicionar')?.value || 0;
+        const assistidos = form.querySelector('[id^="assistidos-buscar"]')?.value || form.querySelector('#assistidos-adicionar')?.value || 0;
+        const temporada = dadosTMDB.temporada || form.querySelector('#temporada-adicionar')?.value || 0;
+        const pontuacao = form.querySelector('[id^="pontuacao-buscar"]')?.value || form.querySelector('#pontuacao-adicionar')?.value || 0;
+        const vezes = form.querySelector('#vezes-adicionar')?.value || 1;
+        const idtmdb = dadosTMDB.idtmdb || form.querySelector('#id-tmdb-adicionar')?.value || '';
+        const originalName = dadosTMDB.originalName || descricao;
+        const overview = dadosTMDB.overview || form.querySelector('#overview-adicionar')?.value || '';
+        const posterPath = capa;
+        const popularity = dadosTMDB.popularity || '0';
+        const firstAirDate = dadosTMDB.firstAirDate || '';
+        const year = dadosTMDB.year || '';
+        const voteAverage = dadosTMDB.scoreTMDB || '0';
         const elementosTemporadas = form.querySelectorAll('#accordionTemporadas .item-temporada');
         const listaTemporadas = [];
 
@@ -719,7 +733,7 @@ export class CatalogoView {
                 if (botaoLink) {
                     const paginaSelecionada = parseInt(botaoLink.dataset.pagina);
                     if (termoBusca) {
-                        await this.listarColecaoPorDescricao(termoBusca, paginaSelecionada); 
+                        await this.listarColecaoPorDescricao(termoBusca, paginaSelecionada);
                     } else {
                         this.paginaAtualColecao = paginaSelecionada;
                         await this.listarColecao();
@@ -1231,7 +1245,6 @@ export class CatalogoView {
         }
     };
 
-
     //Lista os status disponíveis no select da página de catálogo
     async listarStatus(elementoId) {
         const statusVM = new StatusViewModel();
@@ -1241,19 +1254,33 @@ export class CatalogoView {
     };
 
     //Lista os tipos disponíveis no select da página de catálogo
-    async listarTipos(elementoId) {
-        const tiposVM = new TipoViewModel();
-        const tipos = await tiposVM.obterTipos('Catalogo')
+    // async listarTipos(elementoId) {
+    //     const tiposVM = new TipoViewModel();
+    //     const tipos = await tiposVM.obterTipos('Catalogo')
 
-        utils.popularSelect(tipos, elementoId)
+    //     utils.popularSelect(tipos, elementoId)
+    // };
+    async listarTipos(elementoAlvo) {
+        const tiposVM = new TipoViewModel();
+        const tipos = await tiposVM.obterTipos('Catalogo');
+
+        const idOuElemento = typeof elementoAlvo === 'string' ? elementoAlvo : elementoAlvo.id;
+        utils.popularSelect(tipos, idOuElemento);
     };
 
     //Lista as plataformas disponíveis no select da página de catálogo
-    async listarPlataforma(elementoId) {
+    // async listarPlataforma(elementoId) {
+    //     const plataformaVM = new PlataformaViewModel();
+    //     const plataforma = await plataformaVM.obterPlataforma('Catalogo');
+
+    //     utils.popularSelect(plataforma, elementoId);
+    // };
+    async listarPlataforma(elementoAlvo) {
         const plataformaVM = new PlataformaViewModel();
         const plataforma = await plataformaVM.obterPlataforma('Catalogo');
 
-        utils.popularSelect(plataforma, elementoId);
+        const idOuElemento = typeof elementoAlvo === 'string' ? elementoAlvo : elementoAlvo.id;
+        utils.popularSelect(plataforma, idOuElemento);
     };
 
     async renderizarCardsBusca(termobusca, elementoId) {
@@ -1264,198 +1291,170 @@ export class CatalogoView {
             return;
         }
 
-        // Define o estado visual de carregamento
-        elementoDestino.innerHTML = '<p>Buscando no catálogo do TMDB...</p>';
+        elementoDestino.innerHTML = '<p class="text-center text-muted my-3">Buscando no catálogo do TMDB...</p>';
 
         try {
             const items = await this.vm.obterDadosTMDB(termobusca, elementoId);
-
-            // Limpa o estado de carregamento
             elementoDestino.innerHTML = '';
 
             if (!items || items.length === 0) {
-                elementoDestino.innerHTML = '<p>Nenhuma mídia encontrada no TMDB.</p>';
+                elementoDestino.innerHTML = '<p class="text-center text-muted my-3">Nenhuma mídia encontrada no TMDB.</p>';
                 return;
             }
 
-            // Cria a div com as classes de grid do Bootstrap
             const divLinha = document.createElement('div');
             divLinha.className = 'row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4';
 
             items.forEach(item => {
-                // 1. Cria a coluna do grid
                 const divColuna = document.createElement('div');
                 divColuna.className = 'col';
 
-                // 2. Cria a estrutura do card
                 const elementoCard = document.createElement('div');
-                elementoCard.className = 'card h-100';
+                elementoCard.className = 'card h-100 shadow-sm';
 
-                const capa = item.image ? item.image : "https://placeholder.com";
-                const tituloLimpo = item.title.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+                const capa = item.image ? item.image : "https://via.placeholder.com/300x450?text=Sem+Capa";
+                const tituloLimpo = (item.title || '').replace(/"/g, '&quot;').replace(/'/g, "\\'");
 
                 elementoCard.innerHTML = `
-                    <img class="card-img-top" src="${capa}" alt="${tituloLimpo}">
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <div>
-                            <div class="d-flex justify-content-between align-items-end mb-2">
-                                <span class="badge bg-secondary text-capitalize">${item.type}</span>
-                                <strong class="text-warning">⭐ ${item.score || 'N/A'}</strong>
-                            </div>
-                            <h5 class="card-title">${item.title}</h5>
-                            <p class="card-text small text-muted text-truncate-3">${item.synopsis || 'Sem sinopse disponível.'}</p>
+                <img class="card-img-top" src="${capa}" alt="${tituloLimpo}" style="height: 320px; object-fit: cover;">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-end mb-2">
+                            <span class="badge bg-secondary text-capitalize">${item.type || 'Mídia'}</span>
+                            <strong class="text-warning">⭐ ${item.score || 'N/A'}</strong>
                         </div>
-                        
-                        <!-- Div âncora criada para gerenciar os elementos dinâmicos de ação -->
-                        <div class="action-container-${item.id} mt-3"></div>
+                        <h5 class="card-title text-truncate" id="titulo-buscar-${item.id}">${item.title}</h5>
+                        <p class="card-text small text-muted text-truncate-3">${item.synopsis || 'Sem sinopse disponível.'}</p>
                     </div>
-                `;
+                    
+                    <!-- Container único para interações deste card -->
+                    <div class="action-container mt-3"></div>
+                </div>
+            `;
 
-                // 3. Adiciona os elementos de ação dinâmicos do select
-                const containerAcao = elementoCard.querySelector(`.action-container-${item.id}`);
+                const containerAcao = elementoCard.querySelector('.action-container');
 
+                // Select de Status
                 const selectStatus = document.createElement('select');
-                // CORREÇÃO 1: Uso correto de crases para interpolar o ID dinâmico
                 selectStatus.id = `status-buscar-${item.id}`;
-                selectStatus.className = 'status-select form-select form-select-sm mb-2';
+                selectStatus.className = 'form-select form-select-sm mb-2';
                 selectStatus.required = true;
 
-                // CORREÇÃO 2: Passando o ID dinâmico ou o próprio elemento para popular as opções corretamente em cada card
+                // Popular select de status
                 this.listarStatus(selectStatus.id);
 
-                // Escutador do select que invoca o método alternarFormulario da classe
+                // Escutador de alteração do status
                 selectStatus.addEventListener('change', (e) => {
+                    const statusSelecionado = e.target.value;
 
                     const payload = {
-                        // CORREÇÃO 3: Captura o valor do select correto que disparou o evento (e.target.value) 
-                        // em vez de buscar um ID estático global 'status-buscar'
-                        statusId: e.target.value,
-                        episodios: item.episodes || 0,
-                        temporada: item.season || 0,
+                        item,
+                        statusId: statusSelecionado,
                         idtmdb: item.id,
-                        originalName: item.originalName,
-                        overview: item.overview,
-                        posterPath: item.posterPath,
-                        mediaType: item.mediaType,
-                        genresIds: item.genresIds,
+                        titulo: item.title,
+                        originalName: item.originalName || item.title,
+                        overview: item.synopsis || item.overview || '',
+                        posterPath: item.image || item.posterPath || '',
                         popularity: item.popularity,
-                        firstAirDate: item.firstAirDate,
-                        year: new Date(item.releaseDate || item.firstAirDate).getFullYear(),
-                        voteAverage: item.voteAverage || 0
-                    }
+                        firstAirDate: item.firstAirDate || item.releaseDate || '',
+                        year: item.year,
+                        scoreTMDB: item.score || 'N/A',
+                        episodios: item.episodes || 1,
+                        temporada: item.season || 0
+                    };
 
-                    this.alternarFormulario(e.target.value, containerAcao, payload);
+                    this.alternarFormulario(statusSelecionado, containerAcao, payload, item.id);
                 });
 
                 containerAcao.appendChild(selectStatus);
-
-                // 4. Aninha os elementos: card dentro da coluna, coluna dentro da linha
                 divColuna.appendChild(elementoCard);
                 divLinha.appendChild(divColuna);
             });
 
-            // 5. Injeta a linha completa preenchida no container de destino
             elementoDestino.appendChild(divLinha);
 
         } catch (error) {
-            elementoDestino.innerHTML = '<p>Erro na conexão com o servidor.</p>';
+            elementoDestino.innerHTML = '<p class="text-center text-danger my-3">Erro na conexão com o servidor.</p>';
             console.error(error);
         }
-    };
+    }
 
-    alternarFormulario(val, containerAlvo, payload) {
-        // Localiza e limpa qualquer tracker anterior que já esteja aberto neste card
-        const formAntigo = containerAlvo.querySelector(`.form-tracker-dinamico`);
-        if (formAntigo) {
-            formAntigo.remove();
-        }
+    //adicionar rápido
+    alternarFormulario(val, containerAlvo, payload, mediaId) {
+    const formAntigo = containerAlvo.querySelector('.form-tracker-dinamico');
+    if (formAntigo) formAntigo.remove();
+    if (!val) return;
 
-        // Se o usuário selecionou a opção vazia de volta, cancela a criação
-        if (val === "") return;
+    const formDinamico = document.createElement('form');
+    formDinamico.className = 'form-tracker-dinamico mt-2 border-top pt-2';
 
-        // Cria o fragmento que agrupa todos os novos campos do formulário
-        const divForm = document.createElement('div');
-        divForm.className = 'form-tracker-dinamico mt-2 border-top pt-2';
+    // Armazena o payload completo diretamente no dataset do formulário para resgatarmos depois com 100% de precisão
+    formDinamico.dataset.payload = JSON.stringify(payload);
 
-        divForm.innerHTML = `
-            <div class="mb-2">
-                <label for="plataforma-buscar" class="form-label small mb-1 fw-bold">Plataforma</label>
-                <select class="form-select" id="plataforma-buscar" required></select>
+    formDinamico.innerHTML = `
+        <div class="mb-2">
+            <label for="plataforma-buscar-${mediaId}" class="form-label small mb-1 fw-bold">Plataforma</label>
+            <select class="form-select form-select-sm" id="plataforma-buscar-${mediaId}" required></select>
+        </div>
+
+        <div class="row g-2 mb-2">
+            <div class="col-6">
+                <label for="tipo-buscar-${mediaId}" class="form-label small fw-bold mb-1">Tipo</label>
+                <select class="form-select form-select-sm" id="tipo-buscar-${mediaId}" required></select>
             </div>
-            <div class="row g-2 mb-2">
-                <div class="col-8">
-                    <label class="form-label small mb-1 fw-bold">Minha Nota</label>
-                    <select id="pontuacao-buscar" class="form-select form-select-sm">
-                        <option value="10">⭐ (10) Obra-Prima</option>
-                        <option value="9">⭐ (9) Excelente</option>
-                        <option value="8">⭐ (8) Muito Bom</option>
-                        <option value="7">⭐ (7) Bom</option>
-                        <option value="6">⭐ (6) OK</option>
-                        <option value="5">⭐ (5) Mediano</option>
-                        <option value="4">⭐ (4) Ruim</option>
-                        <option value="3">⭐ (3) Muito Ruim</option>
-                        <option value="2">⭐ (2) Horrível</option>
-                        <option value="1">⭐ (1) Tragédia</option>
-                    </select>
-                </div>
+            <div class="col-6">
+                <label for="pontuacao-buscar-${mediaId}" class="form-label small fw-bold mb-1">Minha Nota</label>
+                <select id="pontuacao-buscar-${mediaId}" class="form-select form-select-sm">
+                    <option value="10">⭐ (10) Obra-Prima</option>
+                    <option value="9">⭐ (9) Excelente</option>
+                    <option value="8">⭐ (8) Muito Bom</option>
+                    <option value="7">⭐ (7) Bom</option>
+                    <option value="6">⭐ (6) OK</option>
+                    <option value="5">⭐ (5) Mediano</option>
+                    <option value="4">⭐ (4) Ruim</option>
+                    <option value="3">⭐ (3) Muito Ruim</option>
+                    <option value="2">⭐ (2) Horrível</option>
+                    <option value="1">⭐ (1) Tragédia</option>
+                </select>
             </div>
+        </div>
 
-            <div class="row g-2 mb-2">            
-                <div class="col-4">
-                    <label for="tipo-buscar" class="form-label small fw-bold">Tipo</label>
-                    <select class="form-select form-select-sm" id="tipo-buscar" required></select>
-                </div>
+        <div class="mb-2">                
+            <label for="assistidos-buscar-${mediaId}" class="form-label small mb-1 fw-bold">Episódios Assistidos</label>
+            <input type="number" id="assistidos-buscar-${mediaId}" class="form-control form-control-sm" value="0" min="0" required>
+        </div>
+
+        <div class="row g-2 mb-3">
+            <div class="col-6">
+                <label for="data-inicio-buscar-${mediaId}" class="form-label small mb-1 fw-bold">Início</label>
+                <input type="date" id="data-inicio-buscar-${mediaId}" class="form-control form-control-sm">
             </div>
-            <div class="row g-2 mb-2">                
-                <div class="col">
-                    <label class="form-label small mb-1 fw-bold">Episódios Assistidos</label>
-                    <input type="number" id="assistidos-buscar" class="form-control form-control-sm" value="0" min="0" required>
-                </div>
+            <div class="col-6">
+                <label for="data-fim-buscar-${mediaId}" class="form-label small mb-1 fw-bold">Fim</label>
+                <input type="date" id="data-fim-buscar-${mediaId}" class="form-control form-control-sm">
             </div>
+        </div>
 
-            <div class="row g-2 mb-3">
-                <div class="col-6">
-                    <label class="form-label small mb-1 fw-bold">Início</label>
-                    <input type="date" id="data-inicio" class="form-control form-control-sm">
-                </div>
-            </div>
+        <button type="submit" class="btn btn-success btn-sm w-100 btn-salvar-dinamico">Salvar</button>
+    `;
 
-            <div class="row g-2 mb-3">
-                <div class="col-6">
-                    <label class="form-label small mb-1 fw-bold">Fim</label>
-                    <input type="date" id="data-fim" class="form-control form-control-sm">
-                </div>
-            </div>
-            <div class="mb-2">
-                <input type="hidden" id="status-buscar" value="${payload.statusId}">
-                <input type="hidden" id="temporada-buscar" value="${payload.temporada}">
-                <input type="hidden" id="episodios-buscar" value="${payload.episodios}">
-                <input type="hidden" id="idtmdb-buscar" value="${payload.idtmdb}">
-                <input type="hidden" id="originalName-buscar" value="${payload.originalName}">
-                <input type="hidden" id="overview-buscar" value="${payload.overview}">
-                <input type="hidden" id="posterPath-buscar" value="${payload.posterPath}">
-                <input type="hidden" id="tmdb-lbl-pop" value="${payload.popularity}">
-                <input type="hidden" id="firstAirDate-buscar" value="${payload.firstAirDate}">                
-                <input type="hidden" id="tmdb-lbl-vote" value="${payload.voteAverage}">       
-                <input type="hidden" id="tmdb-lbl-year" value="${payload.year}">                
-            </div>
-        `;
+    containerAlvo.appendChild(formDinamico);
 
-        this.listarTipos("tipo-buscar");
-        this.listarPlataforma("plataforma-buscar");
+    const selectTipo = formDinamico.querySelector(`#tipo-buscar-${mediaId}`);
+    const selectPlataforma = formDinamico.querySelector(`#plataforma-buscar-${mediaId}`);
 
-        // Instancia o botão de confirmação com escopo léxico puro
-        const btnSalvar = document.createElement('button');
-        btnSalvar.className = 'btn btn-success btn-sm w-100 btn-salvar-dinamico';
-        btnSalvar.textContent = 'Salvar';
+    if (selectTipo) this.listarTipos(selectTipo);
+    if (selectPlataforma) this.listarPlataforma(selectPlataforma);
 
-        btnSalvar.addEventListener('click', async () => {
-            await this.salvarFormularioCatalogo(formAntigo);
-        });
+    formDinamico.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await this.salvarFormularioCatalogo(formDinamico);
+        formDinamico.remove();
 
-        divForm.appendChild(btnSalvar);
-        containerAlvo.appendChild(divForm);
-    };
+        const possuiGridCards = document.getElementById("saved-grid");
+        if (possuiGridCards) await this.listarColecao();
+    });
+};
 
     async dispararAtualizacaoGeralMidias() {
         abrirModalAcao({

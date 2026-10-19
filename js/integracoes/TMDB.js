@@ -40,14 +40,13 @@ const apiTMDB = {
                             id: `${item.media_type}-${item.id}`,
                             title: item.title || item.name,
                             originalTitle: item.original_title || item.original_name,
-                            type: typeLabel,
                             synopsis: item.overview,
-                            // Substituição com o domínio correto identificado por você
-                            // FORMATO OFICIAL DO TMDB PARA APPS EXTERNOS
                             image: item.poster_path ? "https://image.tmdb.org/t/p/w500" + item.poster_path : null,
-                            releaseYear: (item.release_date || item.first_air_date) ? 
+                            year: (item.release_date || item.first_air_date) ? 
                                 new Date(item.release_date || item.first_air_date).getFullYear() : 'N/A',
-                            score: item.vote_average ? item.vote_average.toFixed(1) : 'N/A'
+                            release: item.release_date || item.first_air_date,
+                            score: item.vote_average ? item.vote_average.toFixed(1) : 'N/A',
+                            popularity: item.popularity || 'N/A'
                         };
                     });
             }

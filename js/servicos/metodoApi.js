@@ -40,7 +40,7 @@ const api = {
 
     async salvarDados(dados, endpoint) {
         try {
-            debugger
+            
             const response = await fetch(`${urlBase}/${endpoint}`, {
                 method: "POST",
                 headers: {

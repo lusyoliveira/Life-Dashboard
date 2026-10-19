@@ -137,6 +137,7 @@ export class CatalogoViewModel {
   };
 
   async salvarTitulo(titulo) {
+    debugger
     
     const payload = {
       id: titulo.id,
