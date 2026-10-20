@@ -8,11 +8,42 @@ const utils = {
       return dataItem
     },
 
-    formatarParaISO(dataLocalString) {
-        // Converte a string "yyyy-MM-ddThh:mm" para um objeto Date
-        const data = new Date(dataLocalString);
+    // formatarParaISO(dataLocalString) {
+    //     // Converte a string "yyyy-MM-ddThh:mm" para um objeto Date
+    //     const data = new Date(dataLocalString);
     
-        // Usa as partes da data local para construir a string final
+    //     // Usa as partes da data local para construir a string final
+    //     const ano = data.getFullYear();
+    //     const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+    //     const dia = data.getDate().toString().padStart(2, '0');
+    //     const horas = data.getHours().toString().padStart(2, '0');
+    //     const minutos = data.getMinutes().toString().padStart(2, '0');
+    
+    //     // Adiciona segundos e o 'Z' no final para simular o formato UTC
+    //     return `${ano}-${mes}-${dia}T${horas}:${minutos}:00.000Z`;
+    // }
+    formatarParaISO(dataLocalString) {
+        if (!dataLocalString) return null;
+
+        let data;
+
+        // Se a string veio no formato brasileiro (DD/MM/YYYY ou DD/MM/YYYY HH:mm)
+        if (typeof dataLocalString === 'string' && dataLocalString.includes('/')) {
+            const partes = dataLocalString.split(' ');
+            const [dia, mes, ano] = partes[0].split('/');
+            const horaMinuto = partes[1] || '00:00';
+            
+            // Remonta para um formato amigável para o construtor Date (YYYY-MM-DDTHH:mm)
+            data = new Date(`${ano}-${mes}-${dia}T${horaMinuto}:00`);
+        } else {
+            // Caso contrário, tenta criar a data normalmente pelo construtor padrão
+            data = new Date(dataLocalString);
+        }
+
+        // Valida se a data gerada é inválida
+        if (isNaN(data.getTime())) return null;
+    
+        // Usa as partes da data local para construir a string final ISO
         const ano = data.getFullYear();
         const mes = (data.getMonth() + 1).toString().padStart(2, '0');
         const dia = data.getDate().toString().padStart(2, '0');

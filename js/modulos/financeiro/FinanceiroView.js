@@ -145,7 +145,6 @@ export class FinanceiroView {
   };
 
   async salvarFormularioTransacao(form) {
-    debugger
     const idInput = form.querySelector('#id-adicionar')?.value || null;
     const descricao = form.querySelector('#descricao-adicionar').value;
     const categoria = form.querySelector('#categoria-adicionar').value;

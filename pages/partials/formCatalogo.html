@@ -34,9 +34,10 @@
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-primary">Indicadores de Relevância</label>
                         <div class="p-2 border rounded bg-dark d-flex justify-content-around align-items-center">
-                            <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> Média TMDB: <span id="tmdb-lbl-vote">N/A</span></span>
+                            <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> TMDB: <span id="tmdb-lbl-vote">N/A</span></span>
                             <span class="badge bg-info text-dark"><i class="bi bi-graph-up"></i> Popularidade: <span id="tmdb-lbl-pop">N/A</span></span>
                             <span class="badge bg-secondary"><i class="bi bi-calendar-event"></i> Ano: <span id="tmdb-lbl-year">N/A</span></span>
+                            <span class="badge bg-secondary"><i class="bi bi-calendar2-check"></i> Estreia: <span id="first-air-date-adicionar">N/A</span></span>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -44,11 +45,8 @@
                         <textarea class="form-control" id="overview-adicionar" rows="6" disabled placeholder="Nenhuma sinopse importada do TMDB para este título."></textarea>
                     </div>
                     <input type="hidden" id="original-name-adicionar" disabled>
-                    <input type="hidden" id="media-type-adicionar" disabled>
-                    <input type="hidden" id="genres-ids-adicionar" disabled>
                     <input type="hidden"id="id-adicionar" disabled>
                     <input type="hidden" id="id-tmdb-adicionar" disabled>
-                    <input type="hidden" id="first-air-date-adicionar" disabled>
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label for="titulo-adicionar" class="form-label small fw-bold">Título</label>
@@ -77,7 +75,7 @@
                         </div>
                         <div class="col-md-3">
                             <label for="temporada-adicionar" class="form-label small fw-bold">Temporadas</label>
-                            <input type="number" class="form-control" id="temporada-adicionar" min="1" value="1">
+                            <input type="number" class="form-control" id="temporada-adicionar" min="0" value="0">
                         </div>
                         <div class="col-md-3">
                             <label for="episodios-adicionar" class="form-label small fw-bold">Episódios</label>

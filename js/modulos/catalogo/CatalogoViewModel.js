@@ -137,9 +137,7 @@ export class CatalogoViewModel {
   };
 
   async salvarTitulo(titulo) {
-    debugger
-    
-    const payload = {
+     const payload = {
       id: titulo.id,
       titulo: titulo.Titulo,
       capa: titulo.Capa,
@@ -204,20 +202,18 @@ export class CatalogoViewModel {
 
       return tituloCompleto
     } catch (error) {
-      alert('Erro ao buscar título na API!')
+      alert('Erro ao buscar título por descrição na API!')
       throw error
     }
   };
 
   async obterDadosTMDBPorId(idTMDB, tipo) {
     try {
-   
       const tituloTMDB = await apiTMDB.obterProgramaPorID(idTMDB, tipo);
-
       return tituloTMDB
 
     } catch (error) {
-      alert('Erro ao buscar título na API!')
+      alert('Erro ao buscar título por ID na API!')
       throw error
     }
   }

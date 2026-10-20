@@ -56,6 +56,7 @@ const api = {
     },
 
     async atualizarDados(dados, endpoint) {
+        
         try {
             const response = await fetch(`${urlBase}/${endpoint}/${dados.id}`, {
                 method: "PUT",

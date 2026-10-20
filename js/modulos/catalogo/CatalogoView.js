@@ -150,7 +150,7 @@ export class CatalogoView {
         // Preenchimento dos metadados ocultos de controle
         if (document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = titulo.IdTMDB || '';
         if (document.getElementById('original-name-adicionar')) document.getElementById('original-name-adicionar').value = titulo.Original_Name || '';
-        if (document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = utils.formatarDataBR(titulo.First_Air_Date) || '';
+        if (document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').textContent = utils.formatarDataBR(titulo.First_Air_Date) || '';
         if (document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = titulo.Vote_Average || 'N/A';
         if (document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = titulo.Popularity ? Number(titulo.Popularity).toFixed(1) : 'N/A';
         if (document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = titulo.Year || 'N/A';
@@ -169,9 +169,8 @@ export class CatalogoView {
             const containerAlvo = document.getElementById("accordionTemporadas")
             containerAlvo.innerHTML = '<p class="text-muted text-center my-3">Nenhuma temporada encontrada.</p>';
         }
-
-
         const btnBuscarTMDB = document.getElementById("btn-buscar-tmdb-manual");
+        
         if (btnBuscarTMDB) {
             // Remove qualquer listener antigo para não duplicar cliques
             const novoBtn = btnBuscarTMDB.cloneNode(true);
@@ -195,7 +194,7 @@ export class CatalogoView {
             alert("⚠️ Por favor, digite o nome do título ou o ID do TMDB antes de realizar a busca!");
             return;
         }
-
+        
         try {
             let item;
             if (idTMDB) {
@@ -204,14 +203,13 @@ export class CatalogoView {
                 item = await this.vm.obterDadosTMDBPorDescricao(nomeInput, tipo);
             }
 
-            // Preenche os campos principais na Aba 1
             if (document.getElementById('titulo-adicionar')) document.getElementById('titulo-adicionar').value = item.titulo || nomeInput;
             if (document.getElementById('overview-adicionar')) document.getElementById('overview-adicionar').value = item.sinopse || '';
             if (document.getElementById('id-tmdb-adicionar')) document.getElementById('id-tmdb-adicionar').value = item.id_tmdb || '';
             if (document.getElementById('tmdb-lbl-vote')) document.getElementById('tmdb-lbl-vote').textContent = item.media_votos || '0';
             if (document.getElementById('tmdb-lbl-pop')) document.getElementById('tmdb-lbl-pop').textContent = item.popularidade || 'N/A';
             if (document.getElementById('tmdb-lbl-year')) document.getElementById('tmdb-lbl-year').textContent = item.ano || 'N/A';
-            if (document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').value = item.exibicao || '';
+            if (document.getElementById('first-air-date-adicionar')) document.getElementById('first-air-date-adicionar').textContent = utils.formatarDataBR(item.exibicao) || 'N/A';
             const previewImg = document.getElementById('poster-path-adicionar');
             const posterInput = document.getElementById('capa-adicionar');
 
@@ -248,6 +246,7 @@ export class CatalogoView {
             alert(`❌ Erro ao buscar dados: ${error.message}`);
         }
     };
+
     async salvarFormularioCatalogo(form) {
         // Se o formulário veio da busca dinâmica, recuperamos os dados originais do TMDB salvos no dataset
         let dadosTMDB = {};
@@ -260,12 +259,8 @@ export class CatalogoView {
         }
 
         const idInput = form.querySelector('#id-adicionar')?.value || null;
-        
-        // Prioriza o dado do payload da busca, se não existir tenta buscar dos inputs manuais
         const descricao = dadosTMDB.titulo || form.querySelector('#titulo-adicionar')?.value || '';
         const capa = dadosTMDB.posterPath || form.querySelector('#capa-adicionar')?.value || '';
-        
-        // Campos preenchidos pelo usuário no formulário
         const dataInicio = form.querySelector('[id^="data-inicio-buscar"]')?.value || form.querySelector('#data-inicio')?.value || '';
         const dataFim = form.querySelector('[id^="data-fim-buscar"]')?.value || form.querySelector('#data-fim')?.value || '';
         const tipoId = form.querySelector('[id^="tipo-buscar"]')?.value || form.querySelector('#tipo-adicionar')?.value || '';
@@ -280,10 +275,10 @@ export class CatalogoView {
         const originalName = dadosTMDB.originalName || descricao;
         const overview = dadosTMDB.overview || form.querySelector('#overview-adicionar')?.value || '';
         const posterPath = capa;
-        const popularity = dadosTMDB.popularity || '0';
-        const firstAirDate = dadosTMDB.firstAirDate || '';
-        const year = dadosTMDB.year || '';
-        const voteAverage = dadosTMDB.scoreTMDB || '0';
+        const popularity = dadosTMDB.popularity || form.querySelector('#tmdb-lbl-pop')?.textContent || '0';
+        const firstAirDate = dadosTMDB.firstAirDate || form.querySelector('#first-air-date-adicionar')?.textContent || '';
+        const year = dadosTMDB.year || form.querySelector('#tmdb-lbl-year')?.textContent || '';
+        const voteAverage = dadosTMDB.scoreTMDB || form.querySelector('#tmdb-lbl-vote')?.textContent || '0';
         const elementosTemporadas = form.querySelectorAll('#accordionTemporadas .item-temporada');
         const listaTemporadas = [];
 
@@ -316,7 +311,6 @@ export class CatalogoView {
                 const estreiaEp = elEp.querySelector('.exibicao-episodio')?.textContent || null;
                 const votosEp = Number(elEp.querySelector('.votos-episodio')?.textContent.replace('Votos: ', '') || null);
 
-                console.log(estreiaTemporada)
                 listaEpisodios.push({
                     id: idEp,
                     temporadaId: temporadaId,
@@ -379,7 +373,7 @@ export class CatalogoView {
             voteAverage,
             listaTemporadas
         );
-
+    console.log(titulo)
         await this.vm.salvarTitulo(titulo);
     };
 
@@ -1323,7 +1317,7 @@ export class CatalogoView {
                             <span class="badge bg-secondary text-capitalize">${item.type || 'Mídia'}</span>
                             <strong class="text-warning">⭐ ${item.score || 'N/A'}</strong>
                         </div>
-                        <h5 class="card-title text-truncate" id="titulo-buscar-${item.id}">${item.title}</h5>
+                        <h5 class="card-title text-truncate" id="titulo-buscar-${item.id_tmdb}">${item.title}</h5>
                         <p class="card-text small text-muted text-truncate-3">${item.synopsis || 'Sem sinopse disponível.'}</p>
                     </div>
                     
@@ -1336,7 +1330,7 @@ export class CatalogoView {
 
                 // Select de Status
                 const selectStatus = document.createElement('select');
-                selectStatus.id = `status-buscar-${item.id}`;
+                selectStatus.id = `status-buscar-${item.id_tmdb}`;
                 selectStatus.className = 'form-select form-select-sm mb-2';
                 selectStatus.required = true;
 
@@ -1350,7 +1344,7 @@ export class CatalogoView {
                     const payload = {
                         item,
                         statusId: statusSelecionado,
-                        idtmdb: item.id,
+                        idtmdb: item.id_tmdb,
                         titulo: item.title,
                         originalName: item.originalName || item.title,
                         overview: item.synopsis || item.overview || '',
@@ -1363,7 +1357,7 @@ export class CatalogoView {
                         temporada: item.season || 0
                     };
 
-                    this.alternarFormulario(statusSelecionado, containerAcao, payload, item.id);
+                    this.alternarFormulario(statusSelecionado, containerAcao, payload, item.id_tmdb);
                 });
 
                 containerAcao.appendChild(selectStatus);
@@ -1453,7 +1447,10 @@ export class CatalogoView {
 
         const possuiGridCards = document.getElementById("saved-grid");
         if (possuiGridCards) await this.listarColecao();
+
+        formDinamico.innerHTML = ''
     });
+
 };
 
     async dispararAtualizacaoGeralMidias() {
