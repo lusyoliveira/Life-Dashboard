@@ -8,7 +8,9 @@ import { criarDataTable } from "../../componentes/tabelas/DataTable.js";
 import { colunaAcoes } from "../../componentes/tabelas/colunasAcoes.js";
 import { abrirModalAcao } from "../../Utils/modal.js";
 import Catalogo from "./catalogoModel.js";
-
+import { ConfiguracaoViewModel } from '../../modulos/configuracoes/ConfiguracaoViewModel.js';
+const cfvm = new ConfiguracaoViewModel();
+const dadosConfig = (await cfvm.obterConfiguracoes())[0];
 
 export class CatalogoView {
     constructor(vm, temporadaVM = new TemporadaView()) {
@@ -373,7 +375,6 @@ export class CatalogoView {
             voteAverage,
             listaTemporadas
         );
-    console.log(titulo)
         await this.vm.salvarTitulo(titulo);
     };
 
@@ -622,9 +623,18 @@ export class CatalogoView {
             const textoNota = item.Score ? item.Score : 'Sem nota';
             const notaTMDB = item.Vote_Average ? item.Vote_Average : 'N/A';
             const progresso = item.Progresso ? item.Progresso : 0;
+                       
+            let fonteImagem
+            
+            if (dadosConfig.salvarImagemCatalogo) {
+                // Tratamento de imagem unificado (URL ou Base64)
+                fonteImagem = utils.renderMiniatura(item.Poster_Path);
+            } else {
+                fonteImagem = `http://localhost:3000/${item.Poster_Path};`
+            }
 
             // Tratamento de imagem unificado (URL ou Base64)
-            let fonteImagem = utils.renderMiniatura(item.Poster_Path);
+            //let fonteImagem = utils.renderMiniatura(item.Poster_Path);
 
             card.innerHTML =
                 '<div class="position-relative">' +

@@ -14,8 +14,9 @@ export default class Configuracao {
     descricaoContagem
     ativaTMDB
     chaveTMDB
+    salvarImagemCatalogo
 
-    constructor(_id, ativMAL, ativaOutlook, chaveOutlook, ativaGoogle, chaveGoogle, cidade, latitude = 0, longitude = 0,ativaClima, atualizaClima = 0, dataContagem = new Date(), descricaoContagem, ativaTMDB, chaveTMDB) {
+    constructor(_id, ativMAL, ativaOutlook, chaveOutlook, ativaGoogle, chaveGoogle, cidade, latitude = 0, longitude = 0,ativaClima, atualizaClima = 0, dataContagem = new Date(), descricaoContagem, ativaTMDB, chaveTMDB, salvarImagemCatalogo) {
         this.id = _id
         this.ativaMAL = ativMAL
         this.ativaOutlook = ativaOutlook
@@ -31,5 +32,6 @@ export default class Configuracao {
         this.descricaoContagem = descricaoContagem
         this.ativaTMDB = ativaTMDB
         this.chaveTMDB = chaveTMDB
+        this.salvarImagemCatalogo = salvarImagemCatalogo
     }
 }

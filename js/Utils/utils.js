@@ -1,3 +1,4 @@
+
 const utils = {
     criarData() {
       const diaSemana = new Date().toLocaleDateString('pt-br', { weekday : 'long' });
@@ -259,6 +260,7 @@ const utils = {
         // Inicia a variável vazia. A prioridade máxima agora é o poster local.
         let fonteImagemFinal = ""; 
         let stringPoster = "";
+        
         const imagemConvertida = this.bufferParaBase64(poster);
 
         // Tenta extrair e decodificar o poster binário do banco primeiro

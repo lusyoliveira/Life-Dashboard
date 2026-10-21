@@ -26,7 +26,8 @@ export class ConfiguracaoViewModel {
                 configuracoes.dataContagem,
                 configuracoes.descricaoContagem,
                 configuracoes.ativaTMDB,
-                configuracoes.chaveTMDB
+                configuracoes.chaveTMDB,
+                configuracoes.salvarImagemCatalogo
             );
             
             return configuracao;
