@@ -624,17 +624,17 @@ export class CatalogoView {
             const notaTMDB = item.Vote_Average ? item.Vote_Average : 'N/A';
             const progresso = item.Progresso ? item.Progresso : 0;
                        
-            let fonteImagem
+            //let fonteImagem
             
-            if (dadosConfig.salvarImagemCatalogo) {
-                // Tratamento de imagem unificado (URL ou Base64)
-                fonteImagem = utils.renderMiniatura(item.Poster_Path);
-            } else {
-                fonteImagem = `http://localhost:3000/${item.Poster_Path};`
-            }
+            // if (dadosConfig.salvarImagemCatalogo) {
+            //     // Tratamento de imagem unificado (URL ou Base64)
+            //     fonteImagem = utils.renderMiniatura(item.Poster_Path);
+            // } else {
+            //     fonteImagem = `http://localhost:3000/${item.Poster_Path};`
+            // }
 
             // Tratamento de imagem unificado (URL ou Base64)
-            //let fonteImagem = utils.renderMiniatura(item.Poster_Path);
+            let fonteImagem = utils.renderMiniatura(item.Poster_Path);
 
             card.innerHTML =
                 '<div class="position-relative">' +
